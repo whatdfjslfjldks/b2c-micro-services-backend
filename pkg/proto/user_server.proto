@@ -1,0 +1,129 @@
+syntax="proto3";
+
+package proto;
+option go_package = "./user_server;user_server_proto";
+
+service UserService {
+  // 邮箱登录，验证码发送
+  rpc EmailSendCode(EmailSendCodeRequest) returns (EmailSendCodeResponse) {}
+  // 邮箱登录/注册，验证码验证,用户名随机生成，密码置空，提醒用户设置密码
+  rpc EmailVerifyCode(EmailVerifyCodeRequest) returns (EmailVerifyCodeResponse) {}
+  // 用户名密码登录
+  rpc UsernameLogin(UsernameLoginRequest) returns (UsernameLoginResponse) {}
+  // 检测访问令牌是否过期
+  rpc TestAccessToken(TestAccessTokenRequest) returns (TestAccessTokenResponse) {}
+  // 检测刷新令牌是否过期，过期返回错，没过期返回访问令牌
+  rpc TestRefreshToken(TestRefreshTokenRequest) returns (TestRefreshTokenResponse) {}
+  // 修改用户名,修改之前先调用token接口，判断是否过期
+  rpc ChangeUsername(ChangeUsernameRequest) returns (ChangeUsernameResponse) {}
+  // 修改邮箱 3天内只能修改一次,修改之前先调用token接口，判断是否过期,
+  // 先调用方法向以前邮箱发验证码并验证，这个注意，前面写登录的时候需要将
+  // 方法封装,此方法只用于最后的信息存储
+  rpc ChangeEmail(ChangeEmailRequest) returns (ChangeEmailResponse) {}
+  // 修改密码,修改之前先调用token接口，判断是否过期
+  rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
+  // 利用邮箱修改密码,修改之前先调用token接口，判断是否过期
+  rpc ChangePasswordByEmail(ChangePasswordByEmailRequest) returns (ChangePasswordByEmailResponse) {}
+  // 编辑个人信息,修改之前先调用token接口，判断是否过期
+  rpc EditUserInfo(EditUserInfoRequest) returns (EditUserInfoResponse) {}
+}
+// 编辑个人信息
+message EditUserInfoRequest {
+  string avatar_url=1;
+  string bio=2;
+  string location=3;
+}
+message EditUserInfoResponse {
+  string msg=1;
+}
+// 利用邮箱修改密码
+message ChangePasswordByEmailRequest {
+  string email=1;
+  string verify_code=2;
+  string new_password=3;
+}
+message ChangePasswordByEmailResponse {
+  string msg=1;
+}
+// 修改密码
+message ChangePasswordRequest {
+  string userid=1;
+  string old_password=3;
+  string new_password=2;
+}
+message ChangePasswordResponse {
+  string msg=1;
+}
+// 修改邮箱
+message ChangeEmailRequest {
+  string userid=1;
+  string email=2;
+}
+message ChangeEmailResponse {
+  string msg=1;
+}
+// 修改用户名
+message ChangeUsernameRequest {
+  string userid=1;
+  string username=2;
+}
+message ChangeUsernameResponse {
+  string msg=1;
+}
+// 检测刷新令牌是否过期
+message TestRefreshTokenRequest {
+  string refreshToken=1;
+}
+message TestRefreshTokenResponse {
+  string msg=1;
+  string accessToken=2;
+}
+// 检测访问令牌是否过期
+message TestAccessTokenRequest {
+  string accessToken=1;
+}
+message TestAccessTokenResponse {
+  string msg=1;
+}
+// 用户名密码登录
+message UsernameLoginRequest {
+  string username=1;
+  string password=2;
+}
+message UsernameLoginResponse {
+  string username=1;
+  string userid=2;
+  string role=3;
+  string accessToken=4;
+  string refreshToken=5;
+  string avatar=6;
+}
+// 验证码发送
+message EmailSendCodeRequest {
+  string email = 1;
+}
+message EmailSendCodeResponse {
+  // 返回是否发送成功
+  string msg = 1;
+}
+// 验证码验证
+message EmailVerifyCodeRequest {
+  string email=1;
+  string verify_code=2;
+}
+message EmailVerifyCodeResponse {
+  string username=1;
+  string userid=2;
+  string role=3;
+  string accessToken=4;
+  string refreshToken=5;
+  string avatar=6;
+}
+
+
+
+
+
+
+
+
