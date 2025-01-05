@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"google.golang.org/grpc"
 	"micro-services/pkg/etcd"
-	"micro-services/pkg/proto/user_server"
+	userServerProto "micro-services/pkg/proto/user-server"
 )
 
 // GRPCClient 封装了与 gRPC 服务的连接
@@ -36,17 +36,31 @@ func (c *GRPCClient) CallService(serviceName, method string, request interface{}
 	defer conn.Close()
 
 	// 创建 gRPC 客户端
-	client := user_server_proto.NewUserServiceClient(conn)
+	client := userServerProto.NewUserServiceClient(conn)
 
 	// 调用服务方法
 	switch method {
 	case "sendVerifyCode":
-		req := request.(*user_server_proto.EmailSendCodeRequest)
+		req := request.(*userServerProto.EmailSendCodeRequest)
 		resp, err := client.EmailSendCode(context.Background(), req)
 		if err != nil {
-			return fmt.Errorf("failed to call UserRegister: %v", err)
+			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		*response.(*user_server_proto.EmailSendCodeResponse) = *resp
+		*response.(*userServerProto.EmailSendCodeResponse) = *resp
+	case "checkVerifyCode":
+		req := request.(*userServerProto.EmailVerifyCodeRequest)
+		resp, err := client.EmailVerifyCode(context.Background(), req)
+		if err != nil {
+			return fmt.Errorf("failed to call checkVerifyCode: %v", err)
+		}
+		*response.(*userServerProto.EmailVerifyCodeResponse) = *resp
+	case "loginByPassword":
+		req := request.(*userServerProto.UsernameLoginRequest)
+		resp, err := client.UsernameLogin(context.Background(), req)
+		if err != nil {
+			return fmt.Errorf("failed to call checkVerifyCode: %v", err)
+		}
+		*response.(*userServerProto.UsernameLoginResponse) = *resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

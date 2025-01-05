@@ -1,0 +1,25 @@
+# 邮箱（qq邮箱，因为发验证码不要钱，正式项目可以用发手机验证码🐎，要钱）
+email:
+  host: "smtp.qq.com"
+  port: 587
+  sender: "3423564182@qq.com"
+  password: "qnybtryzviuycjba"
+  protocol: "smtp"
+
+# redis-0 存储邮箱验证码
+# redis-1 存储用户双token
+# 默认连接 redis-0
+redis:
+  host: "localhost"
+  port: 6379
+  password: ""        # 没有密码，留空
+  db: 0               # 默认数据库 0
+
+
+# mysql-user-server
+mysql-user-server:
+  host: "localhost"
+  port: 3306
+  user: "root"
+  password: "tjp20040808"
+  dbname: "b2c_user"

@@ -1,7 +1,7 @@
 syntax="proto3";
 
 package proto;
-option go_package = "./user_server;user_server_proto";
+option go_package = "./user-server;user_server_proto";
 
 service UserService {
   // 邮箱登录，验证码发送
@@ -47,7 +47,7 @@ message ChangePasswordByEmailResponse {
 }
 // 修改密码
 message ChangePasswordRequest {
-  string userid=1;
+  int64 user_id=1;
   string old_password=3;
   string new_password=2;
 }
@@ -56,7 +56,7 @@ message ChangePasswordResponse {
 }
 // 修改邮箱
 message ChangeEmailRequest {
-  string userid=1;
+  int64 user_id=1;
   string email=2;
 }
 message ChangeEmailResponse {
@@ -64,7 +64,7 @@ message ChangeEmailResponse {
 }
 // 修改用户名
 message ChangeUsernameRequest {
-  string userid=1;
+  int64 user_id=1;
   string username=2;
 }
 message ChangeUsernameResponse {
@@ -92,7 +92,7 @@ message UsernameLoginRequest {
 }
 message UsernameLoginResponse {
   string username=1;
-  string userid=2;
+  int64 user_id=2;
   string role=3;
   string accessToken=4;
   string refreshToken=5;
@@ -113,7 +113,7 @@ message EmailVerifyCodeRequest {
 }
 message EmailVerifyCodeResponse {
   string username=1;
-  string userid=2;
+  int64 user_id=2;
   string role=3;
   string accessToken=4;
   string refreshToken=5;
