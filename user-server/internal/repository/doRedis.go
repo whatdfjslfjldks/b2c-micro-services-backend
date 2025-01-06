@@ -40,5 +40,15 @@ func SaveToken(userId int64, refreshToken string, accessToken string) error {
 		return errors.New("token存入redis出错")
 	}
 	return nil
+}
 
+func CheckToken(userid int64, token string, tokenType string) error {
+	tokenString, err := config.RdClient1.HGet(config.Ctx, fmt.Sprintf("%d", userid), tokenType).Result()
+	if err != nil {
+		return err
+	}
+	if token != tokenString {
+		return errors.New("token 不匹配！")
+	}
+	return nil
 }

@@ -53,8 +53,11 @@ func (es *EtcdService) GetService(serviceName string) (string, error) {
 
 // get all etcd services
 func (es *EtcdService) GetAllServices() (map[string]string, error) {
+	// 设置超时时间 5 秒
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel() // 确保在函数返回时取消上下文
 	// 获取以 "services:" 为前缀的所有服务
-	resp, err := es.client.Get(context.Background(), "services:", clientv3.WithPrefix())
+	resp, err := es.client.Get(ctx, "services:", clientv3.WithPrefix())
 	if err != nil {
 		return nil, fmt.Errorf("etcd获取所有服务失败:%v", err)
 	}
@@ -77,8 +80,6 @@ func (es *EtcdService) GetAllServices() (map[string]string, error) {
 
 // 从键中提取服务名称和地址
 func extractServiceDetails(key, value string) (string, string) {
-	// 假设服务路径格式是 "services:{service_name}:{port}"
-	// 从键中提取服务名称（即"{service_name}"）
 	parts := splitKey(key, ":")
 	if len(parts) >= 2 {
 		serviceName := parts[1]

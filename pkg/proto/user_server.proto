@@ -14,7 +14,8 @@ service UserService {
   rpc TestAccessToken(TestAccessTokenRequest) returns (TestAccessTokenResponse) {}
   // 检测刷新令牌是否过期，过期返回错，没过期返回访问令牌
   rpc TestRefreshToken(TestRefreshTokenRequest) returns (TestRefreshTokenResponse) {}
-  // 修改用户名,修改之前先调用token接口，判断是否过期
+  // 修改用户名,修改之前先 < 调用 token接口 >，判断是否过期
+  // TODO 调用接口判断而不是直接在这个接口里面判断，是否妥当？但是我懒得改了，先这样
   rpc ChangeUsername(ChangeUsernameRequest) returns (ChangeUsernameResponse) {}
   // 修改邮箱 3天内只能修改一次,修改之前先调用token接口，判断是否过期,
   // 先调用方法向以前邮箱发验证码并验证，这个注意，前面写登录的时候需要将
@@ -23,24 +24,30 @@ service UserService {
   // 修改密码,修改之前先调用token接口，判断是否过期
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse) {}
   // 利用邮箱修改密码,修改之前先调用token接口，判断是否过期
+  // TODO 设置密码也用这个接口,忘记密码后重置
   rpc ChangePasswordByEmail(ChangePasswordByEmailRequest) returns (ChangePasswordByEmailResponse) {}
   // 编辑个人信息,修改之前先调用token接口，判断是否过期
   rpc EditUserInfo(EditUserInfoRequest) returns (EditUserInfoResponse) {}
 }
 // 编辑个人信息
 message EditUserInfoRequest {
-  string avatar_url=1;
-  string bio=2;
-  string location=3;
+  int64 user_id=1;
+  // TODO 图片上传单独一个功能，返回地址
+  string avatar_url=2;
+  string bio=3;
+  string location=4;
+  string accessToken=5;
 }
 message EditUserInfoResponse {
   string msg=1;
 }
 // 利用邮箱修改密码
 message ChangePasswordByEmailRequest {
-  string email=1;
-  string verify_code=2;
-  string new_password=3;
+  int64 user_id=1;
+  string email=2;
+  string verify_code=3;
+  string new_password=4;
+  string accessToken=5;
 }
 message ChangePasswordByEmailResponse {
   string msg=1;
@@ -50,6 +57,7 @@ message ChangePasswordRequest {
   int64 user_id=1;
   string old_password=3;
   string new_password=2;
+  string accessToken=4;
 }
 message ChangePasswordResponse {
   string msg=1;
@@ -58,6 +66,7 @@ message ChangePasswordResponse {
 message ChangeEmailRequest {
   int64 user_id=1;
   string email=2;
+  string accessToken=3;
 }
 message ChangeEmailResponse {
   string msg=1;
@@ -66,9 +75,11 @@ message ChangeEmailResponse {
 message ChangeUsernameRequest {
   int64 user_id=1;
   string username=2;
+  string accessToken=3;
 }
 message ChangeUsernameResponse {
   string msg=1;
+  string username=2; // 新用户名
 }
 // 检测刷新令牌是否过期
 message TestRefreshTokenRequest {

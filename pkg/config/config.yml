@@ -15,7 +15,6 @@ redis:
   password: ""        # 没有密码，留空
   db: 0               # 默认数据库 0
 
-
 # mysql-user-server
 mysql-user-server:
   host: "localhost"
@@ -23,3 +22,10 @@ mysql-user-server:
   user: "root"
   password: "tjp20040808"
   dbname: "b2c_user"
+
+# Kafka-user-server
+kafka-user-server:
+  brokers:
+    - "localhost:9092"
+  group_id: "test-1"    # 消费者组
+  topic: "test-1"       # Kafka topic

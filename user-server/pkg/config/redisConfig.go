@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 )
 
 // RedisConfig Redis 配置结构体
@@ -49,17 +50,29 @@ func InitRedisConfig() error {
 
 // InitRedis 初始化 Redis 客户端
 func InitRedis() {
+	// 设置超时时间 5 秒
+	dialTimeout := 5 * time.Second
+	readTimeout := 5 * time.Second
+	writeTimeout := 5 * time.Second
+
 	// 创建 Redis-0 客户端
 	RdClient = redis.NewClient(&redis.Options{
-		Addr:     RdConfig.Redis.Host + ":" + strconv.Itoa(RdConfig.Redis.Port), // Redis 服务器地址
-		Password: RdConfig.Redis.Password,                                       // Redis 密码，如果没有就留空
-		DB:       RdConfig.Redis.Db,                                             // 使用的数据库索引，默认是 0
+		Addr:         RdConfig.Redis.Host + ":" + strconv.Itoa(RdConfig.Redis.Port), // Redis 服务器地址
+		Password:     RdConfig.Redis.Password,                                       // Redis 密码，如果没有就留空
+		DB:           RdConfig.Redis.Db,                                             // 使用的数据库索引，默认是 0
+		DialTimeout:  dialTimeout,                                                   // 连接超时
+		ReadTimeout:  readTimeout,                                                   // 读取超时
+		WriteTimeout: writeTimeout,                                                  // 写入超时
 	})
+
 	// 创建 Redis-1 客户端
 	RdClient1 = redis.NewClient(&redis.Options{
-		Addr:     RdConfig.Redis.Host + ":" + strconv.Itoa(RdConfig.Redis.Port), // Redis 服务器地址
-		Password: RdConfig.Redis.Password,                                       // Redis 密码，如果没有就留空
-		DB:       1,
+		Addr:         RdConfig.Redis.Host + ":" + strconv.Itoa(RdConfig.Redis.Port), // Redis 服务器地址
+		Password:     RdConfig.Redis.Password,                                       // Redis 密码，如果没有就留空
+		DB:           1,                                                             // 使用的数据库索引为 1
+		DialTimeout:  dialTimeout,                                                   // 连接超时
+		ReadTimeout:  readTimeout,                                                   // 读取超时
+		WriteTimeout: writeTimeout,                                                  // 写入超时
 	})
 
 	// 测试连接

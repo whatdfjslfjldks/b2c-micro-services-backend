@@ -17,23 +17,23 @@ func UsernameLogin(username string, password string) (
 		return nil, err
 	}
 	//生成双token
-	refreshToken, err := token.GenerateRefreshToken(resp.UserId, resp.Role)
+	refreshToken, err := token.GenerateRefreshToken(userId, role)
 	if err != nil {
 		return nil, err
 	}
-	accessToken, err := token.GenerateAccessToken(resp.UserId, resp.Role)
+	accessToken, err := token.GenerateAccessToken(userId, role)
 	if err != nil {
 		return nil, err
 	}
 	resp.RefreshToken = refreshToken
 	resp.AccessToken = accessToken
 	//把双token存入redis数据库
-	err = repository.SaveToken(resp.UserId, resp.RefreshToken, resp.AccessToken)
+	err = repository.SaveToken(userId, resp.RefreshToken, resp.AccessToken)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.UsernameLoginResponse{
-		UserId:       *userId,
+		UserId:       userId,
 		Username:     userName,
 		Role:         role,
 		Avatar:       avatarUrl,

@@ -1,6 +1,7 @@
 package token
 
 import (
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"time"
@@ -18,6 +19,7 @@ var secretKey = []byte("secret-key")
 // 生成刷新令牌
 func GenerateRefreshToken(userId int64, role string) (string, error) {
 	// 创建 JWT 的有效载荷（claims）
+
 	claims := MyCustomClaims{
 		UserId: userId,
 		Role:   role,
@@ -28,7 +30,6 @@ func GenerateRefreshToken(userId int64, role string) (string, error) {
 			Issuer:    "b2cPlatform",                                      // 签发者
 		},
 	}
-
 	// 创建 JWT Token
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
@@ -65,4 +66,30 @@ func GenerateAccessToken(userId int64, role string) (string, error) {
 	}
 
 	return tokenString, nil
+}
+
+// 提取 token 里的信息
+func GetInfoAndCheckExpire(token string) (
+	*MyCustomClaims, error) {
+	if token == "" {
+		return nil, errors.New("token 不能为空！")
+	}
+	result, err := jwt.ParseWithClaims(token, &MyCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return secretKey, nil
+	})
+	if err != nil {
+		return nil, errors.New("token 解析失败！")
+	}
+	// 是否过期？
+	if claims, ok := result.Claims.(*MyCustomClaims); ok && result.Valid {
+		// 已经过期
+		if claims.ExpiresAt.Before(time.Now()) {
+			return nil, errors.New("token 已过期！") // token 已经过期
+		}
+		// 未过期，返回基本信息
+		return claims, nil
+	} else {
+		return nil, errors.New("token 不合法！解析失败！")
+	}
+
 }

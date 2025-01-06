@@ -103,3 +103,200 @@ func LoginByPassword(c *gin.Context) {
 		"data": respCopy,
 	})
 }
+
+// 查看访问令牌是否过期
+func TestAccessToken(c *gin.Context) {
+	var request userServerProto.TestAccessTokenRequest
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code": 400,
+			"msg":  "无法解析请求: " + err.Error(),
+		})
+		return
+	}
+	req := userServerProto.TestAccessTokenRequest{
+		AccessToken: request.AccessToken,
+	}
+	var resp userServerProto.TestAccessTokenResponse
+	err = instance.GrpcClient.CallService(model, "testAccessToken", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code": 500,
+			"msg":  "服务器错误：" + err.Error(),
+		})
+		return
+	}
+	respCopy := proto.Clone(&resp).(*userServerProto.TestAccessTokenResponse)
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  respCopy.Msg,
+	})
+}
+
+// 查看刷新令牌是否过期
+func TestRefreshToken(c *gin.Context) {
+	var request userServerProto.TestRefreshTokenRequest
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code": 400,
+			"msg":  "无法解析请求: " + err.Error(),
+		})
+		return
+	}
+	req := userServerProto.TestRefreshTokenRequest{
+		RefreshToken: request.RefreshToken,
+	}
+	var resp userServerProto.TestRefreshTokenResponse
+	err = instance.GrpcClient.CallService(model, "testRefreshToken", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code": 500,
+			"msg":  "服务器错误：" + err.Error(),
+		})
+		return
+	}
+	respCopy := proto.Clone(&resp).(*userServerProto.TestRefreshTokenResponse)
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  respCopy.Msg,
+		"data": gin.H{
+			"accessToken": respCopy.AccessToken,
+		},
+	})
+}
+
+// 修改用户名
+func ChangeUsername(c *gin.Context) {
+	var request userServerProto.ChangeUsernameRequest
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code": 400,
+			"msg":  "无法解析请求: " + err.Error(),
+		})
+		return
+	}
+	req := userServerProto.ChangeUsernameRequest{
+		UserId:      request.UserId,
+		Username:    request.Username,
+		AccessToken: request.AccessToken,
+	}
+	var resp userServerProto.ChangeUsernameResponse
+	err = instance.GrpcClient.CallService(model, "changeUsername", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code": 500,
+			"msg":  "服务器错误：" + err.Error(),
+		})
+		return
+	}
+	respCopy := proto.Clone(&resp).(*userServerProto.ChangeUsernameResponse)
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  respCopy.Msg,
+		"data": gin.H{
+			"username": respCopy.Username,
+		},
+	})
+}
+
+// 修改邮箱 TODO 调用之前，先验证旧邮箱，再验证新游戏，此接口只用作存储
+func ChangeEmail(c *gin.Context) {
+	var request userServerProto.ChangeEmailRequest
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code": 400,
+			"msg":  "无法解析请求: " + err.Error(),
+		})
+		return
+	}
+	req := userServerProto.ChangeEmailRequest{
+		UserId:      request.UserId,
+		Email:       request.Email,
+		AccessToken: request.AccessToken,
+	}
+	var resp userServerProto.ChangeEmailResponse
+	err = instance.GrpcClient.CallService(model, "changeEmail", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code": 500,
+			"msg":  "服务器错误：" + err.Error(),
+		})
+		return
+	}
+	respCopy := proto.Clone(&resp).(*userServerProto.ChangeEmailResponse)
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  respCopy.Msg,
+	})
+}
+
+// 修改密码，注意判断把密码加密的逻辑加上
+func ChangePassword(c *gin.Context) {
+	var request userServerProto.ChangePasswordRequest
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code": 400,
+			"msg":  "无法解析请求: " + err.Error(),
+		})
+		return
+	}
+	req := userServerProto.ChangePasswordRequest{
+		UserId:      request.UserId,
+		NewPassword: request.NewPassword,
+		OldPassword: request.OldPassword,
+		AccessToken: request.AccessToken,
+	}
+	var resp userServerProto.ChangePasswordResponse
+	err = instance.GrpcClient.CallService(model, "changePassword", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code": 500,
+			"msg":  "服务器错误：" + err.Error(),
+		})
+		return
+	}
+	respCopy := proto.Clone(&resp).(*userServerProto.ChangePasswordResponse)
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  respCopy.Msg,
+	})
+}
+
+// 利用邮箱验证码修改密码，密码忘记后重置
+func ChangePasswordByEmail(c *gin.Context) {
+	var request userServerProto.ChangePasswordByEmailRequest
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code": 400,
+			"msg":  "无法解析请求: " + err.Error(),
+		})
+		return
+	}
+	req := userServerProto.ChangePasswordByEmailRequest{
+		UserId:      request.UserId,
+		Email:       request.Email,
+		VerifyCode:  request.VerifyCode,
+		NewPassword: request.NewPassword,
+		AccessToken: request.AccessToken,
+	}
+	var resp userServerProto.ChangePasswordByEmailResponse
+	err = instance.GrpcClient.CallService(model, "changePasswordByEmail", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code": 500,
+			"msg":  "服务器错误：" + err.Error(),
+		})
+		return
+	}
+	respCopy := proto.Clone(&resp).(*userServerProto.ChangePasswordByEmailResponse)
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"msg":  respCopy.Msg,
+	})
+}

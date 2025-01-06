@@ -45,7 +45,8 @@ type UserServiceClient interface {
 	TestAccessToken(ctx context.Context, in *TestAccessTokenRequest, opts ...grpc.CallOption) (*TestAccessTokenResponse, error)
 	// 检测刷新令牌是否过期，过期返回错，没过期返回访问令牌
 	TestRefreshToken(ctx context.Context, in *TestRefreshTokenRequest, opts ...grpc.CallOption) (*TestRefreshTokenResponse, error)
-	// 修改用户名,修改之前先调用token接口，判断是否过期
+	// 修改用户名,修改之前先 < 调用 token接口 >，判断是否过期
+	// TODO 调用接口判断而不是直接在这个接口里面判断，是否妥当？但是我懒得改了，先这样
 	ChangeUsername(ctx context.Context, in *ChangeUsernameRequest, opts ...grpc.CallOption) (*ChangeUsernameResponse, error)
 	// 修改邮箱 3天内只能修改一次,修改之前先调用token接口，判断是否过期,
 	// 先调用方法向以前邮箱发验证码并验证，这个注意，前面写登录的时候需要将
@@ -181,7 +182,8 @@ type UserServiceServer interface {
 	TestAccessToken(context.Context, *TestAccessTokenRequest) (*TestAccessTokenResponse, error)
 	// 检测刷新令牌是否过期，过期返回错，没过期返回访问令牌
 	TestRefreshToken(context.Context, *TestRefreshTokenRequest) (*TestRefreshTokenResponse, error)
-	// 修改用户名,修改之前先调用token接口，判断是否过期
+	// 修改用户名,修改之前先 < 调用 token接口 >，判断是否过期
+	// TODO 调用接口判断而不是直接在这个接口里面判断，是否妥当？但是我懒得改了，先这样
 	ChangeUsername(context.Context, *ChangeUsernameRequest) (*ChangeUsernameResponse, error)
 	// 修改邮箱 3天内只能修改一次,修改之前先调用token接口，判断是否过期,
 	// 先调用方法向以前邮箱发验证码并验证，这个注意，前面写登录的时候需要将

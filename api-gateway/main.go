@@ -8,7 +8,23 @@ import (
 )
 
 func main() {
-	// 启动 HTTP 服务s
+	// 初始化 kafka-user-server
+	//err := pkgConfig.InitKafkaConfig()
+	//if err != nil {
+	//	return
+	//}
+	//// 发布消息
+	//err = pkgConfig.PublishMessage("Hello Kafka!")
+	//if err != nil {
+	//	log.Fatalf("Error publishing message: %v", err)
+	//}
+	//
+	//// 订阅并消费消息
+	//err = pkgConfig.ConsumeMessages()
+	//if err != nil {
+	//	log.Fatalf("Error consuming messages: %v", err)
+	//}
+	// 启动 HTTP 服务
 	r := gin.Default()
 	//创建实例
 	instance.NewInstance()

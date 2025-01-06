@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
@@ -23,7 +24,7 @@ func startGRPCServer() error {
 	}
 
 	grpcServer := grpc.NewServer()
-	// 注册发送邮箱验证码
+	// 注册所有服务🌈
 	pb.RegisterUserServiceServer(grpcServer, &handler.Server{})
 
 	reflection.Register(grpcServer)
@@ -52,6 +53,19 @@ func initConfig() {
 }
 
 func main() {
+
+	//err := pkgConfig.InitKafkaConfig()
+	//if err != nil {
+	//	return
+	//}
+	////TODO 测试 通过 √
+	//for i := 0; i <= 20; i++ {
+	//	msg := fmt.Sprintf("队列测试! %d", i)
+	//	err := pkgConfig.PublishMessage(msg)
+	//	if err != nil {
+	//		fmt.Printf("%d 错误: %v\n", i, err)
+	//	}
+	//}
 	// 初始化email,redis
 	initConfig()
 	// 注册服务到 etcd
@@ -60,7 +74,7 @@ func main() {
 		log.Fatalf("Error creating etcdservice: %v", err)
 	}
 	defer etcdServices.Close()
-
+	fmt.Println("api:  ", os.Getenv("api"))
 	// 注册服务到 etcd
 	err = etcdServices.RegisterService("user-server", os.Getenv("api")+":50051")
 	if err != nil {

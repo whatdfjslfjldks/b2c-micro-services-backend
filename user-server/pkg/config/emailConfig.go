@@ -16,7 +16,7 @@ type EmailConfig struct {
 }
 
 type TitleEmail struct {
-	Email EmailConfig `yaml:"internal"`
+	Email EmailConfig `yaml:"email"`
 }
 
 var EmailSender *TitleEmail
