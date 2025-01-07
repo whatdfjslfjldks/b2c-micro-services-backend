@@ -25,8 +25,9 @@ func SetupRoutes(router *gin.Engine) {
 		userServer.POST("/changeUsername", userRoutes.ChangeUsername)
 		userServer.POST("/changeEmail", userRoutes.ChangeEmail)
 		userServer.POST("/changePassword", userRoutes.ChangePassword)
-		// TODO 增加一个判断异常，短时间多次修改密码或其他，提醒用户异常
-		userServer.POST("/ChangePasswordByEmail", userRoutes.ChangePasswordByEmail)
+		// TODO 风控模块---增加一个判断异常，短时间多次修改密码或其他，提醒用户异常
+		userServer.POST("/changePasswordByEmail", userRoutes.ChangePasswordByEmail)
+		userServer.POST("/editUserInfo", userRoutes.EditUserInfo)
 
 	}
 }

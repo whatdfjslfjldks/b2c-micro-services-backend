@@ -81,28 +81,33 @@ func SaveUserInfo(name string, email string, role string) (
 func CheckNameAndPwd(name string, pwd string) (
 	int64, string, string, string, error) {
 	if pwd == "" {
-		return 0, "", "", "", errors.New("密码不能为空")
+		return 0, "", "", "", errors.New("GLB-001")
 	}
+	query := "SELECT user_id,role,password_hash FROM b2c_user.users WHERE username=?"
+	row := config.MySqlClient.QueryRow(query, name)
 	var id int64
 	var role string
-	// TODO 还没有定义密码的加密解密方法，这里把密码加密后和数据库的对比
-
-	query := "SELECT user_id,role FROM b2c_user.users WHERE username=? AND password_hash=?"
-	row := config.MySqlClient.QueryRow(query, name, pwd)
-	err := row.Scan(&id, &role)
+	var oldPwdHash string
+	err := row.Scan(&id, &role, &oldPwdHash)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return 0, "", "", "", errors.New("用户名或密码错误")
+			return 0, "", "", "", errors.New("GLB-001")
 		} else {
-			return 0, "", "", "", errors.New("数据库错误")
+			return 0, "", "", "", errors.New("GLB-003")
 		}
 	}
+	err = bcrypt.CompareHashAndPassword([]byte(oldPwdHash), []byte(pwd))
+
+	if err != nil {
+		return 0, "", "", "", errors.New("GLB-001")
+	}
+
 	query = "SELECT avatar_url FROM b2c_user.user_profiles WHERE user_id=?"
 	row = config.MySqlClient.QueryRow(query, id)
 	var avatarUrl string
 	err = row.Scan(&avatarUrl)
 	if err != nil {
-		return 0, "", "", "", errors.New("数据库错误")
+		return 0, "", "", "", errors.New("GBL-003")
 	}
 	return id, name, role, avatarUrl, nil
 }
@@ -167,7 +172,7 @@ func SaveNewPassword(id int64, newPwd string) error {
 	query := "UPDATE b2c_user.users SET password_hash=?,update_at=? WHERE user_id=?"
 	_, err = config.MySqlClient.Exec(query, hs, currentTime, id)
 	if err != nil {
-		fmt.Println("密码存入出错：", err)
+		//fmt.Println("密码存入出错：", err)
 		return err
 	}
 	return nil

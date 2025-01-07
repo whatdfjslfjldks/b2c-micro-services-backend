@@ -1,6 +1,7 @@
 package userPkg
 
 import (
+	"github.com/dlclark/regexp2"
 	"math/rand"
 	"regexp"
 	"time"
@@ -20,4 +21,14 @@ func GenerateVerifyCode(length int) string {
 		code[i] = letters[rand.Intn(len(letters))]
 	}
 	return string(code)
+}
+
+func IsPasswordValid(password string) bool {
+	// 密码规则：至少一个字母，一个数字，长度6-15，允许字母、数字、@#等符号
+	regex := `^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d@#$%^&*!_+\-=]{6,15}$`
+	re := regexp2.MustCompile(regex, 0)
+
+	// 使用正则匹配密码
+	match, _ := re.MatchString(password)
+	return match
 }

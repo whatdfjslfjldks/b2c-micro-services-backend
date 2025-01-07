@@ -23,9 +23,9 @@ mysql-user-server:
   password: "tjp20040808"
   dbname: "b2c_user"
 
-# Kafka-user-server
-kafka-user-server:
+# Kafka-log-server 日志服务kafka队列
+kafka-log-server:
   brokers:
     - "localhost:9092"
-  group_id: "test-1"    # 消费者组
-  topic: "test-1"       # Kafka topic
+  group_id: "log-server"    # 消费者组
+  topic: "log-server"       # topic

@@ -14,16 +14,31 @@ func UsernameLogin(username string, password string) (
 	// 如果密码为空就返回未设置密码,如果都存在就返回信息
 	userId, userName, role, avatarUrl, err := repository.CheckNameAndPwd(username, password)
 	if err != nil {
-		return nil, err
+		if err.Error() == "GLB-003" {
+			resp.Code = 500
+			resp.StatusCode = "GLB-003"
+			resp.Msg = "数据库错误！"
+		} else {
+			resp.Code = 400
+			resp.StatusCode = "GLB-001"
+			resp.Msg = "用户名或密码错误！"
+		}
+		return resp, nil
 	}
 	//生成双token
 	refreshToken, err := token.GenerateRefreshToken(userId, role)
 	if err != nil {
-		return nil, err
+		resp.Code = 500
+		resp.StatusCode = "USR-003"
+		resp.Msg = "refreshToken 生成出错！"
+		return resp, nil
 	}
 	accessToken, err := token.GenerateAccessToken(userId, role)
 	if err != nil {
-		return nil, err
+		resp.Code = 500
+		resp.StatusCode = "USR-003"
+		resp.Msg = "accessToken 生成出错！"
+		return resp, nil
 	}
 	resp.RefreshToken = refreshToken
 	resp.AccessToken = accessToken
@@ -33,6 +48,9 @@ func UsernameLogin(username string, password string) (
 		return nil, err
 	}
 	return &pb.UsernameLoginResponse{
+		Code:         200,
+		StatusCode:   "GLB-000",
+		Msg:          "登录成功！",
 		UserId:       userId,
 		Username:     userName,
 		Role:         role,

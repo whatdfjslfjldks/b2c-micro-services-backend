@@ -107,6 +107,13 @@ func (c *GRPCClient) CallService(serviceName, method string, request interface{}
 			return fmt.Errorf("failed to call changePasswordByEmail:%v", err)
 		}
 		*response.(*userServerProto.ChangePasswordByEmailResponse) = *resp
+	case "editUserInfo":
+		req := request.(*userServerProto.EditUserInfoRequest)
+		resp, err := client.EditUserInfo(context.Background(), req)
+		if err != nil {
+			return fmt.Errorf("failed to call editUserInfo:%v", err)
+		}
+		*response.(*userServerProto.EditUserInfoResponse) = *resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

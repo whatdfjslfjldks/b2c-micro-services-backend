@@ -55,6 +55,7 @@ type UserServiceClient interface {
 	// 修改密码,修改之前先调用token接口，判断是否过期
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...grpc.CallOption) (*ChangePasswordResponse, error)
 	// 利用邮箱修改密码,修改之前先调用token接口，判断是否过期
+	// TODO 设置密码也用这个接口,忘记密码后重置
 	ChangePasswordByEmail(ctx context.Context, in *ChangePasswordByEmailRequest, opts ...grpc.CallOption) (*ChangePasswordByEmailResponse, error)
 	// 编辑个人信息,修改之前先调用token接口，判断是否过期
 	EditUserInfo(ctx context.Context, in *EditUserInfoRequest, opts ...grpc.CallOption) (*EditUserInfoResponse, error)
@@ -192,6 +193,7 @@ type UserServiceServer interface {
 	// 修改密码,修改之前先调用token接口，判断是否过期
 	ChangePassword(context.Context, *ChangePasswordRequest) (*ChangePasswordResponse, error)
 	// 利用邮箱修改密码,修改之前先调用token接口，判断是否过期
+	// TODO 设置密码也用这个接口,忘记密码后重置
 	ChangePasswordByEmail(context.Context, *ChangePasswordByEmailRequest) (*ChangePasswordByEmailResponse, error)
 	// 编辑个人信息,修改之前先调用token接口，判断是否过期
 	EditUserInfo(context.Context, *EditUserInfoRequest) (*EditUserInfoResponse, error)

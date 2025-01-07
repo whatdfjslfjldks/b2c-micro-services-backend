@@ -15,10 +15,20 @@ func (s *Server) ChangeUsername(ctx context.Context, req *pb.ChangeUsernameReque
 	accessToken := req.AccessToken
 	err := changeUsernameService.ChangeUsername(id, username, accessToken)
 	if err != nil {
-		resp.Msg = err.Error()
-		return resp, err
+		if err.Error() == "GLB-003" {
+			resp.Code = 500
+			resp.StatusCode = "GLB-003"
+			resp.Msg = "数据库错误！"
+		} else {
+			resp.Code = 400
+			resp.StatusCode = "GLB-001"
+			resp.Msg = "用户名已存在或 token 失效！"
+		}
+		return resp, nil
 	} else {
-		resp.Msg = "修改成功"
+		resp.Code = 200
+		resp.StatusCode = "GLB-000"
+		resp.Msg = "用户名修改成功！"
 		resp.Username = username
 		return resp, nil
 	}

@@ -10,11 +10,13 @@ import (
 
 func SendEmailCode(email string) (
 	msg string,
-	err error) {
+	err error,
+	httpCode int32,
+	statusCode string) {
 	isValid := userPkg.IsEmailValid(email)
 	if !isValid {
-		msg = "邮箱格式不正确"
-		return
+		msg = "非法输入！邮箱格式不正确！"
+		return msg, err, 400, "GLB-001"
 	}
 	code := userPkg.GenerateVerifyCode(6)
 
@@ -108,5 +110,9 @@ func SendEmailCode(email string) (
 	emailMsg.SetBody("text/html", emailBody)
 	repository.StoreCodeInRedis(email, code)
 	err = dialer.DialAndSend(emailMsg)
-	return "验证码已发送", err
+	if err != nil {
+		return "验证码发送失败", err, 500, "USR-001"
+	} else {
+		return "验证码已发送", nil, 200, "GLB-000"
+	}
 }

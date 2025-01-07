@@ -39,7 +39,9 @@ message EditUserInfoRequest {
   string accessToken=5;
 }
 message EditUserInfoResponse {
-  string msg=1;
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
 }
 // 利用邮箱修改密码
 message ChangePasswordByEmailRequest {
@@ -50,7 +52,9 @@ message ChangePasswordByEmailRequest {
   string accessToken=5;
 }
 message ChangePasswordByEmailResponse {
-  string msg=1;
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
 }
 // 修改密码
 message ChangePasswordRequest {
@@ -60,7 +64,9 @@ message ChangePasswordRequest {
   string accessToken=4;
 }
 message ChangePasswordResponse {
-  string msg=1;
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
 }
 // 修改邮箱
 message ChangeEmailRequest {
@@ -69,7 +75,9 @@ message ChangeEmailRequest {
   string accessToken=3;
 }
 message ChangeEmailResponse {
-  string msg=1;
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
 }
 // 修改用户名
 message ChangeUsernameRequest {
@@ -78,23 +86,29 @@ message ChangeUsernameRequest {
   string accessToken=3;
 }
 message ChangeUsernameResponse {
-  string msg=1;
-  string username=2; // 新用户名
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string username=4; // 新用户名
 }
 // 检测刷新令牌是否过期
 message TestRefreshTokenRequest {
   string refreshToken=1;
 }
 message TestRefreshTokenResponse {
-  string msg=1;
-  string accessToken=2;
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string accessToken=4;
 }
 // 检测访问令牌是否过期
 message TestAccessTokenRequest {
   string accessToken=1;
 }
 message TestAccessTokenResponse {
-  string msg=1;
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
 }
 // 用户名密码登录
 message UsernameLoginRequest {
@@ -102,20 +116,24 @@ message UsernameLoginRequest {
   string password=2;
 }
 message UsernameLoginResponse {
-  string username=1;
-  int64 user_id=2;
-  string role=3;
-  string accessToken=4;
-  string refreshToken=5;
-  string avatar=6;
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string username=4;
+  int64 user_id=5;
+  string role=6;
+  string accessToken=7;
+  string refreshToken=8;
+  string avatar=9;
 }
 // 验证码发送
 message EmailSendCodeRequest {
   string email = 1;
 }
 message EmailSendCodeResponse {
-  // 返回是否发送成功
-  string msg = 1;
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
 }
 // 验证码验证
 message EmailVerifyCodeRequest {
@@ -123,12 +141,15 @@ message EmailVerifyCodeRequest {
   string verify_code=2;
 }
 message EmailVerifyCodeResponse {
-  string username=1;
-  int64 user_id=2;
-  string role=3;
-  string accessToken=4;
-  string refreshToken=5;
-  string avatar=6;
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string username=4;
+  int64 user_id=5;
+  string role=6;
+  string accessToken=7;
+  string refreshToken=8;
+  string avatar=9;
 }
 
 

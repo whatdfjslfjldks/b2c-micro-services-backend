@@ -5,7 +5,6 @@ import (
 	"google.golang.org/protobuf/proto"
 	"micro-services/api-gateway/internal/instance"
 	userServerProto "micro-services/pkg/proto/user-server"
-	"net/http"
 )
 
 var model = "user-server"
@@ -15,6 +14,11 @@ func SendVerifyCode(c *gin.Context) {
 	var request userServerProto.EmailSendCodeRequest
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
 		return
 	}
 	//构建请求对象
@@ -26,16 +30,18 @@ func SendVerifyCode(c *gin.Context) {
 	err = instance.GrpcClient.CallService(model, "sendVerifyCode", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"code": 500,
-			"msg":  "服务器错误: " + err.Error(),
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
 		})
 		return
 	}
 	// 使用 proto.Clone 创建响应副本，避免直接复制锁定结构体
 	respCopy := proto.Clone(&resp).(*userServerProto.EmailSendCodeResponse)
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  respCopy.Msg,
+	c.JSON(int(resp.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 	})
 }
 
@@ -45,8 +51,9 @@ func CheckVerifyCode(c *gin.Context) {
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
 		c.JSON(400, gin.H{
-			"code": 400,
-			"msg":  "无法解析请求: " + err.Error(),
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
 		})
 		return
 	}
@@ -58,16 +65,25 @@ func CheckVerifyCode(c *gin.Context) {
 	err = instance.GrpcClient.CallService(model, "checkVerifyCode", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"code": 500,
-			"msg":  "服务器错误：" + err.Error(),
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
 		})
 		return
 	}
 	respCopy := proto.Clone(&resp).(*userServerProto.EmailVerifyCodeResponse)
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "响应成功",
-		"data": respCopy,
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"username":     respCopy.Username,
+			"userId":       respCopy.UserId,
+			"role":         respCopy.Role,
+			"accessToken":  respCopy.AccessToken,
+			"refreshToken": respCopy.RefreshToken,
+			"avatarUrl":    respCopy.Avatar,
+		},
 	})
 }
 
@@ -77,8 +93,9 @@ func LoginByPassword(c *gin.Context) {
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
 		c.JSON(400, gin.H{
-			"code": 400,
-			"msg":  "无法解析请求: " + err.Error(),
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
 		})
 		return
 	}
@@ -91,16 +108,25 @@ func LoginByPassword(c *gin.Context) {
 	err = instance.GrpcClient.CallService(model, "loginByPassword", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"code": 500,
-			"msg":  "服务器错误：" + err.Error(),
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
 		})
 		return
 	}
 	respCopy := proto.Clone(&resp).(*userServerProto.UsernameLoginResponse)
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  "响应成功",
-		"data": respCopy,
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"username":     respCopy.Username,
+			"userId":       respCopy.UserId,
+			"role":         respCopy.Role,
+			"accessToken":  respCopy.AccessToken,
+			"refreshToken": respCopy.RefreshToken,
+			"avatarUrl":    respCopy.Avatar,
+		},
 	})
 }
 
@@ -110,8 +136,9 @@ func TestAccessToken(c *gin.Context) {
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
 		c.JSON(400, gin.H{
-			"code": 400,
-			"msg":  "无法解析请求: " + err.Error(),
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
 		})
 		return
 	}
@@ -122,15 +149,17 @@ func TestAccessToken(c *gin.Context) {
 	err = instance.GrpcClient.CallService(model, "testAccessToken", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"code": 500,
-			"msg":  "服务器错误：" + err.Error(),
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
 		})
 		return
 	}
 	respCopy := proto.Clone(&resp).(*userServerProto.TestAccessTokenResponse)
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  respCopy.Msg,
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 	})
 }
 
@@ -140,8 +169,9 @@ func TestRefreshToken(c *gin.Context) {
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
 		c.JSON(400, gin.H{
-			"code": 400,
-			"msg":  "无法解析请求: " + err.Error(),
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
 		})
 		return
 	}
@@ -152,15 +182,17 @@ func TestRefreshToken(c *gin.Context) {
 	err = instance.GrpcClient.CallService(model, "testRefreshToken", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"code": 500,
-			"msg":  "服务器错误：" + err.Error(),
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
 		})
 		return
 	}
 	respCopy := proto.Clone(&resp).(*userServerProto.TestRefreshTokenResponse)
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  respCopy.Msg,
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 		"data": gin.H{
 			"accessToken": respCopy.AccessToken,
 		},
@@ -173,8 +205,9 @@ func ChangeUsername(c *gin.Context) {
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
 		c.JSON(400, gin.H{
-			"code": 400,
-			"msg":  "无法解析请求: " + err.Error(),
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
 		})
 		return
 	}
@@ -187,15 +220,17 @@ func ChangeUsername(c *gin.Context) {
 	err = instance.GrpcClient.CallService(model, "changeUsername", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"code": 500,
-			"msg":  "服务器错误：" + err.Error(),
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
 		})
 		return
 	}
 	respCopy := proto.Clone(&resp).(*userServerProto.ChangeUsernameResponse)
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  respCopy.Msg,
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 		"data": gin.H{
 			"username": respCopy.Username,
 		},
@@ -208,8 +243,9 @@ func ChangeEmail(c *gin.Context) {
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
 		c.JSON(400, gin.H{
-			"code": 400,
-			"msg":  "无法解析请求: " + err.Error(),
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
 		})
 		return
 	}
@@ -222,15 +258,17 @@ func ChangeEmail(c *gin.Context) {
 	err = instance.GrpcClient.CallService(model, "changeEmail", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"code": 500,
-			"msg":  "服务器错误：" + err.Error(),
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
 		})
 		return
 	}
 	respCopy := proto.Clone(&resp).(*userServerProto.ChangeEmailResponse)
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  respCopy.Msg,
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 	})
 }
 
@@ -240,8 +278,9 @@ func ChangePassword(c *gin.Context) {
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
 		c.JSON(400, gin.H{
-			"code": 400,
-			"msg":  "无法解析请求: " + err.Error(),
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
 		})
 		return
 	}
@@ -255,15 +294,17 @@ func ChangePassword(c *gin.Context) {
 	err = instance.GrpcClient.CallService(model, "changePassword", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"code": 500,
-			"msg":  "服务器错误：" + err.Error(),
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
 		})
 		return
 	}
 	respCopy := proto.Clone(&resp).(*userServerProto.ChangePasswordResponse)
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  respCopy.Msg,
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 	})
 }
 
@@ -272,9 +313,11 @@ func ChangePasswordByEmail(c *gin.Context) {
 	var request userServerProto.ChangePasswordByEmailRequest
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
+		//fmt.Println("sdfsdf: ", err)
 		c.JSON(400, gin.H{
-			"code": 400,
-			"msg":  "无法解析请求: " + err.Error(),
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
 		})
 		return
 	}
@@ -289,14 +332,53 @@ func ChangePasswordByEmail(c *gin.Context) {
 	err = instance.GrpcClient.CallService(model, "changePasswordByEmail", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"code": 500,
-			"msg":  "服务器错误：" + err.Error(),
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
 		})
 		return
 	}
 	respCopy := proto.Clone(&resp).(*userServerProto.ChangePasswordByEmailResponse)
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"msg":  respCopy.Msg,
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+	})
+}
+
+// 修改用户信息
+func EditUserInfo(c *gin.Context) {
+	var request userServerProto.EditUserInfoRequest
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	req := userServerProto.EditUserInfoRequest{
+		UserId:      request.UserId,
+		AvatarUrl:   request.AvatarUrl,
+		Bio:         request.Bio,
+		Location:    request.Location,
+		AccessToken: request.AccessToken,
+	}
+	var resp userServerProto.EditUserInfoResponse
+	err = instance.GrpcClient.CallService(model, "editUserInfo", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := proto.Clone(&resp).(*userServerProto.EditUserInfoResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 	})
 }

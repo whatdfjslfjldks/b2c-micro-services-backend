@@ -2,12 +2,12 @@ package handler
 
 import (
 	"context"
-	"errors"
 	pb "micro-services/pkg/proto/user-server"
 	"micro-services/user-server/internal/repository"
 	"micro-services/user-server/internal/service/emailService"
 	"micro-services/user-server/internal/service/tokenService"
-	emailPkg "micro-services/user-server/pkg"
+	userPkg "micro-services/user-server/pkg"
+	"micro-services/user-server/pkg/token"
 )
 
 // 发送邮箱验证码
@@ -15,14 +15,18 @@ func (s *Server) EmailSendCode(ctx context.Context, req *pb.EmailSendCodeRequest
 	*pb.EmailSendCodeResponse, error) {
 	//fmt.Println("发送邮箱验证码 入口--------------------")
 	email := req.Email
-	msg, err := emailService.SendEmailCode(email)
+	msg, err, httpCode, statusCode := emailService.SendEmailCode(email)
 	if err != nil {
 		return &pb.EmailSendCodeResponse{
-			Msg: msg,
-		}, err
+			Code:       httpCode,
+			StatusCode: statusCode,
+			Msg:        msg,
+		}, nil
 	} else {
 		return &pb.EmailSendCodeResponse{
-			Msg: msg,
+			Code:       httpCode,
+			StatusCode: statusCode,
+			Msg:        msg,
 		}, nil
 	}
 }
@@ -30,18 +34,22 @@ func (s *Server) EmailSendCode(ctx context.Context, req *pb.EmailSendCodeRequest
 // 验证邮箱验证码
 func (s *Server) EmailVerifyCode(ctx context.Context, req *pb.EmailVerifyCodeRequest) (
 	*pb.EmailVerifyCodeResponse, error) {
-	isValid := emailPkg.IsEmailValid(req.Email)
+	resp := &pb.EmailVerifyCodeResponse{}
+	isValid := userPkg.IsEmailValid(req.Email)
 	if !isValid {
-		return nil, errors.New("邮箱格式错误！")
+		resp.Code = 400
+		resp.StatusCode = "GLB-001"
+		resp.Msg = "邮箱格式错误！"
+		return resp, nil
 	}
 	isVerify := emailService.VerifyCode(req.Email, req.VerifyCode)
 	if !isVerify {
-		return nil, errors.New("验证码错误或已过期！")
+		resp.Code = 400
+		resp.StatusCode = "GLB-001"
+		resp.Msg = "验证码错误或已过期！"
+		return resp, nil
 	}
-	resp, err := emailService.LoginByEmail(req.Email)
-	if err != nil {
-		return nil, err
-	}
+	resp, _ = emailService.LoginByEmail(req.Email)
 	return resp, nil
 }
 
@@ -49,16 +57,28 @@ func (s *Server) EmailVerifyCode(ctx context.Context, req *pb.EmailVerifyCodeReq
 func (s *Server) ChangeEmail(ctx context.Context, req *pb.ChangeEmailRequest) (
 	*pb.ChangeEmailResponse, error) {
 	resp := &pb.ChangeEmailResponse{}
-	isValid := emailPkg.IsEmailValid(req.Email)
+	isValid := userPkg.IsEmailValid(req.Email)
 	if !isValid {
+		resp.Code = 400
+		resp.StatusCode = "GLB-001"
 		resp.Msg = "邮箱格式错误！"
-		return resp, errors.New("邮箱格式错误！")
+		return resp, nil
 	}
 	err := emailService.ChangeEmail(req.UserId, req.Email, req.AccessToken)
 	if err != nil {
-		resp.Msg = err.Error()
-		return resp, err
+		if err.Error() == "GLB-001" {
+			resp.Code = 400
+			resp.StatusCode = "GLB-001"
+			resp.Msg = "token 已失效或不匹配！"
+		} else {
+			resp.Code = 500
+			resp.StatusCode = "GLB-003"
+			resp.Msg = "数据库错误！"
+		}
+		return resp, nil
 	}
+	resp.Code = 200
+	resp.StatusCode = "GLB-000"
 	resp.Msg = "邮箱重置成功！"
 	return resp, nil
 }
@@ -67,25 +87,48 @@ func (s *Server) ChangeEmail(ctx context.Context, req *pb.ChangeEmailRequest) (
 func (s *Server) ChangePasswordByEmail(ctx context.Context, req *pb.ChangePasswordByEmailRequest) (
 	*pb.ChangePasswordByEmailResponse, error) {
 	resp := &pb.ChangePasswordByEmailResponse{}
+
+	a := userPkg.IsPasswordValid(req.NewPassword)
+	if !a {
+		resp.Code = 400
+		resp.StatusCode = "GLB-001"
+		resp.Msg = "密码不符合要求！"
+		return resp, nil
+	}
 	// 验证token
 	_, err := tokenService.TestAccessToken(req.AccessToken)
 	if err != nil {
-		resp.Msg = "token 验证失败!"
-		return resp, err
+		resp.Code = 400
+		resp.StatusCode = "GLB-001"
+		resp.Msg = "token 已失效或不匹配!"
+		return resp, nil
+	}
+	claims, err := token.GetInfoAndCheckExpire(req.AccessToken)
+	if err != nil || claims.UserId != req.UserId {
+		resp.Code = 400
+		resp.StatusCode = "GLB-001"
+		resp.Msg = "token 已失效或不匹配!"
+		return resp, nil
 	}
 	// 验证邮箱验证码
 	// TODO 确保在此之前调用了发送验证码接口
 	isVerify := emailService.VerifyCode(req.Email, req.VerifyCode)
 	if !isVerify {
+		resp.Code = 400
+		resp.StatusCode = "GLB-001"
 		resp.Msg = "验证码错误或已过期！"
-		return resp, errors.New("验证码错误或已过期！")
+		return resp, nil
 	}
 	// 存储新密码
 	err = repository.SaveNewPassword(req.UserId, req.NewPassword)
 	if err != nil {
+		resp.Code = 500
+		resp.StatusCode = "GLB-003"
 		resp.Msg = "重置密码失败！"
-		return resp, err
+		return resp, nil
 	}
+	resp.Code = 200
+	resp.StatusCode = "GLB-000"
 	resp.Msg = "重置密码成功！"
 	return resp, nil
 }
