@@ -1,0 +1,20 @@
+syntax="proto3";
+
+package proto;
+option go_package = "./log-server;log_server_proto";
+
+
+service LogService{
+  rpc PostLog(PostLogRequest) returns (PostLogResponse){}
+}
+
+message PostLogRequest{
+  string source = 1;
+  string request_path = 2;
+  string status_code = 3;
+  string msg = 4;
+  string level = 5;
+  string time = 6;
+}
+// 不返回答复，日志可丢失
+message PostLogResponse{}

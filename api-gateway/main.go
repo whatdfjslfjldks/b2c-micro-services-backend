@@ -37,6 +37,6 @@ func main() {
 		log.Fatalf("failed to start HTTP server: %v", err)
 	}
 
-	// TODO 风控模块，日志模块，订单模块，支付模块
+	// TODO 风控模块，日志模块，商品模块，订单模块，支付模块
 	// TODO 尽量降低不同模块之间的 耦合
 }

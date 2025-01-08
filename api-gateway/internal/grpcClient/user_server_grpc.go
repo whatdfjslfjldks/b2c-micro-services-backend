@@ -28,7 +28,7 @@ func (c *GRPCClient) CallService(serviceName, method string, request interface{}
 		return fmt.Errorf("failed to get service address: %v", err)
 	}
 
-	fmt.Println("服务地址-----------------------： ", serviceAddr)
+	//fmt.Println("服务地址-----------------------： ", serviceAddr)
 
 	// 与 gRPC 服务建立连接
 	conn, err := grpc.Dial(serviceAddr, grpc.WithInsecure()) // 可改成加密连接
