@@ -2,9 +2,12 @@ package handler
 
 import (
 	"context"
+	logServerProto "micro-services/pkg/proto/log-server"
 	pb "micro-services/pkg/proto/user-server"
+	"micro-services/pkg/utils"
 	"micro-services/user-server/internal/service/changePasswordService"
 	userPkg "micro-services/user-server/pkg"
+	"micro-services/user-server/pkg/instance"
 )
 
 func (s *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordRequest) (
@@ -27,6 +30,15 @@ func (s *Server) ChangePassword(ctx context.Context, req *pb.ChangePasswordReque
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
 			resp.Msg = "数据库错误！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/changePassword",
+				Source:      "user-server",
+				StatusCode:  "GLB-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 		}
 		return resp, nil
 	}

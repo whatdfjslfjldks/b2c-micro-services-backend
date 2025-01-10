@@ -1,8 +1,11 @@
 package usernameLoginService
 
 import (
+	logServerProto "micro-services/pkg/proto/log-server"
 	pb "micro-services/pkg/proto/user-server"
+	"micro-services/pkg/utils"
 	"micro-services/user-server/internal/repository"
+	"micro-services/user-server/pkg/instance"
 	"micro-services/user-server/pkg/token"
 )
 
@@ -18,6 +21,15 @@ func UsernameLogin(username string, password string) (
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
 			resp.Msg = "数据库错误！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/usernameLogin",
+				Source:      "user-server",
+				StatusCode:  "GLB-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 		} else {
 			resp.Code = 400
 			resp.StatusCode = "GLB-001"

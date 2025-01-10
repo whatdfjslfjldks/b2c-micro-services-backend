@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
+	"micro-services/pkg/utils"
 	userPkg "micro-services/user-server/pkg"
 	"micro-services/user-server/pkg/config"
-	"time"
 )
 
 func IsEmailExist(email string) bool {
@@ -56,7 +56,7 @@ func GetAvatarUrlById(id int64) (string, error) {
 // 初始化用户信息表
 func SaveUserInfo(name string, email string, role string) (
 	userId int64, err error) {
-	currentTime := time.Now()
+	currentTime := utils.GetTime()
 	// 初始化 users 表
 	query := "INSERT INTO b2c_user.users (username, email, role,create_at,update_at) VALUES (?, ?, ?, ?, ?)"
 	result, err := config.MySqlClient.Exec(query, name, email, role, currentTime, currentTime)
@@ -124,7 +124,7 @@ func IsUsernameExist(username string) bool {
 }
 
 func ChangeUsername(id int64, username string) error {
-	currentTime := time.Now()
+	currentTime := utils.GetTime()
 	query := "UPDATE b2c_user.users SET username=?,update_at=? WHERE user_id=?"
 	_, err := config.MySqlClient.Exec(query, username, currentTime, id)
 	if err != nil {
@@ -135,7 +135,7 @@ func ChangeUsername(id int64, username string) error {
 }
 
 func ChangeEmail(id int64, email string) error {
-	currentTime := time.Now()
+	currentTime := utils.GetTime()
 	query := "UPDATE b2c_user.users SET email=?,update_at=? WHERE user_id=?"
 	_, err := config.MySqlClient.Exec(query, email, currentTime, id)
 	if err != nil {
@@ -163,7 +163,7 @@ func CheckOldPassword(id int64, oldPwd string) error {
 }
 
 func SaveNewPassword(id int64, newPwd string) error {
-	currentTime := time.Now()
+	currentTime := utils.GetTime()
 	// 对密码进行加密
 	hs, err := userPkg.HashPassword(newPwd)
 	if err != nil {
@@ -176,4 +176,26 @@ func SaveNewPassword(id int64, newPwd string) error {
 		return err
 	}
 	return nil
+}
+
+func GetUserIdByEmail(email string) (int64, error) {
+	query := "SELECT user_id FROM b2c_user.users WHERE email=?"
+	row := config.MySqlClient.QueryRow(query, email)
+	var id int64
+	err := row.Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func GetEmailById(id int64) (string, error) {
+	query := "SELECT email FROM b2c_user.users WHERE user_id=?"
+	row := config.MySqlClient.QueryRow(query, id)
+	var email string
+	err := row.Scan(&email)
+	if err != nil {
+		return "", err
+	}
+	return email, nil
 }

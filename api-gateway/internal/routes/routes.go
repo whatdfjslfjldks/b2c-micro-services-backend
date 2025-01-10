@@ -18,14 +18,18 @@ func SetupRoutes(router *gin.Engine) {
 	userServer := router.Group("/api/" + model)
 	{
 		userServer.POST("/sendVerifyCode", userRoutes.SendVerifyCode)
+		// TODO 检测非常用ip和agent
 		userServer.POST("/checkVerifyCode", userRoutes.CheckVerifyCode)
+		// TODO 检测非常用ip和agent
 		userServer.POST("/loginByPassword", userRoutes.LoginByPassword)
 		userServer.POST("/testAccessToken", userRoutes.TestAccessToken)
 		userServer.POST("/testRefreshToken", userRoutes.TestRefreshToken)
 		userServer.POST("/changeUsername", userRoutes.ChangeUsername)
+		// TODO 检测非常用ip和agent
 		userServer.POST("/changeEmail", userRoutes.ChangeEmail)
+		// TODO 检测非常用ip和agent
 		userServer.POST("/changePassword", userRoutes.ChangePassword)
-		// TODO 风控模块---增加一个判断异常，短时间多次修改密码或其他，提醒用户异常
+		// TODO 检测非常用ip和agent
 		userServer.POST("/changePasswordByEmail", userRoutes.ChangePasswordByEmail)
 		userServer.POST("/editUserInfo", userRoutes.EditUserInfo)
 

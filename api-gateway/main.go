@@ -1,31 +1,28 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"log"
 	"micro-services/api-gateway/internal/instance"
 	"micro-services/api-gateway/internal/routes"
+	"time"
 )
 
+// TODO etcd注册中心 50051：user-server
+// TODO            50052：log-server
+// TODO            50053：risk-server
 func main() {
-	// 初始化 kafka-user-server
-	//err := pkgConfig.InitKafkaConfig()
-	//if err != nil {
-	//	return
-	//}
-	//// 发布消息
-	//err = pkgConfig.PublishMessage("Hello Kafka!")
-	//if err != nil {
-	//	log.Fatalf("Error publishing message: %v", err)
-	//}
-	//
-	//// 订阅并消费消息
-	//err = pkgConfig.ConsumeMessages()
-	//if err != nil {
-	//	log.Fatalf("Error consuming messages: %v", err)
-	//}
 	// 启动 HTTP 服务
 	r := gin.Default()
+	// 配置 CORS 中间件
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},                                                                       // 允许的跨域来源，* 表示允许所有
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},                                 // 允许的请求方法
+		AllowHeaders:     []string{"X-Real-IP", "X-Forwarded-For", "Origin", "Content-Type", "Authorization"}, // 允许的请求头
+		AllowCredentials: true,                                                                                // 是否允许携带凭证（例如 cookies）
+		MaxAge:           12 * time.Hour,                                                                      // 预检请求的有效期，单位是时间
+	}))
 	//创建实例
 	instance.NewInstance()
 	// 用gin做网关，进行路由的接收和转发

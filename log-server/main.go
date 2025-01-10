@@ -5,6 +5,7 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 	"micro-services/log-server/internal/handler"
+	"micro-services/log-server/pkg/config"
 	h "micro-services/log-server/pkg/kafka/handler"
 	"micro-services/pkg/etcd"
 	pb "micro-services/pkg/proto/log-server"
@@ -35,10 +36,17 @@ func initKafka() {
 	h.InitProducer()
 
 }
+func initMysql() {
+	if err := config.InitMysqlConfig(); err != nil {
+		log.Fatal("Error loading config: ", err)
+	}
+	config.InitMySql()
+}
 func main() {
 
 	// 初始化kafka,生产者和消费者
 	initKafka()
+	initMysql()
 
 	// 注册服务到 etcd
 	etcdServices, err := etcd.NewEtcdService(5 * time.Second)

@@ -8,6 +8,7 @@ email:
 
 # redis-0 存储邮箱验证码
 # redis-1 存储用户双token
+# redis-2 risk-server存储用户登录ip，agent和状态（成功或失败）
 # 默认连接 redis-0
 redis:
   host: "localhost"
@@ -22,6 +23,24 @@ mysql-user-server:
   user: "root"
   password: "tjp20040808"
   dbname: "b2c_user"
+
+# mysql-log-server
+mysql-log-server:
+  host: "localhost"
+  port: 3307
+  user: "root"
+  password: "tjp20040808"
+  dbname_info: "b2c_log_info"
+  dbname_warn: "b2c_log_warn"
+  dbname_error: "b2c_log_error"
+
+# mysql-risk-server
+mysql-risk-server:
+  host: "localhost"
+  port: 3308
+  user: "root"
+  password: "tjp20040808"
+  dbname: "b2c_risk"
 
 # Kafka-log-server 日志服务kafka队列
 kafka-log-server:

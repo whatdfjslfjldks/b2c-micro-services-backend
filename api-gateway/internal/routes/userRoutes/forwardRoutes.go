@@ -47,6 +47,11 @@ func SendVerifyCode(c *gin.Context) {
 
 // 验证邮箱验证码并登录或注册
 func CheckVerifyCode(c *gin.Context) {
+
+	// 获取请求头里的ip和agent
+	ip := c.ClientIP()
+	agent := c.Request.Header.Get("User-Agent")
+
 	var request userServerProto.EmailVerifyCodeRequest
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
@@ -60,6 +65,8 @@ func CheckVerifyCode(c *gin.Context) {
 	req := userServerProto.EmailVerifyCodeRequest{
 		Email:      request.Email,
 		VerifyCode: request.VerifyCode,
+		Ip:         ip,
+		UserAgent:  agent,
 	}
 	var resp userServerProto.EmailVerifyCodeResponse
 	err = instance.GrpcClient.CallService(model, "checkVerifyCode", &req, &resp)
@@ -89,6 +96,10 @@ func CheckVerifyCode(c *gin.Context) {
 
 // 用户名密码登录
 func LoginByPassword(c *gin.Context) {
+	// 获取请求头里的ip和agent
+	ip := c.ClientIP()
+	agent := c.Request.Header.Get("User-Agent")
+
 	var request userServerProto.UsernameLoginRequest
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
@@ -101,8 +112,10 @@ func LoginByPassword(c *gin.Context) {
 	}
 	// TODO 把请求数据再转化一次有必要吗？应该是有的，为了防止接收到多余信息，明确只拿取需要的数据
 	req := userServerProto.UsernameLoginRequest{
-		Username: request.Username,
-		Password: request.Password,
+		Username:  request.Username,
+		Password:  request.Password,
+		Ip:        ip,
+		UserAgent: agent,
 	}
 	var resp userServerProto.UsernameLoginResponse
 	err = instance.GrpcClient.CallService(model, "loginByPassword", &req, &resp)
@@ -239,6 +252,9 @@ func ChangeUsername(c *gin.Context) {
 
 // 修改邮箱 TODO 调用之前，先验证旧邮箱，再验证新游戏，此接口只用作存储
 func ChangeEmail(c *gin.Context) {
+	// 获取请求头里的ip和agent
+	ip := c.ClientIP()
+	agent := c.Request.Header.Get("User-Agent")
 	var request userServerProto.ChangeEmailRequest
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
@@ -253,6 +269,8 @@ func ChangeEmail(c *gin.Context) {
 		UserId:      request.UserId,
 		Email:       request.Email,
 		AccessToken: request.AccessToken,
+		Ip:          ip,
+		UserAgent:   agent,
 	}
 	var resp userServerProto.ChangeEmailResponse
 	err = instance.GrpcClient.CallService(model, "changeEmail", &req, &resp)
@@ -274,6 +292,9 @@ func ChangeEmail(c *gin.Context) {
 
 // 修改密码，注意判断把密码加密的逻辑加上
 func ChangePassword(c *gin.Context) {
+	// 获取请求头里的ip和agent
+	ip := c.ClientIP()
+	agent := c.Request.Header.Get("User-Agent")
 	var request userServerProto.ChangePasswordRequest
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
@@ -289,6 +310,8 @@ func ChangePassword(c *gin.Context) {
 		NewPassword: request.NewPassword,
 		OldPassword: request.OldPassword,
 		AccessToken: request.AccessToken,
+		Ip:          ip,
+		UserAgent:   agent,
 	}
 	var resp userServerProto.ChangePasswordResponse
 	err = instance.GrpcClient.CallService(model, "changePassword", &req, &resp)
@@ -310,6 +333,9 @@ func ChangePassword(c *gin.Context) {
 
 // 利用邮箱验证码修改密码，密码忘记后重置
 func ChangePasswordByEmail(c *gin.Context) {
+	// 获取请求头里的ip和agent
+	ip := c.ClientIP()
+	agent := c.Request.Header.Get("User-Agent")
 	var request userServerProto.ChangePasswordByEmailRequest
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
@@ -327,6 +353,8 @@ func ChangePasswordByEmail(c *gin.Context) {
 		VerifyCode:  request.VerifyCode,
 		NewPassword: request.NewPassword,
 		AccessToken: request.AccessToken,
+		Ip:          ip,
+		UserAgent:   agent,
 	}
 	var resp userServerProto.ChangePasswordByEmailResponse
 	err = instance.GrpcClient.CallService(model, "changePasswordByEmail", &req, &resp)

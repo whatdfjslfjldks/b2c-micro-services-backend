@@ -5,19 +5,18 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 	"micro-services/pkg/etcd"
-	pb "micro-services/pkg/proto/user-server"
-	"micro-services/user-server/internal/handler"
-	"micro-services/user-server/pkg/config"
-	"micro-services/user-server/pkg/instance"
-
+	pb "micro-services/pkg/proto/risk-server"
+	"micro-services/risk-server/internal/handler"
+	"micro-services/risk-server/pkg/config"
+	"micro-services/risk-server/pkg/instance"
 	"net"
 	"os"
 	"time"
 )
 
-// 创建并启动 gRPC 服务
 func startGRPCServer() error {
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen("tcp", ":50053")
+
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 		return err
@@ -25,17 +24,17 @@ func startGRPCServer() error {
 
 	grpcServer := grpc.NewServer()
 	// 注册所有服务🌈
-	pb.RegisterUserServiceServer(grpcServer, &handler.Server{})
+	pb.RegisterRiskServiceServer(grpcServer, &handler.Server{})
 
 	reflection.Register(grpcServer)
-	log.Println("gRPC server is listening on port 50051")
+	log.Println("gRPC server is listening on port 50053")
 
 	return grpcServer.Serve(lis)
 }
 func initConfig() {
-	err := config.InitEmailConfig()
+	err := config.InitMysqlConfig()
 	if err != nil {
-		log.Fatalf("Error initializing internal config: %v", err)
+		log.Fatalf("Error initializing mysql config: %v", err)
 		return
 	}
 	err = config.InitRedisConfig()
@@ -43,33 +42,28 @@ func initConfig() {
 		log.Fatalf("Error initializing redis config: %v", err)
 		return
 	}
-	err = config.InitMysqlConfig()
-	if err != nil {
-		log.Fatalf("Error initializing mysql config: %v", err)
-		return
-	}
-	config.InitRedis()
 	config.InitMySql()
+	config.InitRedis()
 }
-
 func main() {
-	// 初始化email,redis
+	// TODO 设计风控模块数据库，存用户的ip，常用设备（user-agent），短时间修改密码次数（这个是举个例子）等信息
+	// TODO 同时加载常查询数据进入redis，方便快速获取
+
+	// 初始化mysql
 	initConfig()
+
 	// 注册服务到 etcd
 	etcdServices, err := etcd.NewEtcdService(5 * time.Second)
 	if err != nil {
 		log.Fatalf("Error creating etcdservice: %v", err)
 	}
 	defer etcdServices.Close()
-	//fmt.Println("api:  ", os.Getenv("api"))
 	// 注册服务到 etcd
-	err = etcdServices.RegisterService("user-server", os.Getenv("api")+":50051", 60)
+	err = etcdServices.RegisterService("risk-server", os.Getenv("api")+":50053", 60)
 	if err != nil {
 		log.Fatalf("Error registering service: %v", err)
 	}
-
 	instance.NewInstance()
-
 	// 启动 gRPC 服务
 	if err := startGRPCServer(); err != nil {
 		log.Fatalf("failed to start gRPC server: %v", err)

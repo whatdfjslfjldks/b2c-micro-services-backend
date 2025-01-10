@@ -89,14 +89,50 @@ func main() {
 	client := logServerProto.NewLogServiceClient(conn)
 
 	req := &logServerProto.PostLogRequest{
-		Level:       "info",
+		Level:       "ERROR",
 		Msg:         "hello world",
 		RequestPath: "/test",
 		Source:      "test",
 		StatusCode:  "200",
 		Time:        "2023-07-01 12:00:00",
 	}
-	for i := 1; i <= 10; i++ {
+	for i := 1; i <= 5; i++ {
+		fmt.Println("第", i, "次发送")
+		resp, err := client.PostLog(context.Background(), req)
+		if err != nil {
+			log.Printf("failed to send log: %v", err)
+		} else {
+			fmt.Println("log sent successfully:", resp)
+		}
+	}
+
+	req = &logServerProto.PostLogRequest{
+		Level:       "INFO",
+		Msg:         "hello world",
+		RequestPath: "/test",
+		Source:      "test",
+		StatusCode:  "200",
+		Time:        "2023-07-01 12:00:00",
+	}
+	for i := 1; i <= 5; i++ {
+		fmt.Println("第", i, "次发送")
+		resp, err := client.PostLog(context.Background(), req)
+		if err != nil {
+			log.Printf("failed to send log: %v", err)
+		} else {
+			fmt.Println("log sent successfully:", resp)
+		}
+	}
+
+	req = &logServerProto.PostLogRequest{
+		Level:       "WARN",
+		Msg:         "hello world",
+		RequestPath: "/test",
+		Source:      "test",
+		StatusCode:  "200",
+		Time:        "2023-07-01 12:00:00",
+	}
+	for i := 1; i <= 5; i++ {
 		fmt.Println("第", i, "次发送")
 		resp, err := client.PostLog(context.Background(), req)
 		if err != nil {

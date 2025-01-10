@@ -3,9 +3,12 @@ package emailService
 import "C"
 import (
 	"gopkg.in/gomail.v2"
+	logServerProto "micro-services/pkg/proto/log-server"
+	"micro-services/pkg/utils"
 	"micro-services/user-server/internal/repository"
 	"micro-services/user-server/pkg"
 	"micro-services/user-server/pkg/config"
+	"micro-services/user-server/pkg/instance"
 )
 
 func SendEmailCode(email string) (
@@ -111,6 +114,15 @@ func SendEmailCode(email string) (
 	repository.StoreCodeInRedis(email, code)
 	err = dialer.DialAndSend(emailMsg)
 	if err != nil {
+		a := &logServerProto.PostLogRequest{
+			Level:       "ERROR",
+			Msg:         err.Error(),
+			RequestPath: "/sendVerifyCode",
+			Source:      "user-server",
+			StatusCode:  "USR-001",
+			Time:        utils.GetTime(),
+		}
+		instance.GrpcClient.PostLog(a)
 		return "验证码发送失败", err, 500, "USR-001"
 	} else {
 		return "验证码已发送", nil, 200, "GLB-000"

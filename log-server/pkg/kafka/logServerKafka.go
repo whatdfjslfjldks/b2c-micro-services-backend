@@ -65,7 +65,8 @@ func (k *LogKafkaProducer) InitProducer() error {
 	// 等待所有副本确认
 	config.Producer.Timeout = 10 * time.Second // 发送消息的超时时间
 	config.Producer.Return.Successes = true    // 必须设置为 true，表示生产者需要等待 Kafka 返回成功的消息确认
-
+	// TODO 非常重要！！！ sarama操纵kafka发送指定partition分区，需要配置这一项！！！！！
+	config.Producer.Partitioner = sarama.NewManualPartitioner
 	k.once.Do(func() {
 		// 创建生产者客户端
 		k.Producer, err = sarama.NewSyncProducer(KafkaConfigLog.KafkaUserServer.Brokers, config)
@@ -77,22 +78,25 @@ func (k *LogKafkaProducer) InitProducer() error {
 	return nil
 }
 
-// Kafka 发布消息（生产者）
-func (k *LogKafkaProducer) PublishMessage(message model.Log) error {
+// Kafka 发布消息（根据日志级别发送到不同的分区）
+func (k *LogKafkaProducer) PublishMessage(message model.Log, partition int32) error {
 	// 将自定义 log 格式的 message 转为 JSON 字符串
-	logBytes, er := json.Marshal(message)
-	if er != nil {
-		log.Printf("将自定义 log 格式的 message 转为 JSON 字符串失败： %v", er)
-		return er
-	}
-	// 创建消息
-	msg := &sarama.ProducerMessage{
-		Topic: KafkaConfigLog.KafkaUserServer.Topic,
-		Value: sarama.ByteEncoder(logBytes),
+	logBytes, err := json.Marshal(message)
+	if err != nil {
+		log.Printf("将消息转换为 JSON 失败： %v", err)
+		return err
 	}
 
+	// 创建消息并指定分区
+	msg := &sarama.ProducerMessage{
+		Partition: partition,
+		Topic:     KafkaConfigLog.KafkaUserServer.Topic,
+		Value:     sarama.ByteEncoder(logBytes),
+	}
+	//fmt.Println("分区", partition)
+
 	// 发送消息
-	_, _, err := k.Producer.SendMessage(msg)
+	_, _, err = k.Producer.SendMessage(msg)
 	if err != nil {
 		log.Printf("发送消息失败： %v", err)
 		return fmt.Errorf("failed to send message: %v", err)
@@ -115,8 +119,12 @@ func (k *LogKafkaConsumer) InitConsumer() error {
 	var err error
 	// 创建消费者组配置
 	config := sarama.NewConfig()
-	config.Consumer.Fetch.Max = 100                       // 每次拉取的最大消息数，限制消费者消费速度
-	config.Consumer.Offsets.Initial = sarama.OffsetNewest // 从最新的消息开始消费
+	config.Consumer.Fetch.Max = 100               // 每次拉取的最大消息数，限制消费者消费速度
+	config.Consumer.MaxWaitTime = 1 * time.Second // 每次最多等待 10 秒
+
+	config.Consumer.Offsets.Initial = sarama.OffsetNewest         // TODO 从最新的消息开始消费,根据需要可以做调整
+	config.Consumer.Offsets.AutoCommit.Enable = true              // 默认设置是 true，表示自动提交
+	config.Consumer.Offsets.AutoCommit.Interval = 1 * time.Second // 自动提交间隔
 
 	k.once.Do(func() {
 		// 创建消费者客户端
@@ -148,7 +156,6 @@ func (h *ConsumerHandler) Cleanup(sarama.ConsumerGroupSession) error {
 
 // 消费消息
 func (h *ConsumerHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	fmt.Println("来消息了！！")
 	for message := range claim.Messages() {
 		// 处理消息（通过回调函数）
 		logMessage := model.Log{}
@@ -156,6 +163,8 @@ func (h *ConsumerHandler) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 			log.Printf("消息解析失败: %v", err)
 			continue
 		}
+		//fmt.Println("分区222：:", logMessage)
+
 		// 调用回调函数处理消息
 		if err := h.MessageHandler(logMessage); err != nil {
 			log.Printf("处理消息失败: %v", err)
@@ -167,7 +176,7 @@ func (h *ConsumerHandler) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 }
 
 // 开始消费消息
-func (k *LogKafkaConsumer) ConsumeMessages(handler func(message model.Log) error) error {
+func (k *LogKafkaConsumer) ConsumeMessages(ctx context.Context, handler func(message model.Log) error) error {
 	// 初始化 Kafka 配置
 	err := InitKafkaConfig()
 	if err != nil {
@@ -190,7 +199,7 @@ func (k *LogKafkaConsumer) ConsumeMessages(handler func(message model.Log) error
 	// 开始消费消息
 	for {
 		// 消费消息
-		err := k.ConsumerGroup.Consume(context.Background(), []string{KafkaConfigLog.KafkaUserServer.Topic}, consumerHandler)
+		err := k.ConsumerGroup.Consume(ctx, []string{KafkaConfigLog.KafkaUserServer.Topic}, consumerHandler)
 		if err != nil {
 			return fmt.Errorf("消费消息失败: %v", err)
 		}

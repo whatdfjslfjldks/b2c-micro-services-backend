@@ -2,15 +2,18 @@ package handler
 
 import (
 	"context"
+	logServerProto "micro-services/pkg/proto/log-server"
 	pb "micro-services/pkg/proto/user-server"
+	"micro-services/pkg/utils"
 	"micro-services/user-server/internal/repository"
 	"micro-services/user-server/internal/service/emailService"
 	"micro-services/user-server/internal/service/tokenService"
 	userPkg "micro-services/user-server/pkg"
+	"micro-services/user-server/pkg/instance"
 	"micro-services/user-server/pkg/token"
 )
 
-// 发送邮箱验证码
+// EmailSendCode 发送邮箱验证码
 func (s *Server) EmailSendCode(ctx context.Context, req *pb.EmailSendCodeRequest) (
 	*pb.EmailSendCodeResponse, error) {
 	//fmt.Println("发送邮箱验证码 入口--------------------")
@@ -31,7 +34,7 @@ func (s *Server) EmailSendCode(ctx context.Context, req *pb.EmailSendCodeRequest
 	}
 }
 
-// 验证邮箱验证码
+// EmailVerifyCode 验证邮箱验证码
 func (s *Server) EmailVerifyCode(ctx context.Context, req *pb.EmailVerifyCodeRequest) (
 	*pb.EmailVerifyCodeResponse, error) {
 	resp := &pb.EmailVerifyCodeResponse{}
@@ -44,12 +47,35 @@ func (s *Server) EmailVerifyCode(ctx context.Context, req *pb.EmailVerifyCodeReq
 	}
 	isVerify := emailService.VerifyCode(req.Email, req.VerifyCode)
 	if !isVerify {
+		// TODO 待测试
+		// 如果注册过，获取对应id并调用风控，如果没注册过就continue
+		id, e := repository.GetUserIdByEmail(req.Email)
+		if e == nil {
+			r := instance.GrpcClient.RiskIpAndAgentCheck(id, req.Ip, req.UserAgent, "FAIL")
+			if r != nil && r.RiskStatus == "RISK" {
+				return &pb.EmailVerifyCodeResponse{
+					Code:       r.Code,
+					StatusCode: r.StatusCode,
+					Msg:        r.Msg,
+				}, nil
+			}
+		}
 		resp.Code = 400
 		resp.StatusCode = "GLB-001"
 		resp.Msg = "验证码错误或已过期！"
 		return resp, nil
 	}
 	resp, _ = emailService.LoginByEmail(req.Email)
+
+	// 风控转发 如果RISK=>拦截
+	r := instance.GrpcClient.RiskIpAndAgentCheck(resp.UserId, req.Ip, req.UserAgent, "SUCCESS")
+	if r != nil && r.RiskStatus == "RISK" {
+		return &pb.EmailVerifyCodeResponse{
+			Code:       r.Code,
+			StatusCode: r.StatusCode,
+			Msg:        r.Msg,
+		}, nil
+	}
 	return resp, nil
 }
 
@@ -74,6 +100,15 @@ func (s *Server) ChangeEmail(ctx context.Context, req *pb.ChangeEmailRequest) (
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
 			resp.Msg = "数据库错误！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/changeEmail",
+				Source:      "user-server",
+				StatusCode:  "GLB-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 		}
 		return resp, nil
 	}
@@ -125,10 +160,26 @@ func (s *Server) ChangePasswordByEmail(ctx context.Context, req *pb.ChangePasswo
 		resp.Code = 500
 		resp.StatusCode = "GLB-003"
 		resp.Msg = "重置密码失败！"
+		a := &logServerProto.PostLogRequest{
+			Level:       "ERROR",
+			Msg:         err.Error(),
+			RequestPath: "/changePasswordByEmail",
+			Source:      "user-server",
+			StatusCode:  "GLB-003",
+			Time:        utils.GetTime(),
+		}
+		instance.GrpcClient.PostLog(a)
 		return resp, nil
 	}
 	resp.Code = 200
 	resp.StatusCode = "GLB-000"
 	resp.Msg = "重置密码成功！"
 	return resp, nil
+}
+
+func (s *Server) GetEmailByUserId(ctx context.Context, req *pb.GetEmailByUserIdRequest) (
+	*pb.GetEmailByUserIdResponse, error) {
+	resp := &pb.GetEmailByUserIdResponse{}
+	email, err := repository.GetEmailByUserId(req.UserId)
+
 }

@@ -1,0 +1,25 @@
+syntax="proto3";
+
+package proto;
+option go_package = "./risk-server;risk_server_proto";
+
+
+service RiskService{
+  // ***登录*** 地点和设备的存储和拦截
+  rpc RiskLoginIpAndAgent(RiskLoginIpAndAgentRequest) returns (RiskLoginIpAndAgentResponse);
+
+  // TODO 待做 登录次数和状态的拦截（记录登录时间，地点，设备，登录成功还是失败）
+}
+message RiskLoginIpAndAgentRequest{
+  int64 user_id = 1;
+  string ip = 2;
+  string agent = 3;
+  string login_status = 4; // FAIL 登录失败, SUCCESS 登录成功
+}
+message RiskLoginIpAndAgentResponse{
+  // 老三样，返给前端的,被拦截需要返回，通过就不用
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string risk_status=4; // 拦截状态 PASS 放行， WARN 警告， RISK 拦截
+}

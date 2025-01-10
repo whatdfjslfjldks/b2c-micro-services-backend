@@ -2,9 +2,11 @@ package handler
 
 import (
 	"context"
+	logServerProto "micro-services/pkg/proto/log-server"
 	pb "micro-services/pkg/proto/user-server"
 	"micro-services/pkg/utils"
 	"micro-services/user-server/internal/service/changeUsernameService"
+	"micro-services/user-server/pkg/instance"
 )
 
 func (s *Server) ChangeUsername(ctx context.Context, req *pb.ChangeUsernameRequest) (
@@ -19,6 +21,15 @@ func (s *Server) ChangeUsername(ctx context.Context, req *pb.ChangeUsernameReque
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
 			resp.Msg = "数据库错误！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/changeUsername",
+				Source:      "user-server",
+				StatusCode:  "GLB-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 		} else {
 			resp.Code = 400
 			resp.StatusCode = "GLB-001"

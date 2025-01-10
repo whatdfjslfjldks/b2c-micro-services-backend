@@ -1,9 +1,12 @@
 package emailService
 
 import (
+	logServerProto "micro-services/pkg/proto/log-server"
 	pb "micro-services/pkg/proto/user-server"
+	"micro-services/pkg/utils"
 	"micro-services/user-server/internal/repository"
 	userPkg "micro-services/user-server/pkg"
+	"micro-services/user-server/pkg/instance"
 	"micro-services/user-server/pkg/token"
 )
 
@@ -45,6 +48,15 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
 			resp.Msg = "操作数据库出错！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/loginByEmail",
+				Source:      "user-server",
+				StatusCode:  "GLB-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 			return resp, nil
 		}
 		resp.Avatar = avatarUrl
@@ -54,6 +66,15 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			resp.Code = 500
 			resp.StatusCode = "USR-003"
 			resp.Msg = "refreshToken 生成出错！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/loginByEmail",
+				Source:      "user-server",
+				StatusCode:  "USR-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 			return resp, nil
 		}
 		accessToken, err := token.GenerateAccessToken(resp.UserId, resp.Role)
@@ -61,6 +82,15 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			resp.Code = 500
 			resp.StatusCode = "USR-003"
 			resp.Msg = "accessToken 生成出错！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/loginByEmail",
+				Source:      "user-server",
+				StatusCode:  "USR-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 			return resp, nil
 		}
 		resp.RefreshToken = refreshToken
@@ -71,6 +101,15 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
 			resp.Msg = "操作数据库出错！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/loginByEmail",
+				Source:      "user-server",
+				StatusCode:  "GLB-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 			return resp, nil
 		}
 		resp.Code = 200
@@ -87,6 +126,15 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
 			resp.Msg = "操作数据库出错！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/loginByEmail",
+				Source:      "user-server",
+				StatusCode:  "GLB-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 			return resp, nil
 		}
 		resp.UserId = userId
@@ -96,6 +144,15 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			resp.Code = 500
 			resp.StatusCode = "USR-003"
 			resp.Msg = "refreshToken 生成出错！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/loginByEmail",
+				Source:      "user-server",
+				StatusCode:  "USR-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 			return resp, nil
 		}
 		accessToken, err := token.GenerateAccessToken(resp.UserId, resp.Role)
@@ -103,6 +160,15 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			resp.Code = 500
 			resp.StatusCode = "USR-003"
 			resp.Msg = "accessToken 生成出错！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/loginByEmail",
+				Source:      "user-server",
+				StatusCode:  "USR-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 			return resp, nil
 		}
 		resp.RefreshToken = refreshToken
@@ -113,6 +179,15 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
 			resp.Msg = "操作数据库出错！"
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/loginByEmail",
+				Source:      "user-server",
+				StatusCode:  "GLB-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
 			return resp, nil
 		}
 		// 头像置为默认值，后面可以使用服务器上的默认图片

@@ -28,6 +28,25 @@ service UserService {
   rpc ChangePasswordByEmail(ChangePasswordByEmailRequest) returns (ChangePasswordByEmailResponse) {}
   // 编辑个人信息,修改之前先调用token接口，判断是否过期
   rpc EditUserInfo(EditUserInfoRequest) returns (EditUserInfoResponse) {}
+
+  // 通过user_id获取邮箱
+  rpc GetEmailByUserId(GetEmailByUserIdRequest) returns (GetEmailByUserIdResponse) {}
+  // 向特定邮箱地址发送特定消息
+  rpc SendEmail(SendEmailRequest) returns (SendEmailResponse) {}
+}
+// 向特定邮箱地址发送特定消息
+message SendEmailRequest {
+  string email=1;
+  string subject=2;
+  string content=3;
+}
+message SendEmailResponse {}
+// 通过user_id获取邮箱
+message GetEmailByUserIdRequest {
+  int64 user_id=1;
+}
+message GetEmailByUserIdResponse {
+  string email=1;
 }
 // 编辑个人信息
 message EditUserInfoRequest {
@@ -50,6 +69,8 @@ message ChangePasswordByEmailRequest {
   string verify_code=3;
   string new_password=4;
   string accessToken=5;
+  string ip=6;
+  string user_agent=7;
 }
 message ChangePasswordByEmailResponse {
   int32 code=1;
@@ -62,6 +83,8 @@ message ChangePasswordRequest {
   string old_password=3;
   string new_password=2;
   string accessToken=4;
+  string ip=5;
+  string user_agent=6;
 }
 message ChangePasswordResponse {
   int32 code=1;
@@ -73,6 +96,8 @@ message ChangeEmailRequest {
   int64 user_id=1;
   string email=2;
   string accessToken=3;
+  string ip=4;
+  string user_agent=5;
 }
 message ChangeEmailResponse {
   int32 code=1;
@@ -114,6 +139,8 @@ message TestAccessTokenResponse {
 message UsernameLoginRequest {
   string username=1;
   string password=2;
+  string ip=3;
+  string user_agent=4;
 }
 message UsernameLoginResponse {
   int32 code=1;
@@ -139,6 +166,8 @@ message EmailSendCodeResponse {
 message EmailVerifyCodeRequest {
   string email=1;
   string verify_code=2;
+  string ip=3;
+  string user_agent=4;
 }
 message EmailVerifyCodeResponse {
   int32 code=1;

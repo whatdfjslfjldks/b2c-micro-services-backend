@@ -29,6 +29,8 @@ const (
 	UserService_ChangePassword_FullMethodName        = "/proto.UserService/ChangePassword"
 	UserService_ChangePasswordByEmail_FullMethodName = "/proto.UserService/ChangePasswordByEmail"
 	UserService_EditUserInfo_FullMethodName          = "/proto.UserService/EditUserInfo"
+	UserService_GetEmailByUserId_FullMethodName      = "/proto.UserService/GetEmailByUserId"
+	UserService_SendEmail_FullMethodName             = "/proto.UserService/SendEmail"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -59,6 +61,10 @@ type UserServiceClient interface {
 	ChangePasswordByEmail(ctx context.Context, in *ChangePasswordByEmailRequest, opts ...grpc.CallOption) (*ChangePasswordByEmailResponse, error)
 	// 编辑个人信息,修改之前先调用token接口，判断是否过期
 	EditUserInfo(ctx context.Context, in *EditUserInfoRequest, opts ...grpc.CallOption) (*EditUserInfoResponse, error)
+	// 通过user_id获取邮箱
+	GetEmailByUserId(ctx context.Context, in *GetEmailByUserIdRequest, opts ...grpc.CallOption) (*GetEmailByUserIdResponse, error)
+	// 向特定邮箱地址发送特定消息
+	SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*SendEmailResponse, error)
 }
 
 type userServiceClient struct {
@@ -169,6 +175,26 @@ func (c *userServiceClient) EditUserInfo(ctx context.Context, in *EditUserInfoRe
 	return out, nil
 }
 
+func (c *userServiceClient) GetEmailByUserId(ctx context.Context, in *GetEmailByUserIdRequest, opts ...grpc.CallOption) (*GetEmailByUserIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetEmailByUserIdResponse)
+	err := c.cc.Invoke(ctx, UserService_GetEmailByUserId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*SendEmailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendEmailResponse)
+	err := c.cc.Invoke(ctx, UserService_SendEmail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -197,6 +223,10 @@ type UserServiceServer interface {
 	ChangePasswordByEmail(context.Context, *ChangePasswordByEmailRequest) (*ChangePasswordByEmailResponse, error)
 	// 编辑个人信息,修改之前先调用token接口，判断是否过期
 	EditUserInfo(context.Context, *EditUserInfoRequest) (*EditUserInfoResponse, error)
+	// 通过user_id获取邮箱
+	GetEmailByUserId(context.Context, *GetEmailByUserIdRequest) (*GetEmailByUserIdResponse, error)
+	// 向特定邮箱地址发送特定消息
+	SendEmail(context.Context, *SendEmailRequest) (*SendEmailResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -236,6 +266,12 @@ func (UnimplementedUserServiceServer) ChangePasswordByEmail(context.Context, *Ch
 }
 func (UnimplementedUserServiceServer) EditUserInfo(context.Context, *EditUserInfoRequest) (*EditUserInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditUserInfo not implemented")
+}
+func (UnimplementedUserServiceServer) GetEmailByUserId(context.Context, *GetEmailByUserIdRequest) (*GetEmailByUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEmailByUserId not implemented")
+}
+func (UnimplementedUserServiceServer) SendEmail(context.Context, *SendEmailRequest) (*SendEmailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendEmail not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -438,6 +474,42 @@ func _UserService_EditUserInfo_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetEmailByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEmailByUserIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetEmailByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetEmailByUserId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetEmailByUserId(ctx, req.(*GetEmailByUserIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_SendEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).SendEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_SendEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).SendEmail(ctx, req.(*SendEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -484,6 +556,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EditUserInfo",
 			Handler:    _UserService_EditUserInfo_Handler,
+		},
+		{
+			MethodName: "GetEmailByUserId",
+			Handler:    _UserService_GetEmailByUserId_Handler,
+		},
+		{
+			MethodName: "SendEmail",
+			Handler:    _UserService_SendEmail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
