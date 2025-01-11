@@ -10,7 +10,7 @@ import (
 )
 
 // 用户名密码登录
-func UsernameLogin(username string, password string) (
+func UsernameLogin(username string, password string, ip string, agent string) (
 	*pb.UsernameLoginResponse, error) {
 	resp := &pb.UsernameLoginResponse{}
 	// 根据用户名（唯一）查找，如果用户名不存在就返回用户名不存在，
@@ -59,6 +59,16 @@ func UsernameLogin(username string, password string) (
 	if err != nil {
 		return nil, err
 	}
+
+	r := instance.GrpcClient.RiskIpAndAgentCheck(resp.UserId, ip, agent, "SUCCESS")
+	if r != nil && r.RiskStatus == "RISK" {
+		return &pb.UsernameLoginResponse{
+			Code:       r.Code,
+			StatusCode: r.StatusCode,
+			Msg:        r.Msg,
+		}, nil
+	}
+
 	return &pb.UsernameLoginResponse{
 		Code:         200,
 		StatusCode:   "GLB-000",

@@ -189,7 +189,7 @@ func GetUserIdByEmail(email string) (int64, error) {
 	return id, nil
 }
 
-func GetEmailById(id int64) (string, error) {
+func GetEmailByUserId(id int64) (string, error) {
 	query := "SELECT email FROM b2c_user.users WHERE user_id=?"
 	row := config.MySqlClient.QueryRow(query, id)
 	var email string

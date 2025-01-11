@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	"micro-services/api-gateway/internal/routes/productRoutes"
 	"micro-services/api-gateway/internal/routes/userRoutes"
 )
 
@@ -12,7 +13,6 @@ func SetupRoutes(router *gin.Engine) {
 			"message": "pong",
 		})
 	})
-
 	// -----------------处理user模块请求--------------------------------
 	model := "user-server"
 	userServer := router.Group("/api/" + model)
@@ -32,6 +32,13 @@ func SetupRoutes(router *gin.Engine) {
 		// TODO 检测非常用ip和agent
 		userServer.POST("/changePasswordByEmail", userRoutes.ChangePasswordByEmail)
 		userServer.POST("/editUserInfo", userRoutes.EditUserInfo)
-
 	}
+
+	// -----------------处理product模块请求--------------------------------
+	model2 := "product-server"
+	productServer := router.Group("/api/" + model2)
+	{
+		productServer.GET("/getProductList", productRoutes.GetProductList)
+	}
+
 }

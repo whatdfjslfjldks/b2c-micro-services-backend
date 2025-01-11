@@ -49,7 +49,7 @@ func main() {
 	// TODO 设计风控模块数据库，存用户的ip，常用设备（user-agent），短时间修改密码次数（这个是举个例子）等信息
 	// TODO 同时加载常查询数据进入redis，方便快速获取
 
-	// 初始化mysql
+	// 初始化mysql,redis
 	initConfig()
 
 	// 注册服务到 etcd

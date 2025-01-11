@@ -12,11 +12,8 @@ import (
 
 // TODO 尽量不要再service层写数据库操作，保证每层分工明确
 func VerifyCode(email string, code string) bool {
-	result, err := repository.GetCode(email)
+	err := repository.GetCode(email, code)
 	if err != nil {
-		return false
-	}
-	if result != code {
 		return false
 	}
 	//fmt.Println(result)

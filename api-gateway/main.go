@@ -9,9 +9,10 @@ import (
 	"time"
 )
 
-// TODO etcd注册中心 50051：user-server
-// TODO            50052：log-server
-// TODO            50053：risk-server
+// TODO: etcd注册中心 50051：user-server
+// TODO:            50052：log-server
+// TODO:            50053：risk-server
+// TODO：           50054：product-server
 func main() {
 	// 启动 HTTP 服务
 	r := gin.Default()
@@ -34,6 +35,7 @@ func main() {
 		log.Fatalf("failed to start HTTP server: %v", err)
 	}
 
-	// TODO 风控模块，日志模块，商品模块，订单模块，支付模块
-	// TODO 尽量降低不同模块之间的 耦合
+	// TODO: 风控模块，日志模块，商品模块，订单模块，支付模块
+	// TODO: 尽量降低不同模块之间的 耦合
+	// TODO: 风控和日志模块待更新，现在只做了一个示范
 }

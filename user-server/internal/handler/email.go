@@ -2,6 +2,8 @@ package handler
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	logServerProto "micro-services/pkg/proto/log-server"
 	pb "micro-services/pkg/proto/user-server"
 	"micro-services/pkg/utils"
@@ -181,5 +183,28 @@ func (s *Server) GetEmailByUserId(ctx context.Context, req *pb.GetEmailByUserIdR
 	*pb.GetEmailByUserIdResponse, error) {
 	resp := &pb.GetEmailByUserIdResponse{}
 	email, err := repository.GetEmailByUserId(req.UserId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, err
+		}
+		a := &logServerProto.PostLogRequest{
+			Level:       "ERROR",
+			Msg:         err.Error(),
+			RequestPath: "/getEmailByUserId",
+			Source:      "user-server",
+			StatusCode:  "GLB-003",
+			Time:        utils.GetTime(),
+		}
+		instance.GrpcClient.PostLog(a)
+		return nil, err
+	}
+	resp.Email = email
+	return resp, nil
+}
 
+func (s *Server) SendEmail(ctx context.Context, req *pb.SendEmailRequest) (
+	*pb.SendEmailResponse, error) {
+	//resp:= &pb.SendEmailResponse{}
+	emailService.SendEmail(req.Email, req.Subject, req.Content)
+	return nil, nil
 }

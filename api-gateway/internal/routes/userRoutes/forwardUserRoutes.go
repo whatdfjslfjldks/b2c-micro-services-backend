@@ -9,7 +9,7 @@ import (
 
 var model = "user-server"
 
-// 发送邮箱验证码
+// SendVerifyCode 发送邮箱验证码
 func SendVerifyCode(c *gin.Context) {
 	var request userServerProto.EmailSendCodeRequest
 	err := c.ShouldBindJSON(&request)
@@ -45,7 +45,7 @@ func SendVerifyCode(c *gin.Context) {
 	})
 }
 
-// 验证邮箱验证码并登录或注册
+// CheckVerifyCode 验证邮箱验证码并登录或注册
 func CheckVerifyCode(c *gin.Context) {
 
 	// 获取请求头里的ip和agent
@@ -94,7 +94,7 @@ func CheckVerifyCode(c *gin.Context) {
 	})
 }
 
-// 用户名密码登录
+// LoginByPassword 用户名密码登录
 func LoginByPassword(c *gin.Context) {
 	// 获取请求头里的ip和agent
 	ip := c.ClientIP()
@@ -143,7 +143,7 @@ func LoginByPassword(c *gin.Context) {
 	})
 }
 
-// 查看访问令牌是否过期
+// TestAccessToken 查看访问令牌是否过期
 func TestAccessToken(c *gin.Context) {
 	var request userServerProto.TestAccessTokenRequest
 	err := c.ShouldBindJSON(&request)
@@ -176,7 +176,7 @@ func TestAccessToken(c *gin.Context) {
 	})
 }
 
-// 查看刷新令牌是否过期
+// TestRefreshToken 查看刷新令牌是否过期
 func TestRefreshToken(c *gin.Context) {
 	var request userServerProto.TestRefreshTokenRequest
 	err := c.ShouldBindJSON(&request)
@@ -212,7 +212,7 @@ func TestRefreshToken(c *gin.Context) {
 	})
 }
 
-// 修改用户名
+// ChangeUsername 修改用户名
 func ChangeUsername(c *gin.Context) {
 	var request userServerProto.ChangeUsernameRequest
 	err := c.ShouldBindJSON(&request)
@@ -250,7 +250,7 @@ func ChangeUsername(c *gin.Context) {
 	})
 }
 
-// 修改邮箱 TODO 调用之前，先验证旧邮箱，再验证新游戏，此接口只用作存储
+// ChangeEmail 修改邮箱 TODO 调用之前，先验证旧邮箱，再验证新游戏，此接口只用作存储
 func ChangeEmail(c *gin.Context) {
 	// 获取请求头里的ip和agent
 	ip := c.ClientIP()
@@ -290,7 +290,7 @@ func ChangeEmail(c *gin.Context) {
 	})
 }
 
-// 修改密码，注意判断把密码加密的逻辑加上
+// ChangePassword 修改密码，注意判断把密码加密的逻辑加上
 func ChangePassword(c *gin.Context) {
 	// 获取请求头里的ip和agent
 	ip := c.ClientIP()
@@ -331,7 +331,7 @@ func ChangePassword(c *gin.Context) {
 	})
 }
 
-// 利用邮箱验证码修改密码，密码忘记后重置
+// ChangePasswordByEmail 利用邮箱验证码修改密码，密码忘记后重置
 func ChangePasswordByEmail(c *gin.Context) {
 	// 获取请求头里的ip和agent
 	ip := c.ClientIP()
@@ -374,7 +374,7 @@ func ChangePasswordByEmail(c *gin.Context) {
 	})
 }
 
-// 修改用户信息
+// EditUserInfo 修改用户信息
 func EditUserInfo(c *gin.Context) {
 	var request userServerProto.EditUserInfoRequest
 	err := c.ShouldBindJSON(&request)

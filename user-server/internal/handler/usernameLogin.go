@@ -12,7 +12,7 @@ func (s *Server) UsernameLogin(ctx context.Context, req *pb.UsernameLoginRequest
 	*pb.UsernameLoginResponse, error) {
 	username := utils.Filter(req.Username)
 	password := req.Password
-	resp, _ := usernameLoginService.UsernameLogin(username, password)
+	resp, _ := usernameLoginService.UsernameLogin(username, password, req.Ip, req.UserAgent)
 
 	return resp, nil
 }

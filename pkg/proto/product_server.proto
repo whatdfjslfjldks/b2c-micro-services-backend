@@ -1,0 +1,36 @@
+syntax="proto3";
+
+package proto;
+option go_package = "./product-server;product_server_proto";
+
+
+service ProductService{
+  // TODO: ceshi 获取商品列表
+  rpc GetProductList(GetProductListRequest) returns (GetProductListResponse);
+}
+message GetProductListRequest{
+  int32 currentPage = 1;
+  int32 pageSize = 2;
+  // 前后端维护一个种类id对应表
+  int32 categoryId = 3;
+  // 前后端维护一个价格区间对应表
+  int32 priceRange = 4;
+}
+message GetProductListResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+
+  int32 currentPage = 4;
+  int32 pageSize = 5;
+  int32 totalItems = 6;
+  repeated ProductListItem productList = 7;
+}
+message ProductListItem{
+  int32 product_id = 1;
+  string product_name = 2;
+  string product_cover = 3;
+  string product_price = 4;
+  int32 product_categoryId = 5;
+}
+

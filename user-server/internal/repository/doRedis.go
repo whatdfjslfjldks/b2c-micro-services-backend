@@ -16,12 +16,17 @@ func StoreCodeInRedis(email, code string) {
 	}
 }
 
-func GetCode(email string) (string, error) {
+func GetCode(email string, codeString string) error {
 	code, err := config.RdClient.Get(config.Ctx, email).Result()
 	if err != nil {
-		return "", err
+		return err
 	}
-	return code, nil
+	if codeString != code {
+		return errors.New("验证码错误！")
+	}
+	// 验证成功后，删除 Redis 中的验证码
+	_ = config.RdClient.Del(config.Ctx, email).Err()
+	return nil
 }
 
 func SaveToken(userId int64, refreshToken string, accessToken string) error {

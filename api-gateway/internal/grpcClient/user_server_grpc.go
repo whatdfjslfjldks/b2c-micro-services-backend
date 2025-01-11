@@ -1,27 +1,14 @@
-package user_server_grpcClient
+package server_grpcClient
 
 import (
 	"context"
 	"fmt"
 	"google.golang.org/grpc"
-	"micro-services/pkg/etcd"
 	userServerProto "micro-services/pkg/proto/user-server"
 )
 
-// GRPCClient 封装了与 gRPC 服务的连接
-type GRPCClient struct {
-	etcdClient *etcd.EtcdService
-}
-
-// NewGRPCClient 构造 GRPCClient 实例
-func NewGRPCClient(etcdClient *etcd.EtcdService) *GRPCClient {
-	return &GRPCClient{
-		etcdClient: etcdClient,
-	}
-}
-
 // CallService 调用指定的 gRPC 服务方法
-func (c *GRPCClient) CallService(serviceName, method string, request interface{}, response interface{}) error {
+func (c *GRPCClient) CallService(serviceName string, method string, request interface{}, response interface{}) error {
 	// 获取服务地址
 	serviceAddr, err := c.etcdClient.GetService(serviceName)
 	if err != nil {
