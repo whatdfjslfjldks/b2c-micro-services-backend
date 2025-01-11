@@ -24,6 +24,14 @@ mysql-user-server:
   password: "tjp20040808"
   dbname: "b2c_user"
 
+# mysql-product-server
+mysql-product-server:
+  host: "localhost"
+  port: 3306
+  user: "root"
+  password: "tjp20040808"
+  dbname: "b2c_product"
+
 # mysql-log-server
 mysql-log-server:
   host: "localhost"

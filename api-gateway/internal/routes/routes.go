@@ -39,6 +39,12 @@ func SetupRoutes(router *gin.Engine) {
 	productServer := router.Group("/api/" + model2)
 	{
 		productServer.GET("/getProductList", productRoutes.GetProductList)
+
+		// TODO： 批量上传接口，后面加一个身份验证，管理员权限才可以，accessToken role=admin
+		// 不支持图片的上传，图片可以通过对单一商品的修改上传
+		// TODO 返回一个预计上传时间
+		// TODO **一定要做身份校验** 因为大文件上传并操控数据库，容易造成数据库雪崩
+		productServer.POST("/uploadProductByExcel", productRoutes.UploadProductByExcel)
 	}
 
 }

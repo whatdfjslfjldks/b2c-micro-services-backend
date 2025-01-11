@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProductService_GetProductList_FullMethodName = "/proto.ProductService/GetProductList"
+	ProductService_GetProductList_FullMethodName       = "/proto.ProductService/GetProductList"
+	ProductService_UploadProductByExcel_FullMethodName = "/proto.ProductService/UploadProductByExcel"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -28,6 +29,8 @@ const (
 type ProductServiceClient interface {
 	// TODO: ceshi 获取商品列表
 	GetProductList(ctx context.Context, in *GetProductListRequest, opts ...grpc.CallOption) (*GetProductListResponse, error)
+	// 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
+	UploadProductByExcel(ctx context.Context, in *UploadProductByExcelRequest, opts ...grpc.CallOption) (*UploadProductByExcelResponse, error)
 }
 
 type productServiceClient struct {
@@ -48,12 +51,24 @@ func (c *productServiceClient) GetProductList(ctx context.Context, in *GetProduc
 	return out, nil
 }
 
+func (c *productServiceClient) UploadProductByExcel(ctx context.Context, in *UploadProductByExcelRequest, opts ...grpc.CallOption) (*UploadProductByExcelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadProductByExcelResponse)
+	err := c.cc.Invoke(ctx, ProductService_UploadProductByExcel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility.
 type ProductServiceServer interface {
 	// TODO: ceshi 获取商品列表
 	GetProductList(context.Context, *GetProductListRequest) (*GetProductListResponse, error)
+	// 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
+	UploadProductByExcel(context.Context, *UploadProductByExcelRequest) (*UploadProductByExcelResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -66,6 +81,9 @@ type UnimplementedProductServiceServer struct{}
 
 func (UnimplementedProductServiceServer) GetProductList(context.Context, *GetProductListRequest) (*GetProductListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProductList not implemented")
+}
+func (UnimplementedProductServiceServer) UploadProductByExcel(context.Context, *UploadProductByExcelRequest) (*UploadProductByExcelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadProductByExcel not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
@@ -106,6 +124,24 @@ func _ProductService_GetProductList_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_UploadProductByExcel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadProductByExcelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).UploadProductByExcel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_UploadProductByExcel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).UploadProductByExcel(ctx, req.(*UploadProductByExcelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -116,6 +152,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProductList",
 			Handler:    _ProductService_GetProductList_Handler,
+		},
+		{
+			MethodName: "UploadProductByExcel",
+			Handler:    _ProductService_UploadProductByExcel_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
