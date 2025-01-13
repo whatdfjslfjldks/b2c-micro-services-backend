@@ -9,10 +9,11 @@ import (
 	"time"
 )
 
-// TODO: etcd注册中心 50051：user-server
-// TODO:            50052：log-server
-// TODO:            50053：risk-server
-// TODO：           50054：product-server
+// TODO: etcd注册中心  50051：user-server
+// TODO:             50052：log-server
+// TODO:             50053：risk-server
+// TODO：            50054：product-server
+// TODO:             50055：recommend-server
 func main() {
 	// 启动 HTTP 服务
 	r := gin.Default()

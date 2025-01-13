@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"log"
 	"micro-services/log-server/pkg/kafka/model"
 )
@@ -37,7 +36,7 @@ func PostMsg(source string,
 		default:
 			return
 		}
-		fmt.Println("Sdfasdfsdf:", partition)
+		//fmt.Println("Sdfasdfsdf:", partition)
 		err := KafkaProducer.PublishMessage(formattedLog, partition)
 		if err != nil {
 			log.Printf("Failed to publish message: %v", err)

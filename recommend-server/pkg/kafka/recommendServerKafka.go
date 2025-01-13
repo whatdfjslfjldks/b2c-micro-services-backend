@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"micro-services/log-server/pkg/kafka/model"
+	"micro-services/recommend-server/pkg/kafka/model"
 	"os"
 	"path/filepath"
 	"sync"
@@ -16,33 +16,33 @@ import (
 	"micro-services/pkg/utils"
 )
 
-// LogKafkaConfig Kafka 配置结构体
-type LogKafkaConfig struct {
+// RecommendKafkaConfig Kafka 配置结构体
+type RecommendKafkaConfig struct {
 	Brokers []string `yaml:"brokers"`
 	GroupID string   `yaml:"group_id"`
 	Topic   string   `yaml:"topic"`
 }
 
-// LogConfig 读取整个配置文件的结构体
-type LogConfig struct {
-	KafkaUserServer LogKafkaConfig `yaml:"kafka-log-server"`
+// RecommendConfig 读取整个配置文件的结构体
+type RecommendConfig struct {
+	KafkaUserServer RecommendKafkaConfig `yaml:"kafka-recommend-server"`
 }
 
-// KafkaConfigLog kafka 配置文件
-var KafkaConfigLog *LogConfig
+// KafkaConfigRecommend kafka 配置文件
+var KafkaConfigRecommend *RecommendConfig
 
 // InitKafkaConfig 初始化 Kafka 配置
 func InitKafkaConfig() error {
 	rootPath := utils.GetCurrentPath(1)
 	configPath := filepath.Join(rootPath, "../../../pkg/config", "config.yml")
 
-	KafkaConfigLog = &LogConfig{}
+	KafkaConfigRecommend = &RecommendConfig{}
 	// 读取配置文件
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return fmt.Errorf("failed to read config file: %v", err)
 	}
-	err = yaml.Unmarshal(data, KafkaConfigLog)
+	err = yaml.Unmarshal(data, KafkaConfigRecommend)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal config: %v", err)
 	}
@@ -51,14 +51,14 @@ func InitKafkaConfig() error {
 
 // ------------------ 生产者部分 ------------------
 
-// LogKafkaProducer Kafka 生产者客户端
-type LogKafkaProducer struct {
+// RecommendKafkaProducer Kafka 生产者客户端
+type RecommendKafkaProducer struct {
 	Producer sarama.SyncProducer
 	once     sync.Once
 }
 
 // InitProducer 生产者初始化
-func (k *LogKafkaProducer) InitProducer() error {
+func (k *RecommendKafkaProducer) InitProducer() error {
 	var err error
 	// 创建生产者配置
 	config := sarama.NewConfig()
@@ -69,7 +69,7 @@ func (k *LogKafkaProducer) InitProducer() error {
 	config.Producer.Partitioner = sarama.NewManualPartitioner
 	k.once.Do(func() {
 		// 创建生产者客户端
-		k.Producer, err = sarama.NewSyncProducer(KafkaConfigLog.KafkaUserServer.Brokers, config)
+		k.Producer, err = sarama.NewSyncProducer(KafkaConfigRecommend.KafkaUserServer.Brokers, config)
 	})
 	if err != nil {
 		log.Printf("创建 logkafka 的生产者客户端失败： %v", err)
@@ -79,9 +79,10 @@ func (k *LogKafkaProducer) InitProducer() error {
 }
 
 // PublishMessage Kafka 发布消息（根据日志级别发送到不同的分区）
-func (k *LogKafkaProducer) PublishMessage(message model.Log, partition int32) error {
+// 0-click, 1-purchase, 2-search, 3-browse
+func (k *RecommendKafkaProducer) PublishMessage(message model.Recommend, partition int32) error {
 	// 将自定义 log 格式的 message 转为 JSON 字符串
-	logBytes, err := json.Marshal(message)
+	recommendBytes, err := json.Marshal(message)
 	if err != nil {
 		log.Printf("将消息转换为 JSON 失败： %v", err)
 		return err
@@ -90,8 +91,8 @@ func (k *LogKafkaProducer) PublishMessage(message model.Log, partition int32) er
 	// 创建消息并指定分区
 	msg := &sarama.ProducerMessage{
 		Partition: partition,
-		Topic:     KafkaConfigLog.KafkaUserServer.Topic,
-		Value:     sarama.ByteEncoder(logBytes),
+		Topic:     KafkaConfigRecommend.KafkaUserServer.Topic,
+		Value:     sarama.ByteEncoder(recommendBytes),
 	}
 	//fmt.Println("分区", partition)
 
@@ -108,14 +109,14 @@ func (k *LogKafkaProducer) PublishMessage(message model.Log, partition int32) er
 
 // --------------------- 消费者部分 -------------------------------
 
-// LogKafkaConsumer Kafka 消费者客户端
-type LogKafkaConsumer struct {
+// RecommendKafkaConsumer Kafka 消费者客户端
+type RecommendKafkaConsumer struct {
 	ConsumerGroup sarama.ConsumerGroup
 	once          sync.Once
 }
 
 // InitConsumer 消费者初始化
-func (k *LogKafkaConsumer) InitConsumer() error {
+func (k *RecommendKafkaConsumer) InitConsumer() error {
 	var err error
 	// 创建消费者组配置
 	config := sarama.NewConfig()
@@ -128,7 +129,7 @@ func (k *LogKafkaConsumer) InitConsumer() error {
 
 	k.once.Do(func() {
 		// 创建消费者客户端
-		k.ConsumerGroup, err = sarama.NewConsumerGroup(KafkaConfigLog.KafkaUserServer.Brokers, KafkaConfigLog.KafkaUserServer.GroupID, config)
+		k.ConsumerGroup, err = sarama.NewConsumerGroup(KafkaConfigRecommend.KafkaUserServer.Brokers, KafkaConfigRecommend.KafkaUserServer.GroupID, config)
 	})
 	if err != nil {
 		log.Printf("创建 logkafka 的消费者客户端失败： %v", err)
@@ -139,7 +140,7 @@ func (k *LogKafkaConsumer) InitConsumer() error {
 
 // ConsumerHandler 消费消息处理
 type ConsumerHandler struct {
-	MessageHandler func(message model.Log) error
+	MessageHandler func(message model.Recommend) error
 }
 
 // Setup 设置消费者组
@@ -158,15 +159,15 @@ func (h *ConsumerHandler) Cleanup(sarama.ConsumerGroupSession) error {
 func (h *ConsumerHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for message := range claim.Messages() {
 		// 处理消息（通过回调函数）
-		logMessage := model.Log{}
-		if err := json.Unmarshal(message.Value, &logMessage); err != nil {
+		recommendMessage := model.Recommend{}
+		if err := json.Unmarshal(message.Value, &recommendMessage); err != nil {
 			log.Printf("消息解析失败: %v", err)
 			continue
 		}
 		//fmt.Println("分区222：:", logMessage)
 
 		// 调用回调函数处理消息
-		if err := h.MessageHandler(logMessage); err != nil {
+		if err := h.MessageHandler(recommendMessage); err != nil {
 			log.Printf("处理消息失败: %v", err)
 		}
 		// 标记消息已消费
@@ -176,7 +177,7 @@ func (h *ConsumerHandler) ConsumeClaim(session sarama.ConsumerGroupSession, clai
 }
 
 // ConsumeMessages 开始消费消息
-func (k *LogKafkaConsumer) ConsumeMessages(ctx context.Context, handler func(message model.Log) error) error {
+func (k *RecommendKafkaConsumer) ConsumeMessages(ctx context.Context, handler func(message model.Recommend) error) error {
 	// 初始化 Kafka 配置
 	err := InitKafkaConfig()
 	if err != nil {
@@ -199,7 +200,7 @@ func (k *LogKafkaConsumer) ConsumeMessages(ctx context.Context, handler func(mes
 	// 开始消费消息
 	for {
 		// 消费消息
-		err := k.ConsumerGroup.Consume(ctx, []string{KafkaConfigLog.KafkaUserServer.Topic}, consumerHandler)
+		err := k.ConsumerGroup.Consume(ctx, []string{KafkaConfigRecommend.KafkaUserServer.Topic}, consumerHandler)
 		if err != nil {
 			return fmt.Errorf("消费消息失败: %v", err)
 		}

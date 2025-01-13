@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"micro-services/api-gateway/internal/routes/productRoutes"
+	"micro-services/api-gateway/internal/routes/recommendRoutes"
 	"micro-services/api-gateway/internal/routes/userRoutes"
 )
 
@@ -45,6 +46,18 @@ func SetupRoutes(router *gin.Engine) {
 		// TODO 返回一个预计上传时间
 		// TODO **一定要做身份校验** 因为大文件上传并操控数据库，容易造成数据库雪崩
 		productServer.POST("/uploadProductByExcel", productRoutes.UploadProductByExcel)
+	}
+
+	// -----------------处理recommend模块请求--------------------------------
+	model3 := "recommend-server"
+	recommendServer := router.Group("/api/" + model3)
+	{
+		// 数据埋点
+		// TODO 分开接口，减轻接口在高并发场景下的处理压力
+		recommendServer.POST("/clickProduct", recommendRoutes.ClickProduct)
+		recommendServer.POST("/browseProduct", recommendRoutes.BrowseProduct)
+		recommendServer.POST("/purchaseProduct", recommendRoutes.PurchaseProduct)
+		recommendServer.POST("/searchProduct", recommendRoutes.SearchProduct)
 	}
 
 }

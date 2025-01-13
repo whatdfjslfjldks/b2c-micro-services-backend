@@ -32,6 +32,14 @@ mysql-product-server:
   password: "tjp20040808"
   dbname: "b2c_product"
 
+# mysql-recommend-server
+mysql-recommend-server:
+  host: "localhost"
+  port: 3306
+  user: "root"
+  password: "tjp20040808"
+  dbname: "b2c_recommend"
+
 # mysql-log-server
 mysql-log-server:
   host: "localhost"
@@ -56,3 +64,10 @@ kafka-log-server:
     - "localhost:9092"
   group_id: "log-server"    # 消费者组
   topic: "log-server"       # topic
+
+# kafka-recommend-server 推荐服务kafka队列，用户生产和消费用户点击，浏览，搜索，购买等数据埋
+kafka-recommend-server:
+  brokers:
+    - "localhost:9092"
+  group_id: "recommend-server"
+  topic: "recommend-server"

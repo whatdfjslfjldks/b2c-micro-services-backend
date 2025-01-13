@@ -3,7 +3,7 @@ syntax="proto3";
 package proto;
 option go_package = "./recommend-server;recommend_server_proto";
 
-
+// TODO 用户产品矩阵
 service RecommendService{
    // TODO 数据埋点 点击，购买，搜索，浏览（鼠标悬浮超过一定时间，前端悬浮展示介绍等内容）
   // TODO 行为后端定义( click,purchase...)
@@ -15,36 +15,30 @@ service RecommendService{
 message BrowseProductRequest{
   int64 user_id = 1;
   int32 product_id = 2;
-  string product_name = 3;
   // 时间后端生成，不用前端传
-  string current_url=4;
 }
 message BrowseProductResponse{}
 
 message SearchProductRequest{
+  // TODO 后端做keyword模糊匹配商品，找到product_id
   int64 user_id = 1;
   string keyword = 2;
   // 时间后端生成，不用前端传
-  string current_url=3;
 }
 message SearchProductResponse{}
 
 message PurchaseProductRequest{
   int64 user_id = 1;
   int32 product_id = 2;
-  string product_name = 3;
   // 时间后端生成，不用前端传
-  string current_url=4;
-  int32 quantity = 5; //购买数量
+  int32 quantity = 3; //购买数量,暂时没用到
 }
 message PurchaseProductResponse{}
 
 message ClickProductRequest{
   int64 user_id = 1;
   int32 product_id = 2;
-  string product_name = 3;
   // 时间后端生成，不用前端传
-  string current_url=4;
 }
 message ClickProductResponse{}
 

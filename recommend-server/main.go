@@ -7,6 +7,9 @@ import (
 	"micro-services/pkg/etcd"
 	pb "micro-services/pkg/proto/recommend-server"
 	"micro-services/recommend-server/internal/handler"
+	"micro-services/recommend-server/pkg/config"
+	"micro-services/recommend-server/pkg/instance"
+	h "micro-services/recommend-server/pkg/kafka/handler"
 	"net"
 	"os"
 	"time"
@@ -30,8 +33,25 @@ func startGRPCServer() error {
 	return grpcServer.Serve(lis)
 }
 
+func initKafka() {
+	// 初始化生产者
+	h.InitProducer()
+}
+func initConfig() {
+	err := config.InitMysqlConfig()
+	if err != nil {
+		log.Fatalf("Error initializing internal config: %v", err)
+		return
+	}
+
+	config.InitMySql()
+}
+
 // TODO 基于用户的协同过滤算法
 func main() {
+
+	initKafka()
+	initConfig()
 
 	// 注册服务到 etcd
 	etcdServices, err := etcd.NewEtcdService(5 * time.Second)
@@ -40,11 +60,15 @@ func main() {
 	}
 	defer etcdServices.Close()
 	// 注册服务到 etcd
-	err = etcdServices.RegisterService("risk-server", os.Getenv("api")+":50055", 60)
+	err = etcdServices.RegisterService("recommend-server", os.Getenv("api")+":50055", 60)
 	if err != nil {
 		log.Fatalf("Error registering service: %v", err)
 	}
-	//instance.NewInstance()
+	instance.NewInstance()
+
+	// 启动消费者进程
+	go handler.ConsumeMsg()
+
 	// 启动 gRPC 服务
 	if err := startGRPCServer(); err != nil {
 		log.Fatalf("failed to start gRPC server: %v", err)

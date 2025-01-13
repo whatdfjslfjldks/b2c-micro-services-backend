@@ -28,6 +28,8 @@ const (
 // RecommendServiceClient is the client API for RecommendService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// TODO 用户产品矩阵
 type RecommendServiceClient interface {
 	// TODO 数据埋点 点击，购买，搜索，浏览（鼠标悬浮超过一定时间，前端悬浮展示介绍等内容）
 	// TODO 行为后端定义( click,purchase...)
@@ -88,6 +90,8 @@ func (c *recommendServiceClient) BrowseProduct(ctx context.Context, in *BrowsePr
 // RecommendServiceServer is the server API for RecommendService service.
 // All implementations must embed UnimplementedRecommendServiceServer
 // for forward compatibility.
+//
+// TODO 用户产品矩阵
 type RecommendServiceServer interface {
 	// TODO 数据埋点 点击，购买，搜索，浏览（鼠标悬浮超过一定时间，前端悬浮展示介绍等内容）
 	// TODO 行为后端定义( click,purchase...)
