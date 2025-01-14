@@ -27,7 +27,7 @@ func SaveLoginInfoInToRedis(userId int64, ip string, agent string, status string
 		return err
 	}
 
-	// 使用 HINCRBY 增加 count 字段
+	// 使用 HIncrBy 增加 count 字段
 	_, err := config.RdClient2.HIncrBy(context.Background(), hashKey, "count", 1).Result()
 	if err != nil {
 		fmt.Println("Redis error during HINCRBY: ", err)

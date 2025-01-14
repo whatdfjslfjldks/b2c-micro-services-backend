@@ -1,6 +1,7 @@
 package consumer
 
 import (
+	"log"
 	logServerProto "micro-services/pkg/proto/log-server"
 	"micro-services/pkg/utils"
 	"micro-services/recommend-server/internal/repository"
@@ -8,8 +9,13 @@ import (
 	"micro-services/recommend-server/pkg/kafka/model"
 )
 
-func SearchMsg(message model.Recommend) {
-	err := repository.SaveSearchMsgIntoMysql(message)
+func SearchMsg(message interface{}) {
+	msg, ok := message.(model.Recommend)
+	if !ok {
+		log.Printf("类型断言失败，message 不是 model.Search 类型: %v\n", message)
+	}
+
+	err := repository.SaveSearchMsgIntoMysql(msg)
 	if err != nil {
 		a := &logServerProto.PostLogRequest{
 			Level:       "ERROR",

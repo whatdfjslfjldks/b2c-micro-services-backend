@@ -8,7 +8,8 @@ email:
 
 # redis-0 存储邮箱验证码
 # redis-1 存储用户双token
-# redis-2 risk-server存储用户登录ip，agent和状态（成功或失败）
+# redis-2 risk-server存储用户登录ip，agent和状态（成功或失败） TODO 需要定期同步mysql数据，待完成
+# redis-3 存储用户的id商品权重map表，用于相似度计算
 # 默认连接 redis-0
 redis:
   host: "localhost"

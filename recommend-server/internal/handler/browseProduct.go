@@ -16,6 +16,6 @@ func (s *Server) BrowseProduct(ctx context.Context, req *pb.BrowseProductRequest
 		Status:    "BROWSE",
 		Time:      utils.GetTime(),
 	}
-	_ = h.KafkaProducer.PublishMessage(formattedMsg, 2)
+	_ = h.KafkaProducer.PublishMessage(formattedMsg, 3)
 	return nil, nil
 }

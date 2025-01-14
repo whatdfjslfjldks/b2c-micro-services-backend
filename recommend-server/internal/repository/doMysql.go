@@ -23,10 +23,25 @@ func SavePurchaseMsgIntoMysql(message model.Recommend) error {
 
 // SaveSearchMsgIntoMysql 调用通用的 SaveMsgIntoMysql 函数
 func SaveSearchMsgIntoMysql(message model.Recommend) error {
-	return SaveMsgIntoMysql("search", message)
+	sql := `insert into b2c_recommend.search (user_id, keyword, status, count, create_at, update_at) 
+            values(?, ?, ?, 1, ?, ?)
+            ON DUPLICATE KEY UPDATE 
+                user_id = VALUES(user_id),
+                keyword = VALUES(keyword),
+                status = VALUES(status),
+                count = count + 1,
+                update_at = VALUES(update_at),
+                create_at = COALESCE(create_at, VALUES(create_at))`
+
+	// 执行 SQL 语句
+	_, err := config.MySqlClient.Exec(sql, message.UserId, message.Keyword, message.Status, message.Time, message.Time)
+	if err != nil {
+		log.Printf("Failed to insert into MySQL table search: %v", err)
+		return err
+	}
+	return nil
 }
 
-// SaveMsgIntoMysql 是一个通用的函数，用来保存推荐信息到数据库
 func SaveMsgIntoMysql(tableName string, message model.Recommend) error {
 	sql := `insert into b2c_recommend.` + tableName + `(user_id, product_id, status, count, create_at, update_at) 
             values(?, ?, ?, 1, ?, ?)

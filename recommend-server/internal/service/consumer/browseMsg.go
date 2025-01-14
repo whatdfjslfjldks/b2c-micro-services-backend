@@ -1,6 +1,7 @@
 package consumer
 
 import (
+	"log"
 	logServerProto "micro-services/pkg/proto/log-server"
 	"micro-services/pkg/utils"
 	"micro-services/recommend-server/internal/repository"
@@ -8,8 +9,25 @@ import (
 	"micro-services/recommend-server/pkg/kafka/model"
 )
 
-func BrowseMsg(message model.Recommend) {
-	err := repository.SaveBrowseMsgIntoMysql(message)
+func BrowseMsg(message interface{}) {
+	msg, ok := message.(model.Recommend)
+	if !ok {
+		log.Printf("类型断言失败，message 不是 model.Recommend 类型: %v\n", message)
+	}
+
+	err := repository.CalAndSaveVectorInToRedis(msg)
+	if err != nil {
+		a := &logServerProto.PostLogRequest{
+			Level:       "ERROR",
+			Msg:         err.Error(),
+			RequestPath: "/browseProduct",
+			Source:      "recommend-server",
+			StatusCode:  "GLB-003",
+			Time:        utils.GetTime(),
+		}
+		instance.GrpcClient.PostLog(a)
+	}
+	err = repository.SaveBrowseMsgIntoMysql(msg)
 	if err != nil {
 		a := &logServerProto.PostLogRequest{
 			Level:       "ERROR",

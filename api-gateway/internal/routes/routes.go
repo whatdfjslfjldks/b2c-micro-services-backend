@@ -58,6 +58,8 @@ func SetupRoutes(router *gin.Engine) {
 		recommendServer.POST("/browseProduct", recommendRoutes.BrowseProduct)
 		recommendServer.POST("/purchaseProduct", recommendRoutes.PurchaseProduct)
 		recommendServer.POST("/searchProduct", recommendRoutes.SearchProduct)
+
+		recommendServer.POST("/test", recommendRoutes.Test)
 	}
 
 }

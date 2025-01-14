@@ -10,8 +10,7 @@ import (
 
 func (s *Server) ClickProduct(ctx context.Context, req *pb.ClickProductRequest) (
 	*pb.ClickProductResponse, error) {
-	//fmt.Println("here: ", req)
-	// 存入 kafka
+	//存入 kafka
 	formattedMsg := model.Recommend{
 		UserId:    req.UserId,
 		ProductId: req.ProductId,

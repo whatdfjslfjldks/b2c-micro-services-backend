@@ -43,11 +43,18 @@ func initConfig() {
 		log.Fatalf("Error initializing internal config: %v", err)
 		return
 	}
-
+	err = config.InitRedisConfig()
+	if err != nil {
+		log.Fatalf("Error initializing redis config: %v", err)
+		return
+	}
 	config.InitMySql()
+	config.InitRedis()
 }
 
 // TODO 基于用户的协同过滤算法
+// TODO 存储与当前用户相似用户的userid，数据预热，缓存redis，MySQL做持久化存储，与redis弱一致性
+// TODO redis存储用户的商品，权重的map，方便快拿和计算，相似度计算可以做挂起线程，同时控制速度，定期同步redis和mysql
 func main() {
 
 	initKafka()
