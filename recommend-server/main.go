@@ -7,6 +7,7 @@ import (
 	"micro-services/pkg/etcd"
 	pb "micro-services/pkg/proto/recommend-server"
 	"micro-services/recommend-server/internal/handler"
+	"micro-services/recommend-server/internal/handler/similarity"
 	"micro-services/recommend-server/pkg/config"
 	"micro-services/recommend-server/pkg/instance"
 	h "micro-services/recommend-server/pkg/kafka/handler"
@@ -75,6 +76,9 @@ func main() {
 
 	// 启动消费者进程
 	go handler.ConsumeMsg()
+
+	// TODO 计算用户相似度，待优化
+	go similarity.CalculateSim()
 
 	// 启动 gRPC 服务
 	if err := startGRPCServer(); err != nil {
