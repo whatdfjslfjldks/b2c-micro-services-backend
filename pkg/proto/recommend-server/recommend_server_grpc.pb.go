@@ -19,10 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RecommendService_ClickProduct_FullMethodName    = "/proto.RecommendService/ClickProduct"
-	RecommendService_PurchaseProduct_FullMethodName = "/proto.RecommendService/PurchaseProduct"
-	RecommendService_SearchProduct_FullMethodName   = "/proto.RecommendService/SearchProduct"
-	RecommendService_BrowseProduct_FullMethodName   = "/proto.RecommendService/BrowseProduct"
+	RecommendService_ClickProduct_FullMethodName            = "/proto.RecommendService/ClickProduct"
+	RecommendService_PurchaseProduct_FullMethodName         = "/proto.RecommendService/PurchaseProduct"
+	RecommendService_SearchProduct_FullMethodName           = "/proto.RecommendService/SearchProduct"
+	RecommendService_BrowseProduct_FullMethodName           = "/proto.RecommendService/BrowseProduct"
+	RecommendService_GetRecommendProductList_FullMethodName = "/proto.RecommendService/GetRecommendProductList"
 )
 
 // RecommendServiceClient is the client API for RecommendService service.
@@ -37,6 +38,8 @@ type RecommendServiceClient interface {
 	PurchaseProduct(ctx context.Context, in *PurchaseProductRequest, opts ...grpc.CallOption) (*PurchaseProductResponse, error)
 	SearchProduct(ctx context.Context, in *SearchProductRequest, opts ...grpc.CallOption) (*SearchProductResponse, error)
 	BrowseProduct(ctx context.Context, in *BrowseProductRequest, opts ...grpc.CallOption) (*BrowseProductResponse, error)
+	// TODO 获取推荐的商品
+	GetRecommendProductList(ctx context.Context, in *GetRecommendProductListRequest, opts ...grpc.CallOption) (*GetRecommendProductListResponse, error)
 }
 
 type recommendServiceClient struct {
@@ -87,6 +90,16 @@ func (c *recommendServiceClient) BrowseProduct(ctx context.Context, in *BrowsePr
 	return out, nil
 }
 
+func (c *recommendServiceClient) GetRecommendProductList(ctx context.Context, in *GetRecommendProductListRequest, opts ...grpc.CallOption) (*GetRecommendProductListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetRecommendProductListResponse)
+	err := c.cc.Invoke(ctx, RecommendService_GetRecommendProductList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RecommendServiceServer is the server API for RecommendService service.
 // All implementations must embed UnimplementedRecommendServiceServer
 // for forward compatibility.
@@ -99,6 +112,8 @@ type RecommendServiceServer interface {
 	PurchaseProduct(context.Context, *PurchaseProductRequest) (*PurchaseProductResponse, error)
 	SearchProduct(context.Context, *SearchProductRequest) (*SearchProductResponse, error)
 	BrowseProduct(context.Context, *BrowseProductRequest) (*BrowseProductResponse, error)
+	// TODO 获取推荐的商品
+	GetRecommendProductList(context.Context, *GetRecommendProductListRequest) (*GetRecommendProductListResponse, error)
 	mustEmbedUnimplementedRecommendServiceServer()
 }
 
@@ -120,6 +135,9 @@ func (UnimplementedRecommendServiceServer) SearchProduct(context.Context, *Searc
 }
 func (UnimplementedRecommendServiceServer) BrowseProduct(context.Context, *BrowseProductRequest) (*BrowseProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BrowseProduct not implemented")
+}
+func (UnimplementedRecommendServiceServer) GetRecommendProductList(context.Context, *GetRecommendProductListRequest) (*GetRecommendProductListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRecommendProductList not implemented")
 }
 func (UnimplementedRecommendServiceServer) mustEmbedUnimplementedRecommendServiceServer() {}
 func (UnimplementedRecommendServiceServer) testEmbeddedByValue()                          {}
@@ -214,6 +232,24 @@ func _RecommendService_BrowseProduct_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RecommendService_GetRecommendProductList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRecommendProductListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecommendServiceServer).GetRecommendProductList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RecommendService_GetRecommendProductList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecommendServiceServer).GetRecommendProductList(ctx, req.(*GetRecommendProductListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RecommendService_ServiceDesc is the grpc.ServiceDesc for RecommendService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -236,6 +272,10 @@ var RecommendService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "BrowseProduct",
 			Handler:    _RecommendService_BrowseProduct_Handler,
+		},
+		{
+			MethodName: "GetRecommendProductList",
+			Handler:    _RecommendService_GetRecommendProductList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

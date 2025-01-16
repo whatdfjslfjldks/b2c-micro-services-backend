@@ -2,8 +2,10 @@ package recommendRoutes
 
 import (
 	"github.com/gin-gonic/gin"
+	"google.golang.org/protobuf/proto"
 	"micro-services/api-gateway/internal/instance"
 	recommendServerProto "micro-services/pkg/proto/recommend-server"
+	"strconv"
 )
 
 var model3 = "recommend-server"
@@ -127,4 +129,40 @@ func PurchaseProduct(c *gin.Context) {
 	}
 	// 数据埋点不返回实际内容
 	c.JSON(200, gin.H{})
+}
+
+// GetRecommendProductList 获取推荐商品
+func GetRecommendProductList(c *gin.Context) {
+	userId := c.DefaultQuery("userId", "-1")
+	id, e := strconv.Atoi(userId)
+	if e != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	req := recommendServerProto.GetRecommendProductListRequest{
+		UserId: int64(id),
+		//CurrentPage: int32(size),
+		//PageSize:    int32(page),
+	}
+	var resp recommendServerProto.GetRecommendProductListResponse
+	err := instance.GrpcClient.CallRecommendService(model3, "getRecommendProductList", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := proto.Clone(&resp).(*recommendServerProto.GetRecommendProductListResponse)
+	c.JSON(int(resp.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data":        respCopy.ProductList,
+	})
 }

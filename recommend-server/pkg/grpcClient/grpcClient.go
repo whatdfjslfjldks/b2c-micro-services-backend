@@ -6,6 +6,7 @@ import (
 	"log"
 	"micro-services/pkg/etcd"
 	logServerProto "micro-services/pkg/proto/log-server"
+	productServerProto "micro-services/pkg/proto/product-server"
 )
 
 type GRPCClient struct {
@@ -37,4 +38,27 @@ func (c *GRPCClient) PostLog(request interface{}) {
 	client := logServerProto.NewLogServiceClient(conn)
 	req := request.(*logServerProto.PostLogRequest)
 	_, _ = client.PostLog(context.Background(), req)
+}
+
+func (c *GRPCClient) GetProductById(request interface{}) (
+	*productServerProto.GetProductByIdResponse, error) {
+	serviceAddr, err := c.etcdClient.GetService("product-server")
+	if err != nil {
+		log.Printf("failed to get service address: %v", err)
+		return nil, err
+	}
+	conn, err := grpc.Dial(serviceAddr, grpc.WithInsecure())
+	if err != nil {
+		log.Printf("failed to connect to gRPC service: %v\n", err)
+		return nil, err
+	}
+	defer conn.Close()
+	client := productServerProto.NewProductServiceClient(conn)
+	req := request.(*productServerProto.GetProductByIdRequest)
+	resp, err := client.GetProductById(context.Background(), req)
+	if err != nil {
+		log.Printf("failed to call gRPC method: %v", err)
+		return nil, err
+	}
+	return resp, nil
 }

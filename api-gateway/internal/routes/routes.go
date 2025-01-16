@@ -59,6 +59,9 @@ func SetupRoutes(router *gin.Engine) {
 		recommendServer.POST("/purchaseProduct", recommendRoutes.PurchaseProduct)
 		recommendServer.POST("/searchProduct", recommendRoutes.SearchProduct)
 
+		// 获取推荐商品
+		recommendServer.GET("/GetRecommendProductList", recommendRoutes.GetRecommendProductList)
+
 	}
 
 }

@@ -5,12 +5,27 @@ option go_package = "./product-server;product_server_proto";
 
 
 service ProductService{
-  // TODO: ceshi 获取商品列表
+  // TODO: test 获取商品列表
   rpc GetProductList(GetProductListRequest) returns (GetProductListResponse);
   // 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
   // TODO 身份校验
   rpc UploadProductByExcel(UploadProductByExcelRequest) returns (UploadProductByExcelResponse);
+
+  // 通过product_id获取商品
+  rpc GetProductById(GetProductByIdRequest) returns (GetProductByIdResponse);
 }
+message GetProductByIdRequest{
+  int32 product_id = 1;
+}
+message GetProductByIdResponse{
+  int32 product_id = 1;
+  string product_name = 2;
+  string product_cover = 3;
+  double product_price = 4;
+  int32 product_categoryId = 5;
+  string description = 6;
+}
+
 message UploadProductByExcelRequest{
   bytes file = 1;
 }

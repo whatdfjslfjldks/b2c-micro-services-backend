@@ -11,7 +11,37 @@ service RecommendService{
   rpc PurchaseProduct(PurchaseProductRequest) returns (PurchaseProductResponse);
   rpc SearchProduct(SearchProductRequest) returns (SearchProductResponse);
   rpc BrowseProduct(BrowseProductRequest) returns (BrowseProductResponse);
+
+  // TODO 获取推荐的商品
+  rpc GetRecommendProductList(GetRecommendProductListRequest) returns (GetRecommendProductListResponse);
 }
+
+message GetRecommendProductListRequest{
+  int64 user_id = 1;
+//  int32 currentPage = 2;
+//  int32 pageSize = 3;
+}
+message GetRecommendProductListResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+
+//  int32 currentPage = 4;
+//  int32 pageSize = 5;
+//  int32 totalItems = 6;
+  repeated ProductListItem2 productList = 7;
+}
+
+message ProductListItem2{
+  int32 product_id = 1;
+  string product_name = 2;
+  string product_cover = 3;
+  double product_price = 4;
+  int32 product_categoryId = 5;
+  string description = 6;
+}
+
+
 message BrowseProductRequest{
   int64 user_id = 1;
   int32 product_id = 2;

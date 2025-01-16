@@ -50,6 +50,13 @@ func (c *GRPCClient) CallRecommendService(serviceName string, method string, req
 		if e != nil {
 			return fmt.Errorf("failed to call gRPC method: %v", e)
 		}
+	case "getRecommendProductList":
+		req := request.(*recommendServerProto.GetRecommendProductListRequest)
+		resp, e := client.GetRecommendProductList(context.Background(), req)
+		if e != nil {
+			return fmt.Errorf("failed to call gRPC method: %v", e)
+		}
+		*response.(*recommendServerProto.GetRecommendProductListResponse) = *resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

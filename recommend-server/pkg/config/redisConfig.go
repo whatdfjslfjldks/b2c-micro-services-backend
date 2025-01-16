@@ -23,10 +23,13 @@ type TitleConfig struct {
 	Redis RedisConfig `yaml:"redis"`
 }
 
+// redis-3 存储用户的id商品权重map表，用于相似度计算
+// redis-4 存储用户的相似用户表
 var (
 	RdConfig  *TitleConfig
 	Ctx       = context.Background()
 	RdClient3 *redis.Client
+	RdClient4 *redis.Client
 )
 
 // InitRedisConfig InitConfig 初始化配置，包括 MySQL 和 Redis
@@ -54,11 +57,20 @@ func InitRedis() {
 	readTimeout := 5 * time.Second
 	writeTimeout := 5 * time.Second
 
-	// 创建 Redis-2 客户端
+	// 创建 Redis-3 客户端
 	RdClient3 = redis.NewClient(&redis.Options{
 		Addr:         RdConfig.Redis.Host + ":" + strconv.Itoa(RdConfig.Redis.Port), // Redis 服务器地址
 		Password:     RdConfig.Redis.Password,                                       // Redis 密码，如果没有就留空
 		DB:           3,                                                             // 使用的数据库索引，默认是 0
+		DialTimeout:  dialTimeout,                                                   // 连接超时
+		ReadTimeout:  readTimeout,                                                   // 读取超时
+		WriteTimeout: writeTimeout,                                                  // 写入超时
+	})
+	// 创建 Redis-3 客户端
+	RdClient4 = redis.NewClient(&redis.Options{
+		Addr:         RdConfig.Redis.Host + ":" + strconv.Itoa(RdConfig.Redis.Port), // Redis 服务器地址
+		Password:     RdConfig.Redis.Password,                                       // Redis 密码，如果没有就留空
+		DB:           4,                                                             // 使用的数据库索引，默认是 0
 		DialTimeout:  dialTimeout,                                                   // 连接超时
 		ReadTimeout:  readTimeout,                                                   // 读取超时
 		WriteTimeout: writeTimeout,                                                  // 写入超时
@@ -69,4 +81,9 @@ func InitRedis() {
 	if err != nil {
 		panic(err)
 	}
+	_, err = RdClient4.Ping(Ctx).Result()
+	if err != nil {
+		panic(err)
+	}
+
 }
