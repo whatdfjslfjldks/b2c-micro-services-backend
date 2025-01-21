@@ -1,6 +1,7 @@
 package userRoutes
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/protobuf/proto"
 	"micro-services/api-gateway/internal/instance"
@@ -96,9 +97,11 @@ func CheckVerifyCode(c *gin.Context) {
 
 // LoginByPassword 用户名密码登录
 func LoginByPassword(c *gin.Context) {
+	fmt.Println("12312")
 	// 获取请求头里的ip和agent
 	ip := c.ClientIP()
 	agent := c.Request.Header.Get("User-Agent")
+	fmt.Println("1111: ", ip, agent)
 
 	var request userServerProto.UsernameLoginRequest
 	err := c.ShouldBindJSON(&request)

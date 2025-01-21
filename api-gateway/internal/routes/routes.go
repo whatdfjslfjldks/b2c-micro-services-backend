@@ -64,4 +64,11 @@ func SetupRoutes(router *gin.Engine) {
 
 	}
 
+	// -----------------处理customer模块请求--------------------------------
+	//model4 := "customer-server"
+	//customerServer := router.Group("/api/" + model4)
+	//{
+	//	//customerServer.POST()
+	//}
+
 }

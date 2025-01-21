@@ -1,145 +1,96 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"google.golang.org/grpc"
+	"github.com/gorilla/websocket"
 	"log"
-	logServerProto "micro-services/pkg/proto/log-server"
+	"net/http"
+	"sync"
 )
 
-//
-//import (
-//	"fmt"
-//	"micro-services/log-server/kafka/logServerKafka"
-//	"micro-services/log-server/kafka/logServerKafka/model"
-//	"net/http"
-//	"strings"
-//)
-//
-//func getIPFromRequest(req *http.Request) string {
-//	// 1. 尝试从 "X-Forwarded-For" 获取用户的 IP 地址
-//	xForwardedFor := req.Header.Get("X-Forwarded-For")
-//	if xForwardedFor != "" {
-//		// 如果有多个代理，"X-Forwarded-For" 会包含多个 IP 地址，逗号分隔，取第一个即为客户端的真实 IP
-//		ips := strings.Split(xForwardedFor, ",")
-//		return strings.TrimSpace(ips[0])
-//	}
-//
-//	// 2. 如果没有 "X-Forwarded-For"，则直接获取 "RemoteAddr"
-//	return req.RemoteAddr
-//}
-//
-//func handler(w http.ResponseWriter, req *http.Request) {
-//	// 获取客户端的 IP 地址
-//	clientIP := getIPFromRequest(req)
-//
-//	// 返回 IP 地址
-//	fmt.Fprintf(w, "Your IP Address is: %s", clientIP)
-//}
-//
-//func main() {
-//	// 设置路由
-//	//http.HandleFunc("/get-ip", handler)
-//	//
-//	//// 启动 HTTP 服务器
-//	//fmt.Println("Server started at :8080")
-//	//http.ListenAndServe(":8080", nil)
-//
-//	consumer := &logServerKafka.LogKafkaConsumer{}
-//	err := consumer.ConsumeMessages(func(message model.Log) error {
-//		// 在这里处理每条消息
-//		fmt.Println("处理消息: ", message)
-//		return nil
-//	})
-//	if err != nil {
-//		fmt.Println("消费消息失败: ", err)
-//	}
-//
-//}
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		// 允许任何来源的连接
+		return true
+	},
+}
 
-// 测试
-func main() {
+// WebSocket 连接管理结构体
+type WebSocketServer struct {
+	connections map[*websocket.Conn]bool
+	mu          sync.Mutex
+}
 
-	//// -----------------创建etcd客户端--------------------------------
-	//etcdClient, err := etcd.NewEtcdService(5 * time.Second)
-	//if err != nil {
-	//	// 丸辣！🌶
-	//	panic(err)
-	//}
-	//// -----------------创建GRPCClient实例--------------------------------
-	//GrpcClient = gClient.NewGRPCClient(etcdClient)
-	//// 获取服务地址
-	//serviceAddr, err := c.etcdClient.GetService("log-server")
-	//if err != nil {
-	//	log.Fatal("Asdf: ",err)
-	//}
-	//
-	//fmt.Println("服务地址-----------------------： ", serviceAddr)
+func (server *WebSocketServer) addConnection(conn *websocket.Conn) {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+	server.connections[conn] = true
+}
 
-	// 与 gRPC 服务建立连接
-	conn, err := grpc.Dial("127.0.0.1:50052", grpc.WithInsecure()) // 可改成加密连接
-	if err != nil {
-		log.Fatalf("failed to connect to gRPC %v", err)
+func (server *WebSocketServer) removeConnection(conn *websocket.Conn) {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+	delete(server.connections, conn)
+}
+
+func (server *WebSocketServer) broadcastMessage(message []byte) {
+	server.mu.Lock()
+	defer server.mu.Unlock()
+
+	// 向所有连接的客户端发送消息
+	for conn := range server.connections {
+		err := conn.WriteMessage(websocket.TextMessage, message)
+		if err != nil {
+			log.Println("Error sending message to client:", err)
+			conn.Close()
+			delete(server.connections, conn)
+		}
 	}
-	fmt.Println("连接成功")
+}
+
+func handleWebSocketConnection(w http.ResponseWriter, r *http.Request, server *WebSocketServer) {
+	// 升级 HTTP 连接为 WebSocket
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("WebSocket Upgrade Error:", err)
+		return
+	}
 	defer conn.Close()
 
-	// 创建 gRPC 客户端
-	client := logServerProto.NewLogServiceClient(conn)
+	// 添加连接到服务器的连接池中
+	server.addConnection(conn)
+	defer server.removeConnection(conn)
 
-	req := &logServerProto.PostLogRequest{
-		Level:       "ERROR",
-		Msg:         "hello world",
-		RequestPath: "/test",
-		Source:      "test",
-		StatusCode:  "200",
-		Time:        "2023-07-01 12:00:00",
-	}
-	for i := 1; i <= 5; i++ {
-		fmt.Println("第", i, "次发送")
-		resp, err := client.PostLog(context.Background(), req)
+	// 双向通信：服务端和客户端都可以发送和接收消息
+	for {
+		// 接收来自客户端的消息
+		messageType, msg, err := conn.ReadMessage()
+		fmt.Println("messageType:", messageType)
 		if err != nil {
-			log.Printf("failed to send log: %v", err)
-		} else {
-			fmt.Println("log sent successfully:", resp)
+			log.Println("WebSocket Read Error:", err)
+			break
 		}
+		fmt.Printf("Received from client: %s\n", msg)
+
+		// 将收到的消息广播给所有连接的客户端
+		server.broadcastMessage(msg)
+	}
+}
+
+func main() {
+	server := &WebSocketServer{
+		connections: make(map[*websocket.Conn]bool),
 	}
 
-	req = &logServerProto.PostLogRequest{
-		Level:       "INFO",
-		Msg:         "hello world",
-		RequestPath: "/test",
-		Source:      "test",
-		StatusCode:  "200",
-		Time:        "2023-07-01 12:00:00",
-	}
-	for i := 1; i <= 5; i++ {
-		fmt.Println("第", i, "次发送")
-		resp, err := client.PostLog(context.Background(), req)
-		if err != nil {
-			log.Printf("failed to send log: %v", err)
-		} else {
-			fmt.Println("log sent successfully:", resp)
-		}
-	}
+	// 启动 WebSocket 服务
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		handleWebSocketConnection(w, r, server)
+	})
 
-	req = &logServerProto.PostLogRequest{
-		Level:       "WARN",
-		Msg:         "hello world",
-		RequestPath: "/test",
-		Source:      "test",
-		StatusCode:  "200",
-		Time:        "2023-07-01 12:00:00",
+	// 启动 HTTP 服务，监听 8080 端口
+	log.Println("Starting WebSocket server on :8080")
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		log.Fatal("ListenAndServe failed: ", err)
 	}
-	for i := 1; i <= 5; i++ {
-		fmt.Println("第", i, "次发送")
-		resp, err := client.PostLog(context.Background(), req)
-		if err != nil {
-			log.Printf("failed to send log: %v", err)
-		} else {
-			fmt.Println("log sent successfully:", resp)
-		}
-	}
-
 }
