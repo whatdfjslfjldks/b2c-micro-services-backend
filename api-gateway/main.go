@@ -19,11 +19,11 @@ func main() {
 	r := gin.Default()
 	// 配置 CORS 中间件
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},                                                                       // 允许的跨域来源，* 表示允许所有
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},                                 // 允许的请求方法
-		AllowHeaders:     []string{"X-Real-IP", "X-Forwarded-For", "Origin", "Content-Type", "Authorization"}, // 允许的请求头
-		AllowCredentials: true,                                                                                // 是否允许携带凭证（例如 cookies）
-		MaxAge:           12 * time.Hour,                                                                      // 预检请求的有效期，单位是时间
+		AllowOrigins:     []string{"*"},                                                                                                        // 允许的跨域来源，* 表示允许所有
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},                                                                  // 允许的请求方法
+		AllowHeaders:     []string{"Access-Token", "Refresh-Token", "X-Real-IP", "X-Forwarded-For", "Origin", "Content-Type", "Authorization"}, // 允许的请求头
+		AllowCredentials: true,                                                                                                                 // 是否允许携带凭证（例如 cookies）
+		MaxAge:           12 * time.Hour,                                                                                                       // 预检请求的有效期，单位是时间
 	}))
 	//创建实例
 	instance.NewInstance()

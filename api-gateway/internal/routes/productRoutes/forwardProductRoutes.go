@@ -19,7 +19,8 @@ func GetProductList(c *gin.Context) {
 	currentPage := c.DefaultQuery("currentPage", "1")
 	pageSize := c.DefaultQuery("pageSize", "10")
 	categoryId := c.DefaultQuery("categoryId", "0") // 0 is all
-	priceRange := c.DefaultQuery("priceRange", "0") // 0 is all
+	sort := c.DefaultQuery("sort", "0")             // 0 all, 1 price, 2 time
+	//time := c.DefaultQuery("time", "0")             // 0 all, 1 asc, 2 des
 	//fmt.Println("currentPage:", currentPage, "pageSize:", pageSize, "categoryId:", categoryId)
 	page, e := strconv.Atoi(currentPage)
 	if e != nil {
@@ -48,7 +49,7 @@ func GetProductList(c *gin.Context) {
 		})
 		return
 	}
-	pr, e := strconv.Atoi(priceRange)
+	s, e := strconv.Atoi(sort)
 	if e != nil {
 		c.JSON(400, gin.H{
 			"code":        400,
@@ -61,7 +62,7 @@ func GetProductList(c *gin.Context) {
 		CurrentPage: int32(page),
 		PageSize:    int32(size),
 		CategoryId:  int32(id),
-		PriceRange:  int32(pr),
+		Sort:        int32(s),
 	}
 	var resp productServerProto.GetProductListResponse
 	err := instance.GrpcClient.CallProductService(model2, "getProductList", &req, &resp)
@@ -77,10 +78,13 @@ func GetProductList(c *gin.Context) {
 		"code":        resp.Code,
 		"status_code": resp.StatusCode,
 		"msg":         resp.Msg,
-		"data":        resp.ProductList,
-		"totalItems":  resp.TotalItems,
-		"currentPage": resp.CurrentPage,
-		"pageSize":    resp.PageSize,
+		"data": gin.H{
+			"productList": resp.ProductList,
+			"totalItems":  resp.TotalItems,
+			"currentPage": resp.CurrentPage,
+			"pageSize":    resp.PageSize,
+			"categoryId":  resp.CategoryId,
+		},
 	})
 }
 
@@ -157,5 +161,44 @@ func UploadProductByExcel(c *gin.Context) {
 		"status_code": resp.StatusCode,
 		"msg":         resp.Msg,
 	})
+}
 
+// GetProductDetailById 获取详情界面商品信息
+func GetProductDetailById(c *gin.Context) {
+	productId := c.DefaultQuery("productId", "0")
+	id, e := strconv.Atoi(productId)
+	if e != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "参数错误",
+		})
+		return
+	}
+	req := productServerProto.GetProductDetailByIdRequest{
+		ProductId: int32(id),
+	}
+	var resp productServerProto.GetProductDetailByIdResponse
+	err := instance.GrpcClient.CallProductService(model2, "getProductDetailById", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	c.JSON(int(resp.Code), gin.H{
+		"code":        resp.Code,
+		"status_code": resp.StatusCode,
+		"msg":         resp.Msg,
+		"data": gin.H{
+			"product_id":    resp.ProductId,
+			"product_name":  resp.ProductName,
+			"product_price": resp.ProductPrice,
+			"product_img":   resp.ProductImg,
+			"product_type":  resp.ProductType,
+			"product_sold":  resp.Sold,
+		},
+	})
 }

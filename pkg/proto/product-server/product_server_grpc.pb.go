@@ -22,19 +22,21 @@ const (
 	ProductService_GetProductList_FullMethodName       = "/proto.ProductService/GetProductList"
 	ProductService_UploadProductByExcel_FullMethodName = "/proto.ProductService/UploadProductByExcel"
 	ProductService_GetProductById_FullMethodName       = "/proto.ProductService/GetProductById"
+	ProductService_GetProductDetailById_FullMethodName = "/proto.ProductService/GetProductDetailById"
 )
 
 // ProductServiceClient is the client API for ProductService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductServiceClient interface {
-	// TODO: test 获取商品列表
 	GetProductList(ctx context.Context, in *GetProductListRequest, opts ...grpc.CallOption) (*GetProductListResponse, error)
 	// 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
 	// TODO 身份校验
 	UploadProductByExcel(ctx context.Context, in *UploadProductByExcelRequest, opts ...grpc.CallOption) (*UploadProductByExcelResponse, error)
 	// 通过product_id获取商品
 	GetProductById(ctx context.Context, in *GetProductByIdRequest, opts ...grpc.CallOption) (*GetProductByIdResponse, error)
+	// 获取详情页商品信息
+	GetProductDetailById(ctx context.Context, in *GetProductDetailByIdRequest, opts ...grpc.CallOption) (*GetProductDetailByIdResponse, error)
 }
 
 type productServiceClient struct {
@@ -75,17 +77,28 @@ func (c *productServiceClient) GetProductById(ctx context.Context, in *GetProduc
 	return out, nil
 }
 
+func (c *productServiceClient) GetProductDetailById(ctx context.Context, in *GetProductDetailByIdRequest, opts ...grpc.CallOption) (*GetProductDetailByIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetProductDetailByIdResponse)
+	err := c.cc.Invoke(ctx, ProductService_GetProductDetailById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility.
 type ProductServiceServer interface {
-	// TODO: test 获取商品列表
 	GetProductList(context.Context, *GetProductListRequest) (*GetProductListResponse, error)
 	// 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
 	// TODO 身份校验
 	UploadProductByExcel(context.Context, *UploadProductByExcelRequest) (*UploadProductByExcelResponse, error)
 	// 通过product_id获取商品
 	GetProductById(context.Context, *GetProductByIdRequest) (*GetProductByIdResponse, error)
+	// 获取详情页商品信息
+	GetProductDetailById(context.Context, *GetProductDetailByIdRequest) (*GetProductDetailByIdResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -104,6 +117,9 @@ func (UnimplementedProductServiceServer) UploadProductByExcel(context.Context, *
 }
 func (UnimplementedProductServiceServer) GetProductById(context.Context, *GetProductByIdRequest) (*GetProductByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProductById not implemented")
+}
+func (UnimplementedProductServiceServer) GetProductDetailById(context.Context, *GetProductDetailByIdRequest) (*GetProductDetailByIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProductDetailById not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
@@ -180,6 +196,24 @@ func _ProductService_GetProductById_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_GetProductDetailById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProductDetailByIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).GetProductDetailById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_GetProductDetailById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).GetProductDetailById(ctx, req.(*GetProductDetailByIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -198,6 +232,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProductById",
 			Handler:    _ProductService_GetProductById_Handler,
+		},
+		{
+			MethodName: "GetProductDetailById",
+			Handler:    _ProductService_GetProductDetailById_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

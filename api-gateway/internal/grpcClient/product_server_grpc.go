@@ -40,6 +40,13 @@ func (c *GRPCClient) CallProductService(serviceName string, method string, reque
 			return fmt.Errorf("failed to call gRPC method: %v", e)
 		}
 		*response.(*productServerProto.UploadProductByExcelResponse) = *resp
+	case "getProductDetailById":
+		req := request.(*productServerProto.GetProductDetailByIdRequest)
+		resp, e := client.GetProductDetailById(context.Background(), req)
+		if e != nil {
+			return fmt.Errorf("failed to call gRPC method: %v", e)
+		}
+		*response.(*productServerProto.GetProductDetailByIdResponse) = *resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

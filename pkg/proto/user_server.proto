@@ -125,6 +125,7 @@ message TestRefreshTokenResponse {
   string status_code=2;
   string msg=3;
   string accessToken=4;
+  string refreshToken=5;
 }
 // 检测访问令牌是否过期
 message TestAccessTokenRequest {

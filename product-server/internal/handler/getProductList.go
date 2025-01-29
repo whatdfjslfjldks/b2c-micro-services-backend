@@ -9,11 +9,12 @@ import (
 	"micro-services/product-server/pkg/instance"
 )
 
+// GetProductList 筛选条件 价格升序，时间降序
 func (s *Server) GetProductList(ctx context.Context, req *pb.GetProductListRequest) (
 	*pb.GetProductListResponse, error) {
 	resp := &pb.GetProductListResponse{}
-	//fmt.Println("sdfds", req.CurrentPage, req.PageSize, req.CategoryId, req.PriceRange)
-	list, totalItems, err := service.GetProductList(req.CurrentPage, req.PageSize, req.CategoryId, req.PriceRange)
+
+	list, totalItems, err := service.GetProductList(req.CurrentPage, req.PageSize, req.CategoryId, req.Sort)
 	if err != nil {
 		a := &logServerProto.PostLogRequest{
 			Level:       "ERROR",
@@ -36,5 +37,6 @@ func (s *Server) GetProductList(ctx context.Context, req *pb.GetProductListReque
 	resp.Msg = "获取商品列表成功！"
 	resp.CurrentPage = req.CurrentPage
 	resp.PageSize = req.PageSize
+	resp.CategoryId = req.CategoryId
 	return resp, nil
 }

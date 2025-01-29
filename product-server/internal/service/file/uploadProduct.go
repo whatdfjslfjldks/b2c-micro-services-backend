@@ -7,7 +7,7 @@ import (
 	"github.com/xuri/excelize/v2"
 	"log"
 	"micro-services/product-server/internal/repository"
-	"micro-services/product-server/pkg/enums"
+	"micro-services/product-server/pkg/model/enums"
 	"strconv"
 )
 

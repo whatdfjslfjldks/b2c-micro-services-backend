@@ -9,7 +9,7 @@ import (
 
 func SetupRoutes(router *gin.Engine) {
 	// -----------------ping-pong-------------------------------
-	router.GET("/ping", func(c *gin.Context) {
+	router.GET("/api/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
 		})
@@ -40,7 +40,8 @@ func SetupRoutes(router *gin.Engine) {
 	productServer := router.Group("/api/" + model2)
 	{
 		productServer.GET("/getProductList", productRoutes.GetProductList)
-
+		// 获取详情页商品信息
+		productServer.GET("/getProductDetailById", productRoutes.GetProductDetailById)
 		// TODO： 批量上传接口，后面加一个身份验证，管理员权限才可以，accessToken role=admin
 		// 不支持图片的上传，图片可以通过对单一商品的修改上传
 		// TODO 返回一个预计上传时间

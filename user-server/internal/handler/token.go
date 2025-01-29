@@ -6,8 +6,7 @@ import (
 	"micro-services/user-server/internal/service/tokenService"
 )
 
-// 验证 accessToken 是否过期
-
+// TestAccessToken 验证 accessToken 是否过期
 func (s *Server) TestAccessToken(ctx context.Context, req *pb.TestAccessTokenRequest) (
 	*pb.TestAccessTokenResponse, error) {
 	resp := &pb.TestAccessTokenResponse{}
@@ -25,7 +24,7 @@ func (s *Server) TestAccessToken(ctx context.Context, req *pb.TestAccessTokenReq
 	}
 }
 
-// 验证 refreshToken 是否过期
+// TestRefreshToken 验证 refreshToken 是否过期
 func (s *Server) TestRefreshToken(ctx context.Context, req *pb.TestRefreshTokenRequest) (
 	*pb.TestRefreshTokenResponse, error) {
 	resp := &pb.TestRefreshTokenResponse{}
@@ -40,6 +39,7 @@ func (s *Server) TestRefreshToken(ctx context.Context, req *pb.TestRefreshTokenR
 		resp.StatusCode = "GLB-000"
 		resp.Msg = "token 验证成功"
 		resp.AccessToken = accessToken
+		resp.RefreshToken = req.RefreshToken
 		return resp, nil
 	}
 }

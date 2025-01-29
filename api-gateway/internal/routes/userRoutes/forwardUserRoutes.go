@@ -148,54 +148,45 @@ func LoginByPassword(c *gin.Context) {
 
 // TestAccessToken 查看访问令牌是否过期
 func TestAccessToken(c *gin.Context) {
-	var request userServerProto.TestAccessTokenRequest
-	err := c.ShouldBindJSON(&request)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"code":        400,
-			"status_code": "GLB-001",
-			"msg":         "非法输入！",
-		})
-		return
-	}
+	accessToken := c.Request.Header.Get("Access-Token")
 	req := userServerProto.TestAccessTokenRequest{
-		AccessToken: request.AccessToken,
+		AccessToken: accessToken,
 	}
 	var resp userServerProto.TestAccessTokenResponse
-	err = instance.GrpcClient.CallService(model, "testAccessToken", &req, &resp)
+	err := instance.GrpcClient.CallService(model, "testAccessToken", &req, &resp)
 	if err != nil {
-		c.JSON(500, gin.H{
-			"code":        500,
-			"status_code": "GLB-002",
-			"msg":         "grpc调用错误: " + err.Error(),
-		})
+		c.String(400, "nook")
 		return
+		//c.JSON(500, gin.H{
+		//	"code":        500,
+		//	"status_code": "GLB-002",
+		//	"msg":         "grpc调用错误: " + err.Error(),
+		//})
+		//return
 	}
 	respCopy := proto.Clone(&resp).(*userServerProto.TestAccessTokenResponse)
-	c.JSON(int(respCopy.Code), gin.H{
-		"code":        respCopy.Code,
-		"status_code": respCopy.StatusCode,
-		"msg":         respCopy.Msg,
-	})
+	if respCopy.Code == 200 {
+		c.String(200, "ok")
+		return
+	} else {
+		c.String(400, "nook")
+		return
+	}
+	//c.JSON(int(respCopy.Code), gin.H{
+	//	"code":        respCopy.Code,
+	//	"status_code": respCopy.StatusCode,
+	//	"msg":         respCopy.Msg,
+	//})
 }
 
 // TestRefreshToken 查看刷新令牌是否过期
 func TestRefreshToken(c *gin.Context) {
-	var request userServerProto.TestRefreshTokenRequest
-	err := c.ShouldBindJSON(&request)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"code":        400,
-			"status_code": "GLB-001",
-			"msg":         "非法输入！",
-		})
-		return
-	}
+	refreshToken := c.Request.Header.Get("Refresh-Token")
 	req := userServerProto.TestRefreshTokenRequest{
-		RefreshToken: request.RefreshToken,
+		RefreshToken: refreshToken,
 	}
 	var resp userServerProto.TestRefreshTokenResponse
-	err = instance.GrpcClient.CallService(model, "testRefreshToken", &req, &resp)
+	err := instance.GrpcClient.CallService(model, "testRefreshToken", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"code":        500,
@@ -210,7 +201,8 @@ func TestRefreshToken(c *gin.Context) {
 		"status_code": respCopy.StatusCode,
 		"msg":         respCopy.Msg,
 		"data": gin.H{
-			"accessToken": respCopy.AccessToken,
+			"accessToken":  respCopy.AccessToken,
+			"refreshToken": respCopy.RefreshToken,
 		},
 	})
 }

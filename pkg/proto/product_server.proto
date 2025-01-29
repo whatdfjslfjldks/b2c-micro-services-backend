@@ -5,14 +5,38 @@ option go_package = "./product-server;product_server_proto";
 
 
 service ProductService{
-  // TODO: test 获取商品列表
   rpc GetProductList(GetProductListRequest) returns (GetProductListResponse);
   // 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
   // TODO 身份校验
   rpc UploadProductByExcel(UploadProductByExcelRequest) returns (UploadProductByExcelResponse);
-
   // 通过product_id获取商品
   rpc GetProductById(GetProductByIdRequest) returns (GetProductByIdResponse);
+  // 获取详情页商品信息
+  rpc GetProductDetailById(GetProductDetailByIdRequest) returns (GetProductDetailByIdResponse);
+}
+message GetProductDetailByIdRequest{
+  int32 product_id = 1;
+}
+message GetProductDetailByIdResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  int32 product_id = 4;
+  string product_name = 5;
+  repeated Product_img product_img = 6;
+  double product_price = 7;
+  repeated Product_type product_type = 8;
+  int32 sold = 9;
+//  int32 product_categoryId = 5;
+//  string description = 6;
+}
+message Product_type{
+  int32 product_type_id = 1;
+  string product_type_name = 2;
+}
+message Product_img{
+  int32 img_id = 1;
+  string img_url = 2;
 }
 message GetProductByIdRequest{
   int32 product_id = 1;
@@ -37,20 +61,18 @@ message UploadProductByExcelResponse{
 message GetProductListRequest{
   int32 currentPage = 1;
   int32 pageSize = 2;
-  // 前后端维护一个种类id对应表
-  int32 categoryId = 3;
-  // 前后端维护一个价格区间对应表
-  int32 priceRange = 4;
+  int32 categoryId = 3; // 前后端维护一个种类id对应表
+  int32 sort=4; // 筛选方式 0:all, 1 price,2 time
 }
 message GetProductListResponse{
   int32 code=1;
   string status_code=2;
   string msg=3;
-
   int32 currentPage = 4;
   int32 pageSize = 5;
   int32 totalItems = 6;
   repeated ProductListItem productList = 7;
+  int32 categoryId=8; // 返回一个当前商品种类id
 }
 message ProductListItem{
   int32 product_id = 1;
