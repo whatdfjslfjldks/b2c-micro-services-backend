@@ -7,13 +7,72 @@ option go_package = "./product-server;product_server_proto";
 service ProductService{
   rpc GetProductList(GetProductListRequest) returns (GetProductListResponse);
   // 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
-  // TODO 身份校验
+  // TODO 鉴权
   rpc UploadProductByExcel(UploadProductByExcelRequest) returns (UploadProductByExcelResponse);
   // 通过product_id获取商品
   rpc GetProductById(GetProductByIdRequest) returns (GetProductByIdResponse);
   // 获取详情页商品信息
   rpc GetProductDetailById(GetProductDetailByIdRequest) returns (GetProductDetailByIdResponse);
+  // 上传秒杀商品
+  // TODO 鉴权
+  rpc UploadSecKillProduct(UploadSecKillProductRequest) returns (UploadSecKillProductResponse);
+  // 获取秒杀商品列表
+  rpc GetSecKillList(GetSecKillListRequest) returns (GetSecKillListResponse);
 }
+message GetSecKillListRequest{
+  int32 currentPage = 1;
+  int32 pageSize = 2;
+  int32 time=3; // 场次
+}
+message GetSecKillListResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  int32 currentPage = 4;
+  int32 pageSize = 5;
+  int32 totalItems = 6;
+  repeated SecListItem secList = 7;
+  int32 time=8;  // 场次
+}
+message SecListItem{
+  int32 sec_id = 1;
+  string sec_name = 2;
+  string sec_cover = 3;
+  double sec_price = 4;
+  double sec_original_price = 5;
+  int32 sec_stock = 6; // 库存
+  int32 sec_sold = 7; // 已售
+  string sec_start_time = 8;
+  string sec_end_time = 9;
+}
+
+message UploadSecKillProductRequest{
+  string sec_name = 1;
+  string sec_description = 2;
+  double sec_original_price = 3;
+  double sec_price = 4;
+  int32 sec_stock = 5;
+  string sec_start_time = 6;
+  string sec_end_time = 7;
+  repeated Sec_img sec_img = 8; // 图片列表 默认取第一张做封面
+  repeated Sec_type sec_type = 9; // 类别列表
+  int32 time=10; // 场次,具体含义查看enums包
+}
+
+// request
+message Sec_type{
+  string type_name = 1;
+}
+message Sec_img{
+  string img_url = 1;
+}
+
+message UploadSecKillProductResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+}
+
 message GetProductDetailByIdRequest{
   int32 product_id = 1;
 }
@@ -30,9 +89,11 @@ message GetProductDetailByIdResponse{
 //  int32 product_categoryId = 5;
 //  string description = 6;
 }
+
+// response
 message Product_type{
-  int32 product_type_id = 1;
-  string product_type_name = 2;
+  int32 type_id = 1;
+  string type_name = 2;
 }
 message Product_img{
   int32 img_id = 1;

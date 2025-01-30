@@ -23,6 +23,8 @@ const (
 	ProductService_UploadProductByExcel_FullMethodName = "/proto.ProductService/UploadProductByExcel"
 	ProductService_GetProductById_FullMethodName       = "/proto.ProductService/GetProductById"
 	ProductService_GetProductDetailById_FullMethodName = "/proto.ProductService/GetProductDetailById"
+	ProductService_UploadSecKillProduct_FullMethodName = "/proto.ProductService/UploadSecKillProduct"
+	ProductService_GetSecKillList_FullMethodName       = "/proto.ProductService/GetSecKillList"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -31,12 +33,17 @@ const (
 type ProductServiceClient interface {
 	GetProductList(ctx context.Context, in *GetProductListRequest, opts ...grpc.CallOption) (*GetProductListResponse, error)
 	// 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
-	// TODO 身份校验
+	// TODO 鉴权
 	UploadProductByExcel(ctx context.Context, in *UploadProductByExcelRequest, opts ...grpc.CallOption) (*UploadProductByExcelResponse, error)
 	// 通过product_id获取商品
 	GetProductById(ctx context.Context, in *GetProductByIdRequest, opts ...grpc.CallOption) (*GetProductByIdResponse, error)
 	// 获取详情页商品信息
 	GetProductDetailById(ctx context.Context, in *GetProductDetailByIdRequest, opts ...grpc.CallOption) (*GetProductDetailByIdResponse, error)
+	// 上传秒杀商品
+	// TODO 鉴权
+	UploadSecKillProduct(ctx context.Context, in *UploadSecKillProductRequest, opts ...grpc.CallOption) (*UploadSecKillProductResponse, error)
+	// 获取秒杀商品列表
+	GetSecKillList(ctx context.Context, in *GetSecKillListRequest, opts ...grpc.CallOption) (*GetSecKillListResponse, error)
 }
 
 type productServiceClient struct {
@@ -87,18 +94,43 @@ func (c *productServiceClient) GetProductDetailById(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *productServiceClient) UploadSecKillProduct(ctx context.Context, in *UploadSecKillProductRequest, opts ...grpc.CallOption) (*UploadSecKillProductResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadSecKillProductResponse)
+	err := c.cc.Invoke(ctx, ProductService_UploadSecKillProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productServiceClient) GetSecKillList(ctx context.Context, in *GetSecKillListRequest, opts ...grpc.CallOption) (*GetSecKillListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetSecKillListResponse)
+	err := c.cc.Invoke(ctx, ProductService_GetSecKillList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility.
 type ProductServiceServer interface {
 	GetProductList(context.Context, *GetProductListRequest) (*GetProductListResponse, error)
 	// 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
-	// TODO 身份校验
+	// TODO 鉴权
 	UploadProductByExcel(context.Context, *UploadProductByExcelRequest) (*UploadProductByExcelResponse, error)
 	// 通过product_id获取商品
 	GetProductById(context.Context, *GetProductByIdRequest) (*GetProductByIdResponse, error)
 	// 获取详情页商品信息
 	GetProductDetailById(context.Context, *GetProductDetailByIdRequest) (*GetProductDetailByIdResponse, error)
+	// 上传秒杀商品
+	// TODO 鉴权
+	UploadSecKillProduct(context.Context, *UploadSecKillProductRequest) (*UploadSecKillProductResponse, error)
+	// 获取秒杀商品列表
+	GetSecKillList(context.Context, *GetSecKillListRequest) (*GetSecKillListResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -120,6 +152,12 @@ func (UnimplementedProductServiceServer) GetProductById(context.Context, *GetPro
 }
 func (UnimplementedProductServiceServer) GetProductDetailById(context.Context, *GetProductDetailByIdRequest) (*GetProductDetailByIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProductDetailById not implemented")
+}
+func (UnimplementedProductServiceServer) UploadSecKillProduct(context.Context, *UploadSecKillProductRequest) (*UploadSecKillProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadSecKillProduct not implemented")
+}
+func (UnimplementedProductServiceServer) GetSecKillList(context.Context, *GetSecKillListRequest) (*GetSecKillListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSecKillList not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
@@ -214,6 +252,42 @@ func _ProductService_GetProductDetailById_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_UploadSecKillProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadSecKillProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).UploadSecKillProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_UploadSecKillProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).UploadSecKillProduct(ctx, req.(*UploadSecKillProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductService_GetSecKillList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSecKillListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).GetSecKillList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_GetSecKillList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).GetSecKillList(ctx, req.(*GetSecKillListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -236,6 +310,14 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProductDetailById",
 			Handler:    _ProductService_GetProductDetailById_Handler,
+		},
+		{
+			MethodName: "UploadSecKillProduct",
+			Handler:    _ProductService_UploadSecKillProduct_Handler,
+		},
+		{
+			MethodName: "GetSecKillList",
+			Handler:    _ProductService_GetSecKillList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

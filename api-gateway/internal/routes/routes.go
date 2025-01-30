@@ -39,7 +39,9 @@ func SetupRoutes(router *gin.Engine) {
 	model2 := "product-server"
 	productServer := router.Group("/api/" + model2)
 	{
+		// TODO 有空或者注意到，给多表插入操作加上事件回滚
 		productServer.GET("/getProductList", productRoutes.GetProductList)
+		productServer.GET("/getSecKillList", productRoutes.GetSecKillList)
 		// 获取详情页商品信息
 		productServer.GET("/getProductDetailById", productRoutes.GetProductDetailById)
 		// TODO： 批量上传接口，后面加一个身份验证，管理员权限才可以，accessToken role=admin
@@ -47,6 +49,8 @@ func SetupRoutes(router *gin.Engine) {
 		// TODO 返回一个预计上传时间
 		// TODO **一定要做身份校验** 因为大文件上传并操控数据库，容易造成数据库雪崩
 		productServer.POST("/uploadProductByExcel", productRoutes.UploadProductByExcel)
+		// TODO 鉴权
+		productServer.POST("/uploadSecKillProduct", productRoutes.UploadSecKillProduct)
 	}
 
 	// -----------------处理recommend模块请求--------------------------------

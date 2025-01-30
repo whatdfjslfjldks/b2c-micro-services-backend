@@ -3,6 +3,7 @@ package productRoutes
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/protobuf/proto"
 	"micro-services/api-gateway/internal/instance"
 	"micro-services/pkg/utils"
 	"path/filepath"
@@ -199,6 +200,110 @@ func GetProductDetailById(c *gin.Context) {
 			"product_img":   resp.ProductImg,
 			"product_type":  resp.ProductType,
 			"product_sold":  resp.Sold,
+		},
+	})
+}
+
+// UploadSecKillProduct 上传秒杀商品（非批量）
+func UploadSecKillProduct(c *gin.Context) {
+	// TODO 请求头带token，测试不加
+	var request productServerProto.UploadSecKillProductRequest
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	req := productServerProto.UploadSecKillProductRequest{
+		SecName:          request.SecName,
+		SecDescription:   request.SecDescription,
+		SecOriginalPrice: request.SecOriginalPrice,
+		SecPrice:         request.SecPrice,
+		SecStock:         request.SecStock,
+		SecStartTime:     request.SecStartTime,
+		SecEndTime:       request.SecEndTime,
+		SecImg:           request.SecImg,
+		SecType:          request.SecType,
+		Time:             request.Time,
+	}
+	var resp productServerProto.UploadSecKillProductResponse
+	err = instance.GrpcClient.CallProductService(model2, "uploadSecKillProduct", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := proto.Clone(&resp).(*productServerProto.UploadSecKillProductResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+	})
+}
+
+// GetSecKillList 获取秒杀商品列表
+func GetSecKillList(c *gin.Context) {
+	currentPage := c.DefaultQuery("currentPage", "1")
+	pageSize := c.DefaultQuery("pageSize", "10")
+	time := c.DefaultQuery("time", "1") // 场次
+	page, e := strconv.Atoi(currentPage)
+	if e != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	size, e := strconv.Atoi(pageSize)
+	if e != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	t, e := strconv.Atoi(time)
+	if e != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	req := productServerProto.GetSecKillListRequest{
+		CurrentPage: int32(page),
+		PageSize:    int32(size),
+		Time:        int32(t),
+	}
+	var resp productServerProto.GetSecKillListResponse
+	err := instance.GrpcClient.CallProductService(model2, "getSecKillList", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	c.JSON(int(resp.Code), gin.H{
+		"code":        resp.Code,
+		"status_code": resp.StatusCode,
+		"msg":         resp.Msg,
+		"data": gin.H{
+			"productList": resp.SecList,
+			"totalItems":  resp.TotalItems,
+			"currentPage": resp.CurrentPage,
+			"pageSize":    resp.PageSize,
+			"Time":        resp.Time,
 		},
 	})
 }

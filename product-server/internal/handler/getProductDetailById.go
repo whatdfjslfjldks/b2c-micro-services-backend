@@ -37,6 +37,6 @@ func (s *Server) GetProductDetailById(ctx context.Context, req *pb.GetProductDet
 		ProductImg:   product.ProductImg,
 		ProductPrice: product.ProductPrice,
 		ProductType:  product.ProductType,
-		Sold:         0,
+		Sold:         product.Sold,
 	}, nil
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/xuri/excelize/v2"
 	"log"
 	"micro-services/product-server/internal/repository"
-	"micro-services/product-server/pkg/model/enums"
+	"micro-services/product-server/pkg/model/dto"
 	"strconv"
 )
 
@@ -28,7 +28,7 @@ func UploadProduct(file []byte) error {
 	}
 
 	// 批量存储产品
-	var productBatch []repository.Product
+	var productBatch []dto.Product
 
 	// 读取每一行
 	for index, row := range rows {
@@ -43,12 +43,18 @@ func UploadProduct(file []byte) error {
 			productName := row[0]
 			// 2. 种类
 			category := row[1]
-			// 对应种类表把种类转化成int32
-			c, b := enums.CategoryMap[category]
-			if !b {
-				info := fmt.Sprintf("种类不存在:%s", category)
+			c, err := strconv.Atoi(category)
+			if err != nil {
+				log.Printf("种类转换失败:%v", err)
+				info := fmt.Sprintf("种类转换失败:%v", err)
 				return errors.New(info)
 			}
+			// 对应种类表把种类转化成int32
+			//c, b := enums.CategoryMap[category]
+			//if !b {
+			//	info := fmt.Sprintf("种类不存在:%s", category)
+			//	return errors.New(info)
+			//}
 			// 3. 商品描述
 			description := row[2]
 			// 4. 价格
@@ -69,9 +75,9 @@ func UploadProduct(file []byte) error {
 			}
 
 			// 将解析后的数据存入批量插入数组
-			productBatch = append(productBatch, repository.Product{
+			productBatch = append(productBatch, dto.Product{
 				Name:        productName,
-				Category:    c,
+				Category:    int32(c),
 				Description: description,
 				Price:       p,
 				Stock:       int32(s),
