@@ -9,6 +9,7 @@ import (
 	"micro-services/risk-server/internal/handler"
 	"micro-services/risk-server/pkg/config"
 	"micro-services/risk-server/pkg/instance"
+	"micro-services/risk-server/pkg/localLog"
 	"net"
 	"os"
 	"time"
@@ -44,6 +45,11 @@ func initConfig() {
 	}
 	config.InitMySql()
 	config.InitRedis()
+	err = localLog.InitLog()
+	if err != nil {
+		log.Fatalf("Error initializing log config: %v", err)
+		return
+	}
 }
 func main() {
 	// TODO 设计风控模块数据库，存用户的ip，常用设备（user-agent），短时间修改密码次数（这个是举个例子）等信息
@@ -63,6 +69,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error registering service: %v", err)
 	}
+
+	localLog.RiskLog.Info("etcd: first time register risk-server")
+
 	instance.NewInstance()
 	// 启动 gRPC 服务
 	if err := startGRPCServer(); err != nil {

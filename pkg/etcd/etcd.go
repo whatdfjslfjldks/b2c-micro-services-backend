@@ -27,8 +27,7 @@ func NewEtcdService(dialTimeout time.Duration) (*EtcdService, error) {
 	}, nil
 }
 
-// 60s租约，每30s检测一次状态，心跳机制
-// register etcdservice with heartbeat (Lease)
+// RegisterService 60s租约，每30s检测一次状态，心跳机制
 func (es *EtcdService) RegisterService(serviceName, serviceAddr string, ttl int64) error {
 	// 创建一个租约（TTL 设定为 60 秒）
 	leaseResp, err := es.client.Grant(context.Background(), ttl)

@@ -9,6 +9,7 @@ import (
 	"micro-services/user-server/internal/handler"
 	"micro-services/user-server/pkg/config"
 	"micro-services/user-server/pkg/instance"
+	"micro-services/user-server/pkg/localLog"
 
 	"net"
 	"os"
@@ -50,6 +51,12 @@ func initConfig() {
 	}
 	config.InitRedis()
 	config.InitMySql()
+
+	err = localLog.InitLog()
+	if err != nil {
+		log.Fatalf("Error initializing log config: %v", err)
+		return
+	}
 }
 
 func main() {
@@ -67,6 +74,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error registering service: %v", err)
 	}
+
+	localLog.UserLog.Info("etcd: first time register user-server")
 
 	instance.NewInstance()
 

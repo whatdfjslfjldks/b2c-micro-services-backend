@@ -11,6 +11,7 @@ import (
 	"micro-services/recommend-server/pkg/config"
 	"micro-services/recommend-server/pkg/instance"
 	h "micro-services/recommend-server/pkg/kafka/handler"
+	"micro-services/recommend-server/pkg/localLog"
 	"net"
 	"os"
 	"time"
@@ -51,6 +52,12 @@ func initConfig() {
 	}
 	config.InitMySql()
 	config.InitRedis()
+
+	err = localLog.InitLog()
+	if err != nil {
+		log.Fatalf("Error loading config: %v", err)
+		return
+	}
 }
 
 // TODO 基于用户的协同过滤算法
@@ -72,6 +79,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error registering service: %v", err)
 	}
+
+	localLog.RecLog.Info("etcd: first time register recommend-server")
+
 	instance.NewInstance()
 
 	// 启动消费者进程

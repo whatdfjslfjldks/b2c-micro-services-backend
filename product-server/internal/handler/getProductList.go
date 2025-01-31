@@ -74,7 +74,7 @@ func (s *Server) GetSecKillList(ctx context.Context, req *pb.GetSecKillListReque
 		resp := &pb.GetSecKillListResponse{
 			Code:        500,
 			StatusCode:  "GLB-003",
-			Msg:         "数据库错误！",
+			Msg:         "获取数据失败！",
 			CurrentPage: req.CurrentPage,
 			PageSize:    req.PageSize,
 			Time:        req.Time,

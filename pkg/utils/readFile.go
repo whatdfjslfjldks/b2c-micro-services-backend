@@ -5,7 +5,7 @@ import (
 	"mime/multipart"
 )
 
-// 将文件转化为比特流
+// ReadFileContent 将文件转化为比特流
 func ReadFileContent(file *multipart.FileHeader) (
 	[]byte, error) {
 	f, err := file.Open()

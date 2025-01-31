@@ -15,5 +15,10 @@ func GetSecListAndTotalItems(currentPage int32, pageSize int32, time int32) (
 		return nil, 0, err
 	}
 
-	return products, 0, nil
+	// 获取秒杀商品总数
+	totalItems, err := repository.GetSecTotalItems(time)
+	if err != nil {
+		return nil, 0, err
+	}
+	return products, totalItems, nil
 }

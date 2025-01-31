@@ -6,6 +6,7 @@ import (
 	"log"
 	"micro-services/api-gateway/internal/instance"
 	"micro-services/api-gateway/internal/routes"
+	"micro-services/api-gateway/pkg/localLog"
 	"time"
 )
 
@@ -15,6 +16,10 @@ import (
 // TODO：            50054：product-server
 // TODO:             50055：recommend-server
 func main() {
+	err := localLog.InitLog()
+	if err != nil {
+		log.Fatalf("failed to init log: %v", err)
+	}
 	// 启动 HTTP 服务
 	r := gin.Default()
 	// 配置 CORS 中间件
@@ -30,9 +35,7 @@ func main() {
 	// 用gin做网关，进行路由的接收和转发
 	routes.SetupRoutes(r)
 
-	// TODO  测试
-	//recommendRoutes.Test()
-
+	localLog.GateWayLog.Info("api-gateway start: HTTP server is listening on port 8080")
 	// 启动 HTTP 服务，监听 8080 端口
 	log.Println("HTTP server is listening on port 8080")
 	if err := r.Run(":8080"); err != nil {

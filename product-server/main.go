@@ -9,6 +9,7 @@ import (
 	"micro-services/product-server/internal/handler"
 	"micro-services/product-server/pkg/config"
 	"micro-services/product-server/pkg/instance"
+	"micro-services/product-server/pkg/localLog"
 	"net"
 	"os"
 	"time"
@@ -38,23 +39,30 @@ func initConfig() {
 		return
 	}
 	config.InitMySql()
+
+	err = localLog.InitLog()
+	if err != nil {
+		log.Fatalf("Error initializing local log: %v", err)
+		return
+	}
 }
 func main() {
 
 	initConfig()
 
-	// 注册服务到 etcd
 	etcdServices, err := etcd.NewEtcdService(5 * time.Second)
 	if err != nil {
 		log.Fatalf("Error creating etcdservice: %v", err)
 	}
+
 	defer etcdServices.Close()
-	//fmt.Println("api:  ", os.Getenv("api"))
 	// 注册服务到 etcd
 	err = etcdServices.RegisterService("product-server", os.Getenv("api")+":50054", 60)
 	if err != nil {
 		log.Fatalf("Error registering service: %v", err)
 	}
+
+	localLog.ProductLog.Info("etcd: first time register product-server")
 
 	instance.NewInstance()
 

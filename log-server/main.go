@@ -7,6 +7,7 @@ import (
 	"micro-services/log-server/internal/handler"
 	"micro-services/log-server/pkg/config"
 	h "micro-services/log-server/pkg/kafka/handler"
+	"micro-services/log-server/pkg/localLog"
 	"micro-services/pkg/etcd"
 	pb "micro-services/pkg/proto/log-server"
 	"net"
@@ -34,19 +35,23 @@ func startGRPCServer() error {
 func initKafka() {
 	// 初始化生产者配置，里面已经初始化了kafka配置
 	h.InitProducer()
-
 }
-func initMysql() {
+func initConfig() {
 	if err := config.InitMysqlConfig(); err != nil {
 		log.Fatal("Error loading config: ", err)
 	}
 	config.InitMySql()
+
+	err := localLog.InitLog()
+	if err != nil {
+		log.Fatalf("Error loading config: %v", err)
+	}
 }
 func main() {
 
 	// 初始化kafka,生产者和消费者
 	initKafka()
-	initMysql()
+	initConfig()
 
 	// 注册服务到 etcd
 	etcdServices, err := etcd.NewEtcdService(5 * time.Second)
@@ -59,9 +64,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error registering service: %v", err)
 	}
-
-	// test √
-	//h.PostMsg("log-server", "/api/v1/user/login", "200", "success", "info", "2023-05-01 12:00:00")
+	localLog.LogLog.Info("etcd: first time register log-server")
 
 	// 启动消费者服务
 	// 异步执行，防止堵塞进程

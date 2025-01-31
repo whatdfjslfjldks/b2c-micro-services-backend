@@ -166,8 +166,9 @@ func getProductSold(id int32) (int32, error) {
 	return sold, nil
 }
 
+// UploadSecProduct 插入秒杀商品数据
 func UploadSecProduct(secProduct dto.SecKillProduct) error {
-	// 开始一个事务
+	// 开始一个事务, 保证事务可回滚
 	tx, err := config.MySqlClient.Begin()
 	if err != nil {
 		log.Printf("Failed to begin transaction: %v", err)
@@ -203,24 +204,39 @@ func UploadSecProduct(secProduct dto.SecKillProduct) error {
 		return errors.New("GLB-003")
 	}
 
+	// TODO 避免在循环体操作数据库，优化为批量插入
 	// 插入秒杀商品类型数据
+	var args []interface{}
+	query := "INSERT INTO b2c_product.product_seckill_type (sec_id, sec_type) VALUES"
 	for _, sType := range secProduct.SecType {
-		_, err = tx.Exec("INSERT INTO b2c_product.product_seckill_type (sec_id, sec_type) VALUES (?, ?)", id, sType.TypeName)
-		if err != nil {
-			log.Printf("Failed to insert sec_kill_product_type: %v", err)
-			return errors.New("GLB-003")
-		}
+		query += "(?,?),"
+		args = append(args, id, sType.TypeName)
 	}
-
+	query = query[:len(query)-1]
+	_, err = tx.Exec(query, args...)
+	if err != nil {
+		log.Printf("Failed to insert sec_kill_product_type: %v", err)
+		return errors.New("GLB-003")
+	}
 	// 插入秒杀商品图片数据
+	var args2 []interface{}
+	query2 := "INSERT INTO b2c_product.product_seckill_image (sec_id,sec_img) VALUES"
 	for _, sImg := range secProduct.SecImg {
-		_, err = tx.Exec("INSERT INTO b2c_product.product_seckill_image (sec_id, sec_img) VALUES (?, ?)", id, sImg.ImgUrl)
-		if err != nil {
-			log.Printf("Failed to insert sec_kill_product_img: %v", err)
-			return errors.New("GLB-003")
-		}
+		query2 += "(?,?),"
+		args2 = append(args2, id, sImg.ImgUrl)
 	}
-
+	query2 = query2[:len(query2)-1]
+	_, err = tx.Exec(query2, args2...)
+	if err != nil {
+		log.Printf("Failed to insert sec_kill_product_image: %v", err)
+		return errors.New("GLB-003")
+	}
+	// 初始化sale表
+	_, err = tx.Exec("INSERT INTO b2c_product.product_seckill_sale (sec_id, sold) VALUES (?, ?)", id, 0)
+	if err != nil {
+		log.Printf("Failed to insert product_sale: %v", err)
+		return errors.New("GLB-003")
+	}
 	// 提交事务
 	err = tx.Commit()
 	if err != nil {
@@ -326,21 +342,43 @@ func GetProductList(currentPage int32, pageSize int32, categoryId int32, sort in
 }
 
 // GetSecList 获取秒杀商品列表
-// TODO 封面,已售
+// TODO 已售
 func GetSecList(currentPage int32, pageSize int32, time int32) (
 	[]*pb.SecListItem, error) {
-	query := "SELECT sec_id,name,description,flash_sale_price,original_price,stock,start_time,end_time FROM b2c_product.products_seckill WHERE time=? LIMIT ? OFFSET ?"
+	// 使用 JOIN 查询一次性获取商品信息及已售数量
+	query := `
+		SELECT
+			p.sec_id,
+			p.name,
+			p.description,
+			p.flash_sale_price,
+			p.original_price,
+			p.stock,
+			p.start_time,
+			p.end_time,
+			p.sec_cover,
+			IFNULL(s.sold, 0) AS sold
+		FROM
+			b2c_product.products_seckill p
+		LEFT JOIN
+			b2c_product.product_seckill_sale s
+		ON
+			p.sec_id = s.sec_id
+		WHERE
+			p.time = ? 
+		LIMIT ? 
+		OFFSET ?`
 
 	// 执行商品查询
-	row, err := config.MySqlClient.Query(query, time, pageSize, (currentPage-1)*pageSize)
+	rows, err := config.MySqlClient.Query(query, time, pageSize, (currentPage-1)*pageSize)
 	if err != nil {
 		return nil, errors.New("GLB-003")
 	}
-	defer row.Close()
+	defer rows.Close()
 
 	// 处理查询结果
 	var productList []*pb.SecListItem
-	for row.Next() {
+	for rows.Next() {
 		var secId int32
 		var secName string
 		var secDescription string
@@ -349,21 +387,42 @@ func GetSecList(currentPage int32, pageSize int32, time int32) (
 		var secStock int32
 		var secStartTime string
 		var secEndTime string
-		err = row.Scan(&secId, &secName, &secDescription, &secPrice, &secOriginalPrice, &secStock, &secStartTime, &secEndTime)
+		var secCover sql.NullString // 使用 NullString 类型来处理可能的 NULL 值
+		var sold int32
+
+		err = rows.Scan(&secId, &secName, &secDescription, &secPrice, &secOriginalPrice, &secStock, &secStartTime, &secEndTime, &secCover, &sold)
 		if err != nil {
 			return nil, errors.New("GLB-003")
 		}
+
 		productList = append(productList, &pb.SecListItem{
 			SecId:            secId,
 			SecName:          secName,
 			SecOriginalPrice: secOriginalPrice,
 			SecPrice:         secPrice,
-			//SecSold:          0,
-			SecStock: secStock,
-			//SecCover:         "",
-			SecStartTime: secStartTime,
-			SecEndTime:   secEndTime,
+			SecStock:         secStock,
+			SecCover:         secCover.String,
+			SecStartTime:     secStartTime,
+			SecEndTime:       secEndTime,
+			SecSold:          sold,
 		})
 	}
+
+	// 检查查询过程中是否有错误
+	if err := rows.Err(); err != nil {
+		return nil, errors.New("GLB-003")
+	}
+
 	return productList, nil
+}
+
+// GetSecTotalItems 获取秒杀商品总数
+func GetSecTotalItems(time int32) (int32, error) {
+	query := `SELECT COUNT(*) FROM b2c_product.products_seckill WHERE time = ?`
+	var count int32
+	err := config.MySqlClient.QueryRow(query, time).Scan(&count)
+	if err != nil {
+		return 0, errors.New("GLB-003")
+	}
+	return count, nil
 }
