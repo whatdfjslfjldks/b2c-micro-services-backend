@@ -164,6 +164,40 @@ func UploadProductByExcel(c *gin.Context) {
 	})
 }
 
+func GetProductById(c *gin.Context) {
+	productId := c.DefaultQuery("productId", "0")
+	id, e := strconv.Atoi(productId)
+	if e != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "参数错误",
+		})
+		return
+	}
+	req := productServerProto.GetProductByIdRequest{
+		ProductId: int32(id),
+	}
+	var resp productServerProto.GetProductByIdResponse
+	err := instance.GrpcClient.CallProductService(model2, "getProductById", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	c.JSON(int(resp.Code), gin.H{
+		"code":        resp.Code,
+		"status_code": resp.StatusCode,
+		"msg":         resp.Msg,
+		"data": gin.H{
+			"product": resp.Product,
+		},
+	})
+}
+
 // GetProductDetailById 获取详情界面商品信息
 func GetProductDetailById(c *gin.Context) {
 	productId := c.DefaultQuery("productId", "0")
@@ -217,20 +251,8 @@ func UploadSecKillProduct(c *gin.Context) {
 		})
 		return
 	}
-	req := productServerProto.UploadSecKillProductRequest{
-		SecName:          request.SecName,
-		SecDescription:   request.SecDescription,
-		SecOriginalPrice: request.SecOriginalPrice,
-		SecPrice:         request.SecPrice,
-		SecStock:         request.SecStock,
-		SecStartTime:     request.SecStartTime,
-		SecEndTime:       request.SecEndTime,
-		SecImg:           request.SecImg,
-		SecType:          request.SecType,
-		Time:             request.Time,
-	}
 	var resp productServerProto.UploadSecKillProductResponse
-	err = instance.GrpcClient.CallProductService(model2, "uploadSecKillProduct", &req, &resp)
+	err = instance.GrpcClient.CallProductService(model2, "uploadSecKillProduct", &request, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"code":        500,

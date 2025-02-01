@@ -14,7 +14,7 @@ func (s *Server) TestAccessToken(ctx context.Context, req *pb.TestAccessTokenReq
 	if err != nil && !result {
 		resp.Code = 400
 		resp.StatusCode = "GLB-001"
-		resp.Msg = "accessToken 已过期或不匹配！"
+		resp.Msg = "accessToken 已过期！"
 		return resp, nil
 	} else {
 		resp.Code = 200
@@ -28,7 +28,7 @@ func (s *Server) TestAccessToken(ctx context.Context, req *pb.TestAccessTokenReq
 func (s *Server) TestRefreshToken(ctx context.Context, req *pb.TestRefreshTokenRequest) (
 	*pb.TestRefreshTokenResponse, error) {
 	resp := &pb.TestRefreshTokenResponse{}
-	accessToken, err := tokenService.TestRefreshToken(req.RefreshToken)
+	accessToken, refreshToken, err := tokenService.TestRefreshToken(req.RefreshToken)
 	if err != nil {
 		resp.Code = 400
 		resp.StatusCode = "GLB-001"
@@ -39,7 +39,7 @@ func (s *Server) TestRefreshToken(ctx context.Context, req *pb.TestRefreshTokenR
 		resp.StatusCode = "GLB-000"
 		resp.Msg = "token 验证成功"
 		resp.AccessToken = accessToken
-		resp.RefreshToken = req.RefreshToken
+		resp.RefreshToken = refreshToken
 		return resp, nil
 	}
 }

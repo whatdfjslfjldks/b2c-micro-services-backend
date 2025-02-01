@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	"micro-services/api-gateway/internal/routes/aiRoutes"
 	"micro-services/api-gateway/internal/routes/productRoutes"
 	"micro-services/api-gateway/internal/routes/recommendRoutes"
 	"micro-services/api-gateway/internal/routes/userRoutes"
@@ -42,8 +43,9 @@ func SetupRoutes(router *gin.Engine) {
 		// TODO 有空或者注意到，给多表插入操作加上事件回滚
 		productServer.GET("/getProductList", productRoutes.GetProductList)
 		productServer.GET("/getSecKillList", productRoutes.GetSecKillList)
-		// 获取详情页商品信息
-		productServer.GET("/getProductDetailById", productRoutes.GetProductDetailById)
+		// 获取详情页商品信息 (三种kind一个接口)
+		productServer.GET("/getProductById", productRoutes.GetProductById)
+		//productServer.GET("/getProductDetailById", productRoutes.GetProductDetailById)
 		// TODO： 批量上传接口，后面加一个身份验证，管理员权限才可以，accessToken role=admin
 		// 不支持图片的上传，图片可以通过对单一商品的修改上传
 		// TODO 返回一个预计上传时间
@@ -67,6 +69,13 @@ func SetupRoutes(router *gin.Engine) {
 		// 获取推荐商品
 		recommendServer.GET("/GetRecommendProductList", recommendRoutes.GetRecommendProductList)
 
+	}
+
+	// -----------------处理ai模块请求--------------------------------
+	model4 := "ai-server"
+	aiServer := router.Group("/api/" + model4)
+	{
+		aiServer.POST("/talk", aiRoutes.Talk)
 	}
 
 	// -----------------处理customer模块请求--------------------------------

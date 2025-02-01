@@ -51,3 +51,51 @@ type SecKillProduct struct {
 	SecImg           []*pb.SecImg
 	Time             int32 // 场次
 }
+
+// Products 顶层products表
+type Products struct {
+	ID          int32
+	Name        string
+	Kind        int32
+	Category    int32
+	Description string
+	CreateTime  string
+}
+
+type NormalProducts struct {
+	ImageList   []*pb.ProductImg
+	TypeList    []*pb.ProductType
+	Price       float64
+	OriginPrice float64
+	Stock       int32
+	Sold        int32
+}
+
+type SecProducts struct {
+	ImageList   []*pb.ProductImg
+	TypeList    []*pb.ProductType
+	Price       float64
+	OriginPrice float64
+	Stock       int32
+	Sold        int32
+	StartTime   string
+	Duration    string
+	SessionId   int32
+}
+
+type GetProductById struct {
+	ID          int32
+	Name        string
+	Price       float64
+	OriginPrice float64
+	CategoryID  int32
+	KindID      int32
+	Description string
+	Sold        int32
+	Stock       int32
+	StartTime   string
+	Duration    string
+	SessionID   int32
+	ImageList   []*pb.ProductImg
+	TypeList    []*pb.ProductType
+}

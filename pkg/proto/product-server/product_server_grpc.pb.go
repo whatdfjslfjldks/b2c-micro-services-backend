@@ -35,7 +35,7 @@ type ProductServiceClient interface {
 	// 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
 	// TODO 鉴权
 	UploadProductByExcel(ctx context.Context, in *UploadProductByExcelRequest, opts ...grpc.CallOption) (*UploadProductByExcelResponse, error)
-	// 通过product_id获取商品
+	// 获取详情页商品信息
 	GetProductById(ctx context.Context, in *GetProductByIdRequest, opts ...grpc.CallOption) (*GetProductByIdResponse, error)
 	// 获取详情页商品信息
 	GetProductDetailById(ctx context.Context, in *GetProductDetailByIdRequest, opts ...grpc.CallOption) (*GetProductDetailByIdResponse, error)
@@ -122,7 +122,7 @@ type ProductServiceServer interface {
 	// 注意限制文件大小，不能超过5MB，以免影响通信速度，估算，excel不能超过500行（实际可以1500行左右吧）
 	// TODO 鉴权
 	UploadProductByExcel(context.Context, *UploadProductByExcelRequest) (*UploadProductByExcelResponse, error)
-	// 通过product_id获取商品
+	// 获取详情页商品信息
 	GetProductById(context.Context, *GetProductByIdRequest) (*GetProductByIdResponse, error)
 	// 获取详情页商品信息
 	GetProductDetailById(context.Context, *GetProductDetailByIdRequest) (*GetProductDetailByIdResponse, error)

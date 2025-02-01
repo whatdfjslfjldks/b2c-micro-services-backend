@@ -1,1 +1,23 @@
 2025/01/31 18:28:49 localLog.go:36: [INFO] register product-service
+2025/01/31 18:46:02 localLog.go:36: [INFO] etcd: first time register product-server
+2025/01/31 21:36:09 localLog.go:36: [INFO] etcd: first time register product-server
+2025/01/31 21:41:31 localLog.go:36: [INFO] etcd: first time register product-server
+2025/01/31 21:46:38 localLog.go:36: [INFO] etcd: first time register product-server
+2025/01/31 22:46:23 localLog.go:36: [INFO] etcd: first time register product-server
+2025/01/31 22:54:17 localLog.go:46: [ERROR] GetProductDetail--Failed to scan row: sql: expected 9 destination arguments in Scan, not 6
+2025/01/31 22:56:16 localLog.go:36: [INFO] etcd: first time register product-server
+2025/01/31 22:56:21 localLog.go:46: [ERROR] GetProductDetail--Failed to scan row: sql: Scan error on column index 0, name "image": converting NULL to string is unsupported
+2025/02/01 23:06:47 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/01 23:23:38 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/01 23:43:50 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/01 23:58:01 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/01 23:58:13 localLog.go:46: [ERROR] GetProductDetail--Failed to scan row: sql: Scan error on column index 2, name "stock": converting NULL to int32 is unsupported
+2025/02/01 23:59:16 localLog.go:46: [ERROR] GetProductDetail--Failed to scan row: sql: Scan error on column index 2, name "stock": converting NULL to int32 is unsupported
+2025/02/01 23:59:50 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/01 23:59:56 localLog.go:46: [ERROR] GetProductDetail--Failed to scan row: sql: Scan error on column index 2, name "stock": converting NULL to int32 is unsupported
+2025/02/02 00:01:26 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 00:01:30 localLog.go:46: [ERROR] GetProductDetail--Failed to scan row: sql: Scan error on column index 2, name "stock": converting NULL to int32 is unsupported
+2025/02/02 00:03:28 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 00:49:37 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 00:58:41 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 00:59:36 localLog.go:36: [INFO] etcd: first time register product-server

@@ -5,7 +5,6 @@ import (
 	logServerProto "micro-services/pkg/proto/log-server"
 	pb "micro-services/pkg/proto/product-server"
 	"micro-services/pkg/utils"
-	"micro-services/product-server/internal/repository"
 	"micro-services/product-server/internal/service"
 	"micro-services/product-server/pkg/instance"
 )
@@ -14,33 +13,35 @@ import (
 // TODO 有空把repository层的service部分分出来
 func (s *Server) GetProductList(ctx context.Context, req *pb.GetProductListRequest) (
 	*pb.GetProductListResponse, error) {
-	resp := &pb.GetProductListResponse{}
+	//resp := &pb.GetProductListResponse{}
 
-	list, totalItems, err := repository.GetProductList(req.CurrentPage, req.PageSize, req.CategoryId, req.Sort)
-	if err != nil {
-		a := &logServerProto.PostLogRequest{
-			Level:       "ERROR",
-			Msg:         err.Error(),
-			RequestPath: "/getProductList",
-			Source:      "product-server",
-			StatusCode:  "GLB-003",
-			Time:        utils.GetTime(),
-		}
-		instance.GrpcClient.PostLog(a)
-		resp.Code = 500
-		resp.StatusCode = "GLB-003"
-		resp.Msg = err.Error()
-		return resp, nil
-	}
-	resp.ProductList = list
-	resp.TotalItems = totalItems
-	resp.Code = 200
-	resp.StatusCode = "GLB-000"
-	resp.Msg = "获取商品列表成功！"
-	resp.CurrentPage = req.CurrentPage
-	resp.PageSize = req.PageSize
-	resp.CategoryId = req.CategoryId
-	return resp, nil
+	//list, totalItems, err := repository.GetProductList(req.CurrentPage, req.PageSize, req.CategoryId, req.Sort)
+	//if err != nil {
+	//	a := &logServerProto.PostLogRequest{
+	//		Level:       "ERROR",
+	//		Msg:         err.Error(),
+	//		RequestPath: "/getProductList",
+	//		Source:      "product-server",
+	//		StatusCode:  "GLB-003",
+	//		Time:        utils.GetTime(),
+	//	}
+	//	instance.GrpcClient.PostLog(a)
+	//	resp.Code = 500
+	//	resp.StatusCode = "GLB-003"
+	//	resp.Msg = err.Error()
+	//	return resp, nil
+	//}
+	//resp.ProductList = list
+	//resp.TotalItems = totalItems
+	//resp.Code = 200
+	//resp.StatusCode = "GLB-000"
+	//resp.Msg = "获取商品列表成功！"
+	//resp.CurrentPage = req.CurrentPage
+	//resp.PageSize = req.PageSize
+	//resp.CategoryId = req.CategoryId
+	//return resp, nil
+
+	return nil, nil
 }
 
 // GetSecKillList 获取秒杀商品列表

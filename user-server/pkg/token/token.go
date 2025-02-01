@@ -16,7 +16,7 @@ type MyCustomClaims struct {
 // TODO 密钥，暂时硬编码，之后用openssl生成rsa密码，私钥存在环境变量里
 var secretKey = []byte("secret-key")
 
-// 生成刷新令牌
+// GenerateRefreshToken 生成刷新令牌
 func GenerateRefreshToken(userId int64, role string) (string, error) {
 	// 创建 JWT 的有效载荷（claims）
 
@@ -25,9 +25,9 @@ func GenerateRefreshToken(userId int64, role string) (string, error) {
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// 设置有效期
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)), // 设置过期时间为 24 小时
-			IssuedAt:  jwt.NewNumericDate(time.Now()),                     // 设置当前时间为签发时间
-			Issuer:    "b2cPlatform",                                      // 签发者
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 7)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()), // 设置当前时间为签发时间
+			Issuer:    "b2cPlatform",                  // 签发者
 		},
 	}
 	// 创建 JWT Token
@@ -42,7 +42,7 @@ func GenerateRefreshToken(userId int64, role string) (string, error) {
 	return tokenString, nil
 }
 
-// 生成访问令牌，常用于访问受限资源，
+// GenerateAccessToken 生成访问令牌，常用于访问受限资源，
 func GenerateAccessToken(userId int64, role string) (string, error) {
 	// 创建 JWT 的有效载荷（claims）
 	claims := MyCustomClaims{
@@ -50,9 +50,9 @@ func GenerateAccessToken(userId int64, role string) (string, error) {
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// 设置有效期
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 1)), // 设置过期时间为 1 小时
-			IssuedAt:  jwt.NewNumericDate(time.Now()),                    // 设置当前时间为签发时间
-			Issuer:    "b2cPlatform",                                     // 签发者
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 10)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()), // 设置当前时间为签发时间
+			Issuer:    "b2cPlatform",                  // 签发者
 		},
 	}
 
@@ -68,7 +68,7 @@ func GenerateAccessToken(userId int64, role string) (string, error) {
 	return tokenString, nil
 }
 
-// 提取 token 里的信息
+// GetInfoAndCheckExpire 提取 token 里的信息
 func GetInfoAndCheckExpire(token string) (
 	*MyCustomClaims, error) {
 	if token == "" {

@@ -13,3 +13,10 @@ var CategoryMap = map[string]int32{
 	"母婴用品": 9,
 	"书籍音像": 10,
 }
+
+// KindMap 定义商品销售类型 普通，秒杀，预售
+var KindMap = map[string]int32{
+	"普通": 1,
+	"秒杀": 2,
+	"预售": 3,
+}

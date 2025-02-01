@@ -9,7 +9,6 @@ import (
 	"micro-services/product-server/internal/service"
 	"micro-services/product-server/internal/service/file"
 	"micro-services/product-server/pkg/instance"
-	"micro-services/product-server/pkg/model/dto"
 )
 
 // UploadProductByExcel TODO 注意，不依靠返回的error判断
@@ -52,14 +51,18 @@ func (s *Server) UploadProductByExcel(ctx context.Context, req *pb.UploadProduct
 		}, nil
 	}
 
-	return nil, nil
+	return &pb.UploadProductByExcelResponse{
+		Code:       200,
+		StatusCode: "GLB-000",
+		Msg:        "批量上传成功！",
+	}, nil
 }
 
 // UploadSecKillProduct 上传秒杀商品
 func (s *Server) UploadSecKillProduct(c context.Context, req *pb.UploadSecKillProductRequest) (
 	*pb.UploadSecKillProductResponse, error) {
 	// 判断场次是否存在
-	if !service.IsSessionValid(req.Time) {
+	if !service.IsSessionValid(req.SessionId) {
 		resp := &pb.UploadSecKillProductResponse{
 			Code:       400,
 			StatusCode: "GLB-001",
@@ -68,7 +71,7 @@ func (s *Server) UploadSecKillProduct(c context.Context, req *pb.UploadSecKillPr
 		return resp, nil
 	}
 	// 判断图片,类别列表是否为空
-	if len(req.SecImg) == 0 || len(req.SecType) == 0 {
+	if len(req.Img) == 0 || len(req.Type) == 0 {
 		resp := &pb.UploadSecKillProductResponse{
 			Code:       400,
 			StatusCode: "GLB-001",
@@ -76,45 +79,20 @@ func (s *Server) UploadSecKillProduct(c context.Context, req *pb.UploadSecKillPr
 		}
 		return resp, nil
 	}
-	secProduct := dto.SecKillProduct{
-		SecName:          req.SecName,
-		SecDescription:   req.SecDescription,
-		SecPrice:         req.SecPrice,
-		SecOriginalPrice: req.SecOriginalPrice,
-		Stock:            req.SecStock,
-		StartTime:        req.SecStartTime,
-		EndTime:          req.SecEndTime,
-		SecType:          req.SecType,
-		SecImg:           req.SecImg,
-		Time:             req.Time,
-	}
-	err := repository.UploadSecProduct(secProduct)
+
+	err := repository.UploadSecProduct(req)
 	if err != nil {
-		if err.Error() == "GLB-003" {
-			a := &logServerProto.PostLogRequest{
-				Level:       "ERROR",
-				Msg:         "数据库错误！",
-				RequestPath: "/uploadSecKillProduct",
-				Source:      "product-server",
-				StatusCode:  "GLB-003",
-				Time:        utils.GetTime(),
-			}
-			instance.GrpcClient.PostLog(a)
-			return &pb.UploadSecKillProductResponse{
-				Code:       500,
-				Msg:        "数据库错误！",
-				StatusCode: "GLB-003",
-			}, nil
-		}
-		return &pb.UploadSecKillProductResponse{
+		resp := &pb.UploadSecKillProductResponse{
 			Code:       500,
-			Msg:        "数据插入失败！",
-			StatusCode: err.Error(),
-		}, nil
+			StatusCode: "GLB-003",
+			Msg:        "操作数据库出错！",
+		}
+		return resp, nil
 	}
+
 	return &pb.UploadSecKillProductResponse{
 		Code:       200,
-		Msg:        "数据插入成功！",
 		StatusCode: "GLB-000",
+		Msg:        "数据上传成功！",
 	}, nil
 }

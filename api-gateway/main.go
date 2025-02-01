@@ -15,6 +15,7 @@ import (
 // TODO:             50053：risk-server
 // TODO：            50054：product-server
 // TODO:             50055：recommend-server
+// TODO:             50056：ai-server
 func main() {
 	err := localLog.InitLog()
 	if err != nil {
