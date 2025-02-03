@@ -2,66 +2,82 @@ package handler
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"log"
 	logServerProto "micro-services/pkg/proto/log-server"
 	pb "micro-services/pkg/proto/product-server"
 	"micro-services/pkg/utils"
+	"micro-services/product-server/internal/repository"
 	"micro-services/product-server/internal/service"
 	"micro-services/product-server/pkg/instance"
 )
 
 // GetProductList 筛选条件 价格升序，时间降序
-// TODO 有空把repository层的service部分分出来
 func (s *Server) GetProductList(ctx context.Context, req *pb.GetProductListRequest) (
 	*pb.GetProductListResponse, error) {
-	//resp := &pb.GetProductListResponse{}
+	resp := &pb.GetProductListResponse{}
 
-	//list, totalItems, err := repository.GetProductList(req.CurrentPage, req.PageSize, req.CategoryId, req.Sort)
-	//if err != nil {
-	//	a := &logServerProto.PostLogRequest{
-	//		Level:       "ERROR",
-	//		Msg:         err.Error(),
-	//		RequestPath: "/getProductList",
-	//		Source:      "product-server",
-	//		StatusCode:  "GLB-003",
-	//		Time:        utils.GetTime(),
-	//	}
-	//	instance.GrpcClient.PostLog(a)
-	//	resp.Code = 500
-	//	resp.StatusCode = "GLB-003"
-	//	resp.Msg = err.Error()
-	//	return resp, nil
-	//}
-	//resp.ProductList = list
-	//resp.TotalItems = totalItems
-	//resp.Code = 200
-	//resp.StatusCode = "GLB-000"
-	//resp.Msg = "获取商品列表成功！"
-	//resp.CurrentPage = req.CurrentPage
-	//resp.PageSize = req.PageSize
-	//resp.CategoryId = req.CategoryId
-	//return resp, nil
-
-	return nil, nil
+	productList, totalItems, err := repository.GetProductList(req.CurrentPage, req.PageSize, req.CategoryId, 1, req.Sort)
+	if err != nil {
+		log.Printf("GetProductList error: %v", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			resp = &pb.GetProductListResponse{
+				Code:        400,
+				StatusCode:  "GLB-004",
+				Msg:         "没有商品！",
+				CurrentPage: req.CurrentPage,
+				PageSize:    req.PageSize,
+			}
+			return resp, nil
+		} else {
+			a := &logServerProto.PostLogRequest{
+				Level:       "ERROR",
+				Msg:         err.Error(),
+				RequestPath: "/getProductList",
+				Source:      "product-server",
+				StatusCode:  "GLB-003",
+				Time:        utils.GetTime(),
+			}
+			instance.GrpcClient.PostLog(a)
+			resp := &pb.GetProductListResponse{
+				Code:        500,
+				StatusCode:  "GLB-003",
+				Msg:         "获取数据失败！",
+				CurrentPage: req.CurrentPage,
+				PageSize:    req.PageSize,
+			}
+			return resp, nil
+		}
+	}
+	resp = &pb.GetProductListResponse{
+		Code:        200,
+		StatusCode:  "GLB-000",
+		Msg:         "获取数据成功！",
+		CurrentPage: req.CurrentPage,
+		PageSize:    req.PageSize,
+		TotalItems:  totalItems,
+		ProductList: productList,
+	}
+	return resp, nil
 }
 
 // GetSecKillList 获取秒杀商品列表
-// TODO 没有细分错误处理
 func (s *Server) GetSecKillList(ctx context.Context, req *pb.GetSecKillListRequest) (
 	*pb.GetSecKillListResponse, error) {
 	// 判断场次是存在
-	//fmt.Println("Sdfdsfsdf: ", req.Time)
-	if !service.IsSessionValid(req.Time) {
+	if !service.IsSessionValid(req.SessionId) {
 		resp := &pb.GetSecKillListResponse{
 			Code:        400,
 			StatusCode:  "GLB-001",
 			Msg:         "场次不存在！",
 			CurrentPage: req.CurrentPage,
 			PageSize:    req.PageSize,
-			Time:        req.Time,
+			SessionId:   req.SessionId,
 		}
 		return resp, nil
 	}
-	secProducts, totalItems, err := service.GetSecListAndTotalItems(req.CurrentPage, req.PageSize, req.Time)
+	secProducts, totalItems, err := repository.GetSecList(req.CurrentPage, req.PageSize, req.SessionId)
 	if err != nil {
 		a := &logServerProto.PostLogRequest{
 			Level:       "ERROR",
@@ -78,7 +94,7 @@ func (s *Server) GetSecKillList(ctx context.Context, req *pb.GetSecKillListReque
 			Msg:         "获取数据失败！",
 			CurrentPage: req.CurrentPage,
 			PageSize:    req.PageSize,
-			Time:        req.Time,
+			SessionId:   req.SessionId,
 		}
 		return resp, nil
 	}
@@ -91,6 +107,6 @@ func (s *Server) GetSecKillList(ctx context.Context, req *pb.GetSecKillListReque
 		PageSize:    req.PageSize,
 		TotalItems:  totalItems,
 		SecList:     secProducts,
-		Time:        req.Time,
+		SessionId:   req.SessionId,
 	}, nil
 }

@@ -21,3 +21,67 @@
 2025/02/02 00:49:37 localLog.go:36: [INFO] etcd: first time register product-server
 2025/02/02 00:58:41 localLog.go:36: [INFO] etcd: first time register product-server
 2025/02/02 00:59:36 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 01:00:35 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 18:48:21 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 18:48:48 localLog.go:46: [ERROR] GetProductList--Failed to execute query: sql: expected 1 arguments, got 2
+2025/02/02 18:51:53 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 18:52:07 localLog.go:46: [ERROR] GetProductList--Failed to scan row: sql: Scan error on column index 5, name "price": converting NULL to float64 is unsupported
+2025/02/02 19:14:03 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:15:40 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:18:49 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:23:22 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:26:51 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:29:32 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:32:58 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:33:01 localLog.go:46: [ERROR] GetProductList--Failed to execute base query: Error 1054 (42S22): Unknown column 'p.create_at' in 'order clause'
+2025/02/02 19:33:30 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:35:15 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:41:08 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:41:33 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 19:43:40 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 21:18:52 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 21:33:51 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 21:38:44 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 21:40:21 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 22:01:28 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 22:02:54 localLog.go:46: [ERROR] GetProductList--Failed to execute base query: Error 1054 (42S22): Unknown column 'p.category_id' in 'where clause'
+2025/02/02 22:04:30 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 22:08:04 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 22:09:53 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 22:10:46 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/02 22:12:28 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 15:46:18 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 15:53:33 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 16:50:31 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 17:27:51 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 17:30:08 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 17:41:23 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 17:43:18 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 17:45:08 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 17:49:26 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 17:49:46 localLog.go:46: [ERROR] GetList--Failed to execute count query: Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AND p.kind = ?' at line 11
+2025/02/03 17:51:27 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 17:52:15 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 20:30:16 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 20:31:52 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 20:31:55 localLog.go:46: [ERROR] GetList--Failed to scan base row: sql: Scan error on column index 6, name "price": converting NULL to float64 is unsupported
+2025/02/03 20:33:51 localLog.go:46: [ERROR] GetList--Failed to scan base row: sql: Scan error on column index 6, name "price": converting NULL to float64 is unsupported
+2025/02/03 20:35:08 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 20:58:55 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 21:15:11 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 21:16:28 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 21:17:06 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 21:18:02 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/03 21:18:51 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:18:57 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:19:04 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:19:05 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:19:24 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:19:28 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:19:33 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:19:40 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:19:43 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:20:10 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:20:20 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:20:53 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
+2025/02/03 21:20:57 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported

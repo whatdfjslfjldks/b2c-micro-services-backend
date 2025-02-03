@@ -84,7 +84,6 @@ func GetProductList(c *gin.Context) {
 			"totalItems":  resp.TotalItems,
 			"currentPage": resp.CurrentPage,
 			"pageSize":    resp.PageSize,
-			"categoryId":  resp.CategoryId,
 		},
 	})
 }
@@ -198,45 +197,45 @@ func GetProductById(c *gin.Context) {
 	})
 }
 
-// GetProductDetailById 获取详情界面商品信息
-func GetProductDetailById(c *gin.Context) {
-	productId := c.DefaultQuery("productId", "0")
-	id, e := strconv.Atoi(productId)
-	if e != nil {
-		c.JSON(500, gin.H{
-			"code":        500,
-			"status_code": "GLB-002",
-			"msg":         "参数错误",
-		})
-		return
-	}
-	req := productServerProto.GetProductDetailByIdRequest{
-		ProductId: int32(id),
-	}
-	var resp productServerProto.GetProductDetailByIdResponse
-	err := instance.GrpcClient.CallProductService(model2, "getProductDetailById", &req, &resp)
-	if err != nil {
-		c.JSON(500, gin.H{
-			"code":        500,
-			"status_code": "GLB-002",
-			"msg":         "grpc调用错误: " + err.Error(),
-		})
-		return
-	}
-	c.JSON(int(resp.Code), gin.H{
-		"code":        resp.Code,
-		"status_code": resp.StatusCode,
-		"msg":         resp.Msg,
-		"data": gin.H{
-			"product_id":    resp.ProductId,
-			"product_name":  resp.ProductName,
-			"product_price": resp.ProductPrice,
-			"product_img":   resp.ProductImg,
-			"product_type":  resp.ProductType,
-			"product_sold":  resp.Sold,
-		},
-	})
-}
+//// GetProductDetailById 获取详情界面商品信息
+//func GetProductDetailById(c *gin.Context) {
+//	productId := c.DefaultQuery("productId", "0")
+//	id, e := strconv.Atoi(productId)
+//	if e != nil {
+//		c.JSON(500, gin.H{
+//			"code":        500,
+//			"status_code": "GLB-002",
+//			"msg":         "参数错误",
+//		})
+//		return
+//	}
+//	req := productServerProto.GetProductDetailByIdRequest{
+//		ProductId: int32(id),
+//	}
+//	var resp productServerProto.GetProductDetailByIdResponse
+//	err := instance.GrpcClient.CallProductService(model2, "getProductDetailById", &req, &resp)
+//	if err != nil {
+//		c.JSON(500, gin.H{
+//			"code":        500,
+//			"status_code": "GLB-002",
+//			"msg":         "grpc调用错误: " + err.Error(),
+//		})
+//		return
+//	}
+//	c.JSON(int(resp.Code), gin.H{
+//		"code":        resp.Code,
+//		"status_code": resp.StatusCode,
+//		"msg":         resp.Msg,
+//		"data": gin.H{
+//			"product_id":    resp.ProductId,
+//			"product_name":  resp.ProductName,
+//			"product_price": resp.ProductPrice,
+//			"product_img":   resp.ProductImg,
+//			"product_type":  resp.ProductType,
+//			"product_sold":  resp.Sold,
+//		},
+//	})
+//}
 
 // UploadSecKillProduct 上传秒杀商品（非批量）
 func UploadSecKillProduct(c *gin.Context) {
@@ -273,7 +272,7 @@ func UploadSecKillProduct(c *gin.Context) {
 func GetSecKillList(c *gin.Context) {
 	currentPage := c.DefaultQuery("currentPage", "1")
 	pageSize := c.DefaultQuery("pageSize", "10")
-	time := c.DefaultQuery("time", "1") // 场次
+	time := c.DefaultQuery("sessionId", "1") // 场次
 	page, e := strconv.Atoi(currentPage)
 	if e != nil {
 		c.JSON(400, gin.H{
@@ -304,7 +303,7 @@ func GetSecKillList(c *gin.Context) {
 	req := productServerProto.GetSecKillListRequest{
 		CurrentPage: int32(page),
 		PageSize:    int32(size),
-		Time:        int32(t),
+		SessionId:   int32(t),
 	}
 	var resp productServerProto.GetSecKillListResponse
 	err := instance.GrpcClient.CallProductService(model2, "getSecKillList", &req, &resp)
@@ -325,7 +324,7 @@ func GetSecKillList(c *gin.Context) {
 			"totalItems":  resp.TotalItems,
 			"currentPage": resp.CurrentPage,
 			"pageSize":    resp.PageSize,
-			"Time":        resp.Time,
+			"sessionId":   resp.SessionId,
 		},
 	})
 }

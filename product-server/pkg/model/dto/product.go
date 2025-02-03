@@ -20,14 +20,14 @@ type ProductById struct {
 	Price       float64
 }
 
-type ProductDetail struct {
-	ProductId    int32
-	ProductName  string
-	ProductImg   []*pb.ProductImg
-	ProductPrice float64
-	ProductType  []*pb.ProductType
-	Sold         int32
-}
+//type ProductDetail struct {
+//	ProductId    int32
+//	ProductName  string
+//	ProductImg   []*pb.ProductImg
+//	ProductPrice float64
+//	ProductType  []*pb.ProductType
+//	Sold         int32
+//}
 
 type img struct {
 	ImgId  int32
@@ -63,17 +63,27 @@ type Products struct {
 }
 
 type NormalProducts struct {
-	ImageList   []*pb.ProductImg
-	TypeList    []*pb.ProductType
+	ID          int32
+	Name        string
+	Description string
+	Kind        int32
+	Category    int32
+	ImageList   []*pb.PImg
+	TypeList    []*pb.PType
 	Price       float64
 	OriginPrice float64
 	Stock       int32
 	Sold        int32
+	CreateTime  string
+}
+
+type Test struct {
+	PPP []NormalProducts
 }
 
 type SecProducts struct {
-	ImageList   []*pb.ProductImg
-	TypeList    []*pb.ProductType
+	ImageList   []*pb.PImg
+	TypeList    []*pb.PType
 	Price       float64
 	OriginPrice float64
 	Stock       int32
@@ -83,19 +93,19 @@ type SecProducts struct {
 	SessionId   int32
 }
 
-type GetProductById struct {
-	ID          int32
-	Name        string
-	Price       float64
-	OriginPrice float64
-	CategoryID  int32
-	KindID      int32
-	Description string
-	Sold        int32
-	Stock       int32
-	StartTime   string
-	Duration    string
-	SessionID   int32
-	ImageList   []*pb.ProductImg
-	TypeList    []*pb.ProductType
-}
+//type GetProductById struct {
+//	ID          int32
+//	Name        string
+//	Price       float64
+//	OriginPrice float64
+//	CategoryID  int32
+//	KindID      int32
+//	Description string
+//	Sold        int32
+//	Stock       int32
+//	StartTime   string
+//	Duration    string
+//	SessionID   int32
+//	ImageList   []*pb.ProductImg
+//	TypeList    []*pb.ProductType
+//}

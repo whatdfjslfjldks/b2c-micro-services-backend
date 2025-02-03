@@ -11,8 +11,8 @@ service ProductService{
   rpc UploadProductByExcel(UploadProductByExcelRequest) returns (UploadProductByExcelResponse);
   // 获取详情页商品信息
   rpc GetProductById(GetProductByIdRequest) returns (GetProductByIdResponse);
-  // 获取详情页商品信息
-  rpc GetProductDetailById(GetProductDetailByIdRequest) returns (GetProductDetailByIdResponse);
+
+//  rpc GetProductDetailById(GetProductDetailByIdRequest) returns (GetProductDetailByIdResponse);
   // 上传秒杀商品
   // TODO 鉴权
   rpc UploadSecKillProduct(UploadSecKillProductRequest) returns (UploadSecKillProductResponse);
@@ -22,7 +22,7 @@ service ProductService{
 message GetSecKillListRequest{
   int32 currentPage = 1;
   int32 pageSize = 2;
-  int32 time=3; // 场次
+  int32 session_id=3; // 场次
 }
 message GetSecKillListResponse{
   int32 code=1;
@@ -31,33 +31,43 @@ message GetSecKillListResponse{
   int32 currentPage = 4;
   int32 pageSize = 5;
   int32 totalItems = 6;
-  repeated SecListItem secList = 7;
-  int32 time=8;  // 场次
+  int32 session_id=7;  // 场次
+  repeated SecListItem secList = 8;
 }
 message SecListItem{
-  int32 sec_id = 1;
-  string sec_name = 2;
-  string sec_cover = 3;
-  double sec_price = 4;
-  double sec_original_price = 5;
-  int32 sec_stock = 6; // 库存
-  int32 sec_sold = 7; // 已售
-  string sec_start_time = 8;
-  string sec_end_time = 9;
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  repeated PImg pImg = 4;
+  repeated PType pType = 5;
+  double price = 6;
+  double original_price = 7;
+  int32 stock = 8;
+  int32 sold = 9;
+  string create_time = 10;
+  int32 category_id = 11;
+  int32 kind_id = 12;
+  string start_time = 13;
+  string duration = 14;
+  int32 session_id = 15;
 }
 
 message UploadSecKillProductRequest{
-  string name = 1;
-  string description = 2;
-  double original_price = 3;
-  double price = 4;
-  int32 stock = 5;
-  string start_time = 6;
-  string duration = 7;
-  repeated Sec_img img = 8; // 图片列表 默认取第一张做封面
-  repeated Sec_type type = 9; // 类别列表
-  int32 session_id=10; // 场次,具体含义查看enums包
-  int32 category_id=11;
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  repeated PImg pImg = 4;
+  repeated PType pType = 5;
+  double price = 6;
+  double original_price = 7;
+  int32 stock = 8;
+  int32 sold = 9;
+  string create_time = 10;
+  int32 category_id = 11;
+  int32 kind_id = 12;
+  string start_time = 13;
+  string duration = 14;
+  int32 session_id = 15;
 }
 
 // request
@@ -74,32 +84,25 @@ message UploadSecKillProductResponse{
   string msg=3;
 }
 
-message GetProductDetailByIdRequest{
-  int32 product_id = 1;
-}
-message GetProductDetailByIdResponse{
-  int32 code=1;
-  string status_code=2;
-  string msg=3;
-  int32 product_id = 4;
-  string product_name = 5;
-  repeated Product_img product_img = 6;
-  double product_price = 7;
-  repeated Product_type product_type = 8;
-  int32 sold = 9;
-//  int32 product_categoryId = 5;
-//  string description = 6;
-}
+//message GetProductDetailByIdRequest{
+//  int32 product_id = 1;
+//}
+//message GetProductDetailByIdResponse{
+//  int32 code=1;
+//  string status_code=2;
+//  string msg=3;
+//  int32 product_id = 4;
+//  string product_name = 5;
+//  repeated PImg product_img = 6;
+//  double product_price = 7;
+//  repeated PType product_type = 8;
+//  int32 sold = 9;
+////  int32 product_categoryId = 5;
+////  string description = 6;
+//}
 
-// response
-message Product_type{
-  int32 type_id = 1;
-  string type_name = 2;
-}
-message Product_img{
-  int32 img_id = 1;
-  string img_url = 2;
-}
+
+
 message GetProductByIdRequest{
   int32 product_id = 1;
 }
@@ -123,8 +126,8 @@ message ProductById{
   string start_time = 10;
   string duration = 11;
   int32 session_id = 12;
-  repeated Product_img product_img = 13;
-  repeated Product_type product_type = 14;
+  repeated PImg pImg = 13;
+  repeated PType pType = 14;
 }
 
 message UploadProductByExcelRequest{
@@ -149,14 +152,29 @@ message GetProductListResponse{
   int32 pageSize = 5;
   int32 totalItems = 6;
   repeated ProductListItem productList = 7;
-  int32 categoryId=8; // 返回一个当前商品种类id
+
 }
 message ProductListItem{
-  int32 product_id = 1;
-  string product_name = 2;
-  string product_cover = 3;
-  double product_price = 4;
-  int32 product_categoryId = 5;
-  string description = 6;
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+  repeated PImg pImg = 4;
+  repeated PType pType = 5;
+  double price = 6;
+  double original_price = 7;
+  int32 stock = 8;
+  int32 sold = 9;
+  string create_time = 10;
+  int32 category_id = 11;
+  int32 kind_id = 12;
 }
+
+message PImg{
+  string img_url = 1;
+}
+
+message PType{
+  string type_name = 1;
+}
+
 

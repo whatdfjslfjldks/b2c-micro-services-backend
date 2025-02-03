@@ -71,7 +71,7 @@ func (s *Server) UploadSecKillProduct(c context.Context, req *pb.UploadSecKillPr
 		return resp, nil
 	}
 	// 判断图片,类别列表是否为空
-	if len(req.Img) == 0 || len(req.Type) == 0 {
+	if len(req.PImg) == 0 || len(req.PType) == 0 {
 		resp := &pb.UploadSecKillProductResponse{
 			Code:       400,
 			StatusCode: "GLB-001",

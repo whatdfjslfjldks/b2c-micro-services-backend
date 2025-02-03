@@ -12,6 +12,7 @@ func GetProductById(id int32) (
 	*pb.ProductById, error) {
 	// 查顶层products表，并判断商品kind
 	products, err := repository.GetInfoFromProducts(id)
+	//fmt.Println("products: ", products)
 	if err != nil {
 		log.Printf("GetInfoFromProducts err: %v", err)
 		return nil, err
@@ -21,6 +22,7 @@ func GetProductById(id int32) (
 		// 普通商品 四表联查
 		productDetail, err := repository.GetProductDetail(id)
 		if err != nil {
+			//log.Println("GetProductDetail error:", err)
 			return nil, err
 		}
 		return &pb.ProductById{
@@ -33,8 +35,8 @@ func GetProductById(id int32) (
 			Description:   products.Description,
 			Sold:          productDetail.Sold,
 			Stock:         productDetail.Stock,
-			ProductImg:    productDetail.ImageList,
-			ProductType:   productDetail.TypeList,
+			PImg:          productDetail.ImageList,
+			PType:         productDetail.TypeList,
 		}, nil
 	case 2:
 		productDetail, err := repository.GetSecProductDetail(id)
@@ -52,8 +54,8 @@ func GetProductById(id int32) (
 			Description:   products.Description,
 			Sold:          productDetail.Sold,
 			Stock:         productDetail.Stock,
-			ProductImg:    productDetail.ImageList,
-			ProductType:   productDetail.TypeList,
+			PImg:          productDetail.ImageList,
+			PType:         productDetail.TypeList,
 			StartTime:     productDetail.StartTime,
 			Duration:      productDetail.Duration,
 			SessionId:     productDetail.SessionId,
