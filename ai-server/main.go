@@ -49,18 +49,4 @@ func main() {
 		log.Fatalf("failed to start gRPC server: %v", err)
 	}
 
-	//r := gin.Default()
-	//r.Use(cors.New(cors.Config{
-	//	AllowOrigins:     []string{"*"},                                                                                                        // 允许的跨域来源，* 表示允许所有
-	//	AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},                                                                  // 允许的请求方法
-	//	AllowHeaders:     []string{"Access-Token", "Refresh-Token", "X-Real-IP", "X-Forwarded-For", "Origin", "Content-Type", "Authorization"}, // 允许的请求头
-	//	AllowCredentials: true,                                                                                                                 // 是否允许携带凭证（例如 cookies）
-	//	MaxAge:           12 * time.Hour,                                                                                                       // 预检请求的有效期，单位是时间
-	//}))
-	//routes.SetupRoutes(r)
-	//
-	//if err := r.Run(":8080"); err != nil {
-	//	log.Fatalf("failed to start HTTP server: %v", err)
-	//}
-
 }

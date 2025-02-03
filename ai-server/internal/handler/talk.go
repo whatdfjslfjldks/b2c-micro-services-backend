@@ -13,7 +13,7 @@ func (s *Server) Talk(req *ai_server_proto.TalkRequest, stream ai_server_proto.A
 	// 构造 HTTP 请求体
 	ollamaRequest := map[string]interface{}{
 		"prompt": req.Prompt,
-		"model":  "deepseek-r1:32b",
+		"model":  "deepseek-r1:1.5b",
 		"stream": true, // 启用流式处理
 	}
 	requestBody, _ := json.Marshal(ollamaRequest)

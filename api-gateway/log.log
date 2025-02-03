@@ -20,3 +20,5 @@
 2025/02/03 15:52:32 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
 2025/02/03 16:31:04 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
 2025/02/03 17:01:45 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/03 17:30:00 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/03 21:44:14 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
