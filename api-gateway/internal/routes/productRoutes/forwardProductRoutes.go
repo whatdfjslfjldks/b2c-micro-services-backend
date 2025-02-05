@@ -3,7 +3,6 @@ package productRoutes
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/protobuf/proto"
 	"micro-services/api-gateway/internal/instance"
 	"micro-services/pkg/utils"
 	"path/filepath"
@@ -65,7 +64,7 @@ func GetProductList(c *gin.Context) {
 		CategoryId:  int32(id),
 		Sort:        int32(s),
 	}
-	var resp productServerProto.GetProductListResponse
+	var resp interface{}
 	err := instance.GrpcClient.CallProductService(model2, "getProductList", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -75,15 +74,16 @@ func GetProductList(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(int(resp.Code), gin.H{
-		"code":        resp.Code,
-		"status_code": resp.StatusCode,
-		"msg":         resp.Msg,
+	respCopy := resp.(*productServerProto.GetProductListResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 		"data": gin.H{
-			"productList": resp.ProductList,
-			"totalItems":  resp.TotalItems,
-			"currentPage": resp.CurrentPage,
-			"pageSize":    resp.PageSize,
+			"productList": respCopy.ProductList,
+			"totalItems":  respCopy.TotalItems,
+			"currentPage": respCopy.CurrentPage,
+			"pageSize":    respCopy.PageSize,
 		},
 	})
 }
@@ -146,7 +146,7 @@ func UploadProductByExcel(c *gin.Context) {
 	req := productServerProto.UploadProductByExcelRequest{
 		File: fileContent,
 	}
-	var resp productServerProto.UploadProductByExcelResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallProductService(model2, "uploadProductByExcel", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -156,10 +156,11 @@ func UploadProductByExcel(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(int(resp.Code), gin.H{
-		"code":        resp.Code,
-		"status_code": resp.StatusCode,
-		"msg":         resp.Msg,
+	respCopy := resp.(*productServerProto.UploadProductByExcelResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 	})
 }
 
@@ -177,7 +178,7 @@ func GetProductById(c *gin.Context) {
 	req := productServerProto.GetProductByIdRequest{
 		ProductId: int32(id),
 	}
-	var resp productServerProto.GetProductByIdResponse
+	var resp interface{}
 	err := instance.GrpcClient.CallProductService(model2, "getProductById", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -187,12 +188,13 @@ func GetProductById(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(int(resp.Code), gin.H{
-		"code":        resp.Code,
-		"status_code": resp.StatusCode,
-		"msg":         resp.Msg,
+	respCopy := resp.(*productServerProto.GetProductByIdResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 		"data": gin.H{
-			"product": resp.Product,
+			"product": respCopy.Product,
 		},
 	})
 }
@@ -250,7 +252,7 @@ func UploadSecKillProduct(c *gin.Context) {
 		})
 		return
 	}
-	var resp productServerProto.UploadSecKillProductResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallProductService(model2, "uploadSecKillProduct", &request, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -260,7 +262,7 @@ func UploadSecKillProduct(c *gin.Context) {
 		})
 		return
 	}
-	respCopy := proto.Clone(&resp).(*productServerProto.UploadSecKillProductResponse)
+	respCopy := (resp).(*productServerProto.UploadSecKillProductResponse)
 	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
@@ -305,7 +307,7 @@ func GetSecKillList(c *gin.Context) {
 		PageSize:    int32(size),
 		SessionId:   int32(t),
 	}
-	var resp productServerProto.GetSecKillListResponse
+	var resp interface{}
 	err := instance.GrpcClient.CallProductService(model2, "getSecKillList", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -315,16 +317,17 @@ func GetSecKillList(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(int(resp.Code), gin.H{
-		"code":        resp.Code,
-		"status_code": resp.StatusCode,
-		"msg":         resp.Msg,
+	respCopy := resp.(*productServerProto.GetSecKillListResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 		"data": gin.H{
-			"productList": resp.SecList,
-			"totalItems":  resp.TotalItems,
-			"currentPage": resp.CurrentPage,
-			"pageSize":    resp.PageSize,
-			"sessionId":   resp.SessionId,
+			"productList": respCopy.SecList,
+			"totalItems":  respCopy.TotalItems,
+			"currentPage": respCopy.CurrentPage,
+			"pageSize":    respCopy.PageSize,
+			"sessionId":   respCopy.SessionId,
 		},
 	})
 }

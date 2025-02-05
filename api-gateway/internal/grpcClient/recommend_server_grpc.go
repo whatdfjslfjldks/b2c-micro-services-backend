@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (c *GRPCClient) CallRecommendService(serviceName string, method string, request interface{}, response interface{}) error {
+func (c *GRPCClient) CallRecommendService(serviceName string, method string, request interface{}, response *interface{}) error {
 	// 获取服务地址
 	serviceAddr, err := c.etcdClient.GetService(serviceName)
 	if err != nil {
@@ -84,7 +84,7 @@ func (c *GRPCClient) CallRecommendService(serviceName string, method string, req
 			}
 			return fmt.Errorf("failed to call getRecommendProductList: %v", e)
 		}
-		response = resp
+		*response = resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

@@ -94,3 +94,210 @@
 2025/02/05 23:35:19 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
 2025/02/05 23:37:18 localLog.go:36: [INFO] request /api/pay-server/tradePreCreate cost time 1441 ms
 
+2025/02/05 23:37:51 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/05 23:38:27 localLog.go:36: [INFO] request /api/api/pay-server/tradePreCreate cost time 0 ms
+
+2025/02/05 23:38:44 localLog.go:36: [INFO] request /api/pay-server/tradePreCreate cost time 1106 ms
+
+2025/02/05 23:42:51 localLog.go:36: [INFO] request /api/pay-server/tradePreCreate cost time 1222 ms
+
+2025/02/05 23:42:57 localLog.go:36: [INFO] request /api/pay-server/tradePreCreate cost time 1159 ms
+
+2025/02/05 23:56:10 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/05 23:56:16 localLog.go:36: [INFO] request /api/pay-server/tradePreCreate cost time 1299 ms
+
+2025/02/05 23:56:24 localLog.go:36: [INFO] request /api/user-server/loginByPassword cost time 186 ms
+
+2025/02/05 23:56:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 5 ms
+
+2025/02/05 23:56:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 109 ms
+
+2025/02/05 23:56:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 48 ms
+
+2025/02/05 23:56:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 124 ms
+
+2025/02/05 23:56:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 98 ms
+
+2025/02/05 23:56:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 15 ms
+
+2025/02/05 23:56:51 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 204 ms
+
+2025/02/05 23:56:58 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 205 ms
+
+2025/02/05 23:56:58 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 212 ms
+
+2025/02/05 23:57:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 5 ms
+
+2025/02/05 23:57:02 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 10 ms
+
+2025/02/05 23:57:03 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 57 ms
+
+2025/02/05 23:57:03 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 6 ms
+
+2025/02/05 23:57:03 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 3 ms
+
+2025/02/05 23:57:04 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 5 ms
+
+2025/02/05 23:57:04 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 7 ms
+
+2025/02/05 23:57:04 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 4 ms
+
+2025/02/05 23:57:05 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 13 ms
+
+2025/02/05 23:57:05 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 10 ms
+
+2025/02/05 23:57:05 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 6 ms
+
+2025/02/05 23:57:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 5 ms
+
+2025/02/05 23:57:06 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 6 ms
+
+2025/02/05 23:57:07 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 6 ms
+
+2025/02/05 23:57:07 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 9 ms
+
+2025/02/05 23:57:08 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 10 ms
+
+2025/02/05 23:57:10 localLog.go:36: [INFO] request /api/product-server/getSecKillList cost time 160 ms
+
+2025/02/05 23:57:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/05 23:57:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 25 ms
+
+2025/02/05 23:57:15 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 37 ms
+
+2025/02/05 23:57:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 50 ms
+
+2025/02/05 23:57:23 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 10 ms
+
+2025/02/05 23:57:28 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 91 ms
+
+2025/02/05 23:57:34 localLog.go:36: [INFO] request /api/user-server/loginByPassword cost time 145 ms
+
+2025/02/05 23:57:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 8 ms
+
+2025/02/05 23:57:35 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 11 ms
+
+2025/02/05 23:57:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 148 ms
+
+2025/02/05 23:57:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 47 ms
+
+2025/02/05 23:57:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 46 ms
+
+2025/02/05 23:57:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 146 ms
+
+2025/02/05 23:58:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 81 ms
+
+2025/02/05 23:58:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 104 ms
+
+2025/02/05 23:58:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 64 ms
+
+2025/02/05 23:58:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 15 ms
+
+2025/02/05 23:58:14 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 17 ms
+
+2025/02/05 23:58:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 128 ms
+
+2025/02/05 23:58:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 98 ms
+
+2025/02/05 23:58:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/05 23:58:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 86 ms
+
+2025/02/05 23:58:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 78 ms
+
+2025/02/05 23:58:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 48 ms
+
+2025/02/05 23:58:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 51 ms
+
+2025/02/05 23:58:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 46 ms
+
+2025/02/05 23:59:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 50 ms
+
+2025/02/05 23:59:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 54 ms
+
+2025/02/05 23:59:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 44 ms
+
+2025/02/05 23:59:12 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 14 ms
+
+2025/02/05 23:59:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 46 ms
+
+2025/02/05 23:59:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 50 ms
+
+2025/02/05 23:59:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 48 ms
+
+2025/02/05 23:59:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 79 ms
+
+2025/02/05 23:59:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 48 ms
+
+2025/02/06 00:00:16 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 101 ms
+
+2025/02/06 00:00:16 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 108 ms
+
+2025/02/06 00:00:37 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 100 ms
+
+2025/02/06 00:00:37 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 100 ms
+
+2025/02/06 00:01:32 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 132 ms
+
+2025/02/06 00:01:32 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 135 ms
+
+2025/02/06 00:01:39 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 89 ms
+
+2025/02/06 00:01:53 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 171 ms
+
+2025/02/06 00:01:53 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 244 ms
+
+2025/02/06 00:01:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 12 ms
+
+2025/02/06 00:01:55 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 16 ms
+
+2025/02/06 00:02:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 92 ms
+
+2025/02/06 00:02:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 104 ms
+
+2025/02/06 00:02:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 125 ms
+
+2025/02/06 00:02:12 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 17 ms
+
+2025/02/06 00:02:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 66 ms
+
+2025/02/06 00:02:15 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 22 ms
+
+2025/02/06 00:02:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 47 ms
+
+2025/02/06 00:02:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 66 ms
+
+2025/02/06 00:02:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 89 ms
+
+2025/02/06 00:02:34 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 43 ms
+
+2025/02/06 00:02:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 54 ms
+
+2025/02/06 00:03:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 141 ms
+
+2025/02/06 00:03:05 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 144 ms
+
+2025/02/06 00:03:08 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 6 ms
+
+2025/02/06 00:03:13 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 51 ms
+
+2025/02/06 00:03:14 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 15 ms
+
+2025/02/06 00:03:18 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 121 ms
+
+2025/02/06 00:03:23 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 85 ms
+
+2025/02/06 00:03:28 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/06 00:03:33 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 57 ms
+
+2025/02/06 00:03:37 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 125 ms
+
+2025/02/06 00:03:38 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 52 ms
+
+2025/02/06 00:03:38 localLog.go:36: [INFO] request /api/product-server/getSecKillList cost time 40 ms
+
+2025/02/06 00:03:43 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 57 ms
+
+2025/02/06 00:46:30 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080

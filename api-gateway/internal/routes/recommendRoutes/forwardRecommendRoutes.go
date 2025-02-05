@@ -2,7 +2,6 @@ package recommendRoutes
 
 import (
 	"github.com/gin-gonic/gin"
-	"google.golang.org/protobuf/proto"
 	"micro-services/api-gateway/internal/instance"
 	recommendServerProto "micro-services/pkg/proto/recommend-server"
 	"strconv"
@@ -26,7 +25,7 @@ func ClickProduct(c *gin.Context) {
 		UserId:    request.UserId,
 		ProductId: request.ProductId,
 	}
-	var resp recommendServerProto.ClickProductResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallRecommendService(model3, "clickProduct", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -56,7 +55,7 @@ func SearchProduct(c *gin.Context) {
 		UserId:  request.UserId,
 		Keyword: request.Keyword,
 	}
-	var resp recommendServerProto.SearchProductResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallRecommendService(model3, "searchProduct", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -86,7 +85,7 @@ func BrowseProduct(c *gin.Context) {
 		UserId:    request.UserId,
 		ProductId: request.ProductId,
 	}
-	var resp recommendServerProto.BrowseProductResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallRecommendService(model3, "browseProduct", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -117,7 +116,7 @@ func PurchaseProduct(c *gin.Context) {
 		ProductId: request.ProductId,
 		Quantity:  request.Quantity,
 	}
-	var resp recommendServerProto.PurchaseProductResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallRecommendService(model3, "purchaseProduct", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -148,7 +147,7 @@ func GetRecommendProductList(c *gin.Context) {
 		//CurrentPage: int32(size),
 		//PageSize:    int32(page),
 	}
-	var resp recommendServerProto.GetRecommendProductListResponse
+	var resp interface{}
 	err := instance.GrpcClient.CallRecommendService(model3, "getRecommendProductList", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -158,8 +157,8 @@ func GetRecommendProductList(c *gin.Context) {
 		})
 		return
 	}
-	respCopy := proto.Clone(&resp).(*recommendServerProto.GetRecommendProductListResponse)
-	c.JSON(int(resp.Code), gin.H{
+	respCopy := (resp).(*recommendServerProto.GetRecommendProductListResponse)
+	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
 		"msg":         respCopy.Msg,

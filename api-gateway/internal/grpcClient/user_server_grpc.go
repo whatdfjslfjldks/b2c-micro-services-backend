@@ -12,7 +12,7 @@ import (
 )
 
 // CallService 调用指定的 gRPC 服务方法
-func (c *GRPCClient) CallService(serviceName string, method string, request interface{}, response interface{}) error {
+func (c *GRPCClient) CallService(serviceName string, method string, request interface{}, response *interface{}) error {
 	//获取服务地址
 	serviceAddr, err := c.etcdClient.GetService(serviceName)
 	if err != nil {
@@ -49,7 +49,7 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			}
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		response = resp
+		*response = resp
 	case "checkVerifyCode":
 		req := request.(*userServerProto.EmailVerifyCodeRequest)
 		resp, err := client.EmailVerifyCode(ctx, req)
@@ -59,7 +59,7 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			}
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		response = resp
+		*response = resp
 	case "loginByPassword":
 		req := request.(*userServerProto.UsernameLoginRequest)
 		resp, err := client.UsernameLogin(ctx, req)
@@ -69,7 +69,7 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			}
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		response = resp
+		*response = resp
 	case "testAccessToken":
 		req := request.(*userServerProto.TestAccessTokenRequest)
 		resp, err := client.TestAccessToken(ctx, req)
@@ -79,7 +79,7 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			}
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		response = resp
+		*response = resp
 	case "testRefreshToken":
 		req := request.(*userServerProto.TestRefreshTokenRequest)
 		resp, err := client.TestRefreshToken(ctx, req)
@@ -89,7 +89,7 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			}
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		response = resp
+		*response = resp
 	case "changeUsername":
 		req := request.(*userServerProto.ChangeUsernameRequest)
 		resp, err := client.ChangeUsername(ctx, req)
@@ -99,7 +99,7 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			}
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		response = resp
+		*response = resp
 	case "changeEmail":
 		req := request.(*userServerProto.ChangeEmailRequest)
 		resp, err := client.ChangeEmail(ctx, req)
@@ -109,7 +109,7 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			}
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		response = resp
+		*response = resp
 	case "changePassword":
 		req := request.(*userServerProto.ChangePasswordRequest)
 		resp, err := client.ChangePassword(ctx, req)
@@ -119,7 +119,7 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			}
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		response = resp
+		*response = resp
 	case "changePasswordByEmail":
 		req := request.(*userServerProto.ChangePasswordByEmailRequest)
 		resp, err := client.ChangePasswordByEmail(ctx, req)
@@ -129,7 +129,7 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			}
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		response = resp
+		*response = resp
 	case "editUserInfo":
 		req := request.(*userServerProto.EditUserInfoRequest)
 		resp, err := client.EditUserInfo(ctx, req)
@@ -139,7 +139,7 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			}
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
-		response = resp
+		*response = resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

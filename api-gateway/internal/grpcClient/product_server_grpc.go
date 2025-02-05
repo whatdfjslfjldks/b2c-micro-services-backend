@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func (c *GRPCClient) CallProductService(serviceName string, method string, request interface{}, response interface{}) error {
+func (c *GRPCClient) CallProductService(serviceName string, method string, request interface{}, response *interface{}) error {
 	// 获取服务地址
 	serviceAddr, err := c.etcdClient.GetService(serviceName)
 	if err != nil {
@@ -51,7 +51,7 @@ func (c *GRPCClient) CallProductService(serviceName string, method string, reque
 			}
 			return fmt.Errorf("failed to call getProductList: %v", e)
 		}
-		response = resp
+		*response = resp
 	case "uploadProductByExcel":
 		req := request.(*productServerProto.UploadProductByExcelRequest)
 		resp, e := client.UploadProductByExcel(ctx, req)
@@ -61,7 +61,7 @@ func (c *GRPCClient) CallProductService(serviceName string, method string, reque
 			}
 			return fmt.Errorf("failed to call uploadProductByExcel: %v", e)
 		}
-		response = resp
+		*response = resp
 	//case "getProductDetailById":
 	//	req := request.(*productServerProto.GetProductDetailByIdRequest)
 	//	resp, e := client.GetProductDetailById(ctx, req)
@@ -81,7 +81,7 @@ func (c *GRPCClient) CallProductService(serviceName string, method string, reque
 			}
 			return fmt.Errorf("failed to call uploadSecKillProduct: %v", e)
 		}
-		response = resp
+		*response = resp
 	case "getSecKillList":
 		req := request.(*productServerProto.GetSecKillListRequest)
 		resp, e := client.GetSecKillList(ctx, req)
@@ -91,7 +91,7 @@ func (c *GRPCClient) CallProductService(serviceName string, method string, reque
 			}
 			return fmt.Errorf("failed to call getSecKillList: %v", e)
 		}
-		response = resp
+		*response = resp
 	case "getProductById":
 		req := request.(*productServerProto.GetProductByIdRequest)
 		resp, e := client.GetProductById(ctx, req)
@@ -101,7 +101,7 @@ func (c *GRPCClient) CallProductService(serviceName string, method string, reque
 			}
 			return fmt.Errorf("failed to call getProductById: %v", e)
 		}
-		response = resp
+		*response = resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

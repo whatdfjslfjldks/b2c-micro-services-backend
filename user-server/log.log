@@ -72,3 +72,7 @@
 2025/02/05 20:49:52 localLog.go:36: [INFO] etcd: first time register user-server on port: 50060 
 2025/02/05 20:49:52 localLog.go:36: [INFO] etcd: first time register user-server on port: 50063 
 2025/02/05 20:49:52 localLog.go:36: [INFO] etcd: first time register user-server on port: 50061 
+2025/02/05 23:55:03 localLog.go:36: [INFO] etcd: first time register user-server on port: 50061 
+2025/02/05 23:55:03 localLog.go:36: [INFO] etcd: first time register user-server on port: 50060 
+2025/02/05 23:55:03 localLog.go:36: [INFO] etcd: first time register user-server on port: 50062 
+2025/02/05 23:55:03 localLog.go:36: [INFO] etcd: first time register user-server on port: 50063 

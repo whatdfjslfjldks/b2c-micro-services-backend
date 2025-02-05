@@ -3,7 +3,6 @@ package userRoutes
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/protobuf/proto"
 	"micro-services/api-gateway/internal/instance"
 	userServerProto "micro-services/pkg/proto/user-server"
 )
@@ -27,7 +26,7 @@ func SendVerifyCode(c *gin.Context) {
 		Email: request.Email,
 	}
 	//创建响应对象
-	var resp userServerProto.EmailSendCodeResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallService(model, "sendVerifyCode", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -37,9 +36,8 @@ func SendVerifyCode(c *gin.Context) {
 		})
 		return
 	}
-	// 使用 proto.Clone 创建响应副本，避免直接复制锁定结构体
-	respCopy := proto.Clone(&resp).(*userServerProto.EmailSendCodeResponse)
-	c.JSON(int(resp.Code), gin.H{
+	respCopy := (resp).(*userServerProto.EmailSendCodeResponse)
+	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
 		"msg":         respCopy.Msg,
@@ -69,7 +67,7 @@ func CheckVerifyCode(c *gin.Context) {
 		Ip:         ip,
 		UserAgent:  agent,
 	}
-	var resp userServerProto.EmailVerifyCodeResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallService(model, "checkVerifyCode", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -79,7 +77,7 @@ func CheckVerifyCode(c *gin.Context) {
 		})
 		return
 	}
-	respCopy := proto.Clone(&resp).(*userServerProto.EmailVerifyCodeResponse)
+	respCopy := (resp).(*userServerProto.EmailVerifyCodeResponse)
 	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
@@ -120,7 +118,7 @@ func LoginByPassword(c *gin.Context) {
 		Ip:        ip,
 		UserAgent: agent,
 	}
-	var resp userServerProto.UsernameLoginResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallService(model, "loginByPassword", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -130,7 +128,7 @@ func LoginByPassword(c *gin.Context) {
 		})
 		return
 	}
-	respCopy := proto.Clone(&resp).(*userServerProto.UsernameLoginResponse)
+	respCopy := (resp).(*userServerProto.UsernameLoginResponse)
 	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
@@ -152,7 +150,7 @@ func TestAccessToken(c *gin.Context) {
 	req := userServerProto.TestAccessTokenRequest{
 		AccessToken: accessToken,
 	}
-	var resp userServerProto.TestAccessTokenResponse
+	var resp interface{}
 	err := instance.GrpcClient.CallService(model, "testAccessToken", &req, &resp)
 	if err != nil {
 		c.String(400, "nook")
@@ -164,7 +162,7 @@ func TestAccessToken(c *gin.Context) {
 		//})
 		//return
 	}
-	respCopy := proto.Clone(&resp).(*userServerProto.TestAccessTokenResponse)
+	respCopy := (resp).(*userServerProto.TestAccessTokenResponse)
 	if respCopy.Code == 200 {
 		c.String(200, "ok")
 		return
@@ -185,7 +183,7 @@ func TestRefreshToken(c *gin.Context) {
 	req := userServerProto.TestRefreshTokenRequest{
 		RefreshToken: refreshToken,
 	}
-	var resp userServerProto.TestRefreshTokenResponse
+	var resp interface{}
 	err := instance.GrpcClient.CallService(model, "testRefreshToken", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -195,7 +193,7 @@ func TestRefreshToken(c *gin.Context) {
 		})
 		return
 	}
-	respCopy := proto.Clone(&resp).(*userServerProto.TestRefreshTokenResponse)
+	respCopy := (resp).(*userServerProto.TestRefreshTokenResponse)
 	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
@@ -224,7 +222,7 @@ func ChangeUsername(c *gin.Context) {
 		Username:    request.Username,
 		AccessToken: request.AccessToken,
 	}
-	var resp userServerProto.ChangeUsernameResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallService(model, "changeUsername", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -234,7 +232,7 @@ func ChangeUsername(c *gin.Context) {
 		})
 		return
 	}
-	respCopy := proto.Clone(&resp).(*userServerProto.ChangeUsernameResponse)
+	respCopy := (resp).(*userServerProto.ChangeUsernameResponse)
 	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
@@ -267,7 +265,7 @@ func ChangeEmail(c *gin.Context) {
 		Ip:          ip,
 		UserAgent:   agent,
 	}
-	var resp userServerProto.ChangeEmailResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallService(model, "changeEmail", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -277,7 +275,7 @@ func ChangeEmail(c *gin.Context) {
 		})
 		return
 	}
-	respCopy := proto.Clone(&resp).(*userServerProto.ChangeEmailResponse)
+	respCopy := (resp).(*userServerProto.ChangeEmailResponse)
 	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
@@ -308,7 +306,7 @@ func ChangePassword(c *gin.Context) {
 		Ip:          ip,
 		UserAgent:   agent,
 	}
-	var resp userServerProto.ChangePasswordResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallService(model, "changePassword", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -318,7 +316,7 @@ func ChangePassword(c *gin.Context) {
 		})
 		return
 	}
-	respCopy := proto.Clone(&resp).(*userServerProto.ChangePasswordResponse)
+	respCopy := (resp).(*userServerProto.ChangePasswordResponse)
 	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
@@ -351,7 +349,7 @@ func ChangePasswordByEmail(c *gin.Context) {
 		Ip:          ip,
 		UserAgent:   agent,
 	}
-	var resp userServerProto.ChangePasswordByEmailResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallService(model, "changePasswordByEmail", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -361,7 +359,7 @@ func ChangePasswordByEmail(c *gin.Context) {
 		})
 		return
 	}
-	respCopy := proto.Clone(&resp).(*userServerProto.ChangePasswordByEmailResponse)
+	respCopy := (resp).(*userServerProto.ChangePasswordByEmailResponse)
 	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
@@ -388,7 +386,7 @@ func EditUserInfo(c *gin.Context) {
 		Location:    request.Location,
 		AccessToken: request.AccessToken,
 	}
-	var resp userServerProto.EditUserInfoResponse
+	var resp interface{}
 	err = instance.GrpcClient.CallService(model, "editUserInfo", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
@@ -398,7 +396,7 @@ func EditUserInfo(c *gin.Context) {
 		})
 		return
 	}
-	respCopy := proto.Clone(&resp).(*userServerProto.EditUserInfoResponse)
+	respCopy := (resp).(*userServerProto.EditUserInfoResponse)
 	c.JSON(int(respCopy.Code), gin.H{
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
