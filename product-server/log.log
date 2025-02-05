@@ -86,3 +86,5 @@
 2025/02/03 21:20:53 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
 2025/02/03 21:20:57 localLog.go:46: [ERROR] GetSecProductDetail--Failed to execute base query: sql: Scan error on column index 2, name "price": converting NULL to float64 is unsupported
 2025/02/03 21:27:18 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/05 19:52:48 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/05 23:10:45 localLog.go:36: [INFO] etcd: first time register product-server

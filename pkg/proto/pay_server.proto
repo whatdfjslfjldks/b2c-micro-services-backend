@@ -1,0 +1,23 @@
+syntax="proto3";
+
+package proto;
+option go_package = "./pay-server;pay_server_proto";
+
+
+service payService{
+ rpc TradePreCreate(TradePreCreateRequest) returns (TradePreCreateResponse);
+}
+
+message TradePreCreateRequest{
+  string subject = 1;  // 商品名字或描述
+  float total_amount = 2;
+  string return_url = 3;
+}
+
+message TradePreCreateResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string code_url = 4;
+}
+

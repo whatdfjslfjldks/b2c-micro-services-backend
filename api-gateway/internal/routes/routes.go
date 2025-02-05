@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"micro-services/api-gateway/internal/routes/aiRoutes"
+	"micro-services/api-gateway/internal/routes/payRoutes"
 	"micro-services/api-gateway/internal/routes/productRoutes"
 	"micro-services/api-gateway/internal/routes/recommendRoutes"
 	"micro-services/api-gateway/internal/routes/userRoutes"
@@ -78,11 +79,11 @@ func SetupRoutes(router *gin.Engine) {
 		aiServer.POST("/talk", aiRoutes.Talk)
 	}
 
-	// -----------------处理customer模块请求--------------------------------
-	//model4 := "customer-server"
-	//customerServer := router.Group("/api/" + model4)
-	//{
-	//	//customerServer.POST()
-	//}
+	// -----------------处理pay模块请求--------------------------------
+	model5 := "pay-server"
+	payServer := router.Group("/api/" + model5)
+	{
+		payServer.POST("/tradePreCreate", payRoutes.TradePreCreate)
+	}
 
 }

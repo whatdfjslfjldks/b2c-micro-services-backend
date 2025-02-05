@@ -18,21 +18,28 @@ import (
 // EmailSendCode 发送邮箱验证码
 func (s *Server) EmailSendCode(ctx context.Context, req *pb.EmailSendCodeRequest) (
 	*pb.EmailSendCodeResponse, error) {
-	//fmt.Println("发送邮箱验证码 入口--------------------")
-	email := req.Email
-	msg, err, httpCode, statusCode := emailService.SendEmailCode(email)
-	if err != nil {
-		return &pb.EmailSendCodeResponse{
-			Code:       httpCode,
-			StatusCode: statusCode,
-			Msg:        msg,
-		}, nil
-	} else {
-		return &pb.EmailSendCodeResponse{
-			Code:       httpCode,
-			StatusCode: statusCode,
-			Msg:        msg,
-		}, nil
+	for {
+		select {
+		case <-ctx.Done():
+			// 请求已被取消，可能是超时导致的
+			return nil, ctx.Err()
+		default:
+			email := req.Email
+			msg, err, httpCode, statusCode := emailService.SendEmailCode(email)
+			if err != nil {
+				return &pb.EmailSendCodeResponse{
+					Code:       httpCode,
+					StatusCode: statusCode,
+					Msg:        msg,
+				}, nil
+			} else {
+				return &pb.EmailSendCodeResponse{
+					Code:       httpCode,
+					StatusCode: statusCode,
+					Msg:        msg,
+				}, nil
+			}
+		}
 	}
 }
 

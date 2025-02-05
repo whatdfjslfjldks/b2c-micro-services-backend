@@ -10,7 +10,9 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt/v4 v4.5.1
+	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
+	github.com/smartwalle/alipay/v3 v3.2.24
 	github.com/xuri/excelize/v2 v2.9.0
 	go.etcd.io/etcd/client/v3 v3.5.17
 	golang.org/x/crypto v0.31.0
@@ -66,6 +68,9 @@ require (
 	github.com/richardlehane/mscfb v1.0.4 // indirect
 	github.com/richardlehane/msoleps v1.0.4 // indirect
 	github.com/rogpeppe/go-internal v1.13.1 // indirect
+	github.com/smartwalle/ncrypto v1.0.4 // indirect
+	github.com/smartwalle/ngx v1.0.9 // indirect
+	github.com/smartwalle/nsign v1.0.9 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/xuri/efp v0.0.0-20240408161823-9ad904a10d6d // indirect
