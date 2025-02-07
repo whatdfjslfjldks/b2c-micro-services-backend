@@ -3,6 +3,7 @@ package productRoutes
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	"micro-services/api-gateway/internal/instance"
 	"micro-services/pkg/utils"
 	"path/filepath"
@@ -329,5 +330,43 @@ func GetSecKillList(c *gin.Context) {
 			"pageSize":    respCopy.PageSize,
 			"sessionId":   respCopy.SessionId,
 		},
+	})
+}
+
+// PurchaseSecKill 购买秒杀商品
+func PurchaseSecKill(c *gin.Context) {
+	accessToken := c.Request.Header.Get("Access-Token")
+	type a struct {
+		ProductId int32 `json:"productId"`
+	}
+	var b a
+	if err := c.ShouldBindJSON(&b); err != nil {
+		log.Printf("err: %v", err)
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	req := productServerProto.PurchaseSecKillRequest{
+		Id:          b.ProductId,
+		AccessToken: accessToken,
+	}
+	var resp interface{}
+	err := instance.GrpcClient.CallProductService(model2, "purchaseSecKill", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := resp.(*productServerProto.PurchaseSecKillResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
 	})
 }

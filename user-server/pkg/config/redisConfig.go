@@ -30,7 +30,7 @@ var (
 	RdClient1 *redis.Client
 )
 
-// InitConfig 初始化配置，包括 MySQL 和 Redis
+// InitRedisConfig 初始化配置 Redis
 func InitRedisConfig() error {
 	rootPath := utils.GetCurrentPath(2)
 	configPath := filepath.Join(rootPath, "../pkg/config", "config.yml")

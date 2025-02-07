@@ -18,6 +18,19 @@ service ProductService{
   rpc UploadSecKillProduct(UploadSecKillProductRequest) returns (UploadSecKillProductResponse);
   // 获取秒杀商品列表
   rpc GetSecKillList(GetSecKillListRequest) returns (GetSecKillListResponse);
+
+  // 购买秒杀商品，库存上锁,查看是否登录
+  // TODO 基本信息，待传
+  rpc PurchaseSecKill(PurchaseSecKillRequest) returns (PurchaseSecKillResponse);
+}
+message PurchaseSecKillRequest{
+  int32 id = 1;  // 商品id
+  string access_token = 2;  // 短token
+}
+message PurchaseSecKillResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
 }
 message GetSecKillListRequest{
   int32 currentPage = 1;

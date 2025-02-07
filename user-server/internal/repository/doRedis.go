@@ -7,7 +7,24 @@ import (
 	"time"
 )
 
+//	func Test() string {
+//		pool := goredis.NewPool(config.RdClient)
+//		rs := redsync.New(pool)
+//
+//		// 获取一个锁对象，指定锁的名称
+//		mutex := rs.NewMutex("my-redis-lock")
+//
+//		// 尝试获取锁，设置锁的过期时间为 10 秒
+//		if err := mutex.Lock(); err != nil {
+//			panic(err)
+//		}
+//		fmt.Println("锁锁锁")
+//		time.Sleep(2 * time.Second)
+//		defer mutex.Unlock()
+//		return "yes"
+//	}
 func StoreCodeInRedis(email, code string) {
+
 	err := config.RdClient.Set(config.Ctx, email, code, 2*time.Minute).Err() //五分钟过期
 	if err != nil {
 		fmt.Println("存储验证码失败: ", err)

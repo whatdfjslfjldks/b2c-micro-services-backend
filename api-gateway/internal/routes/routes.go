@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"micro-services/api-gateway/internal/routes/aiRoutes"
+	"micro-services/api-gateway/internal/routes/orderRoutes"
 	"micro-services/api-gateway/internal/routes/payRoutes"
 	"micro-services/api-gateway/internal/routes/productRoutes"
 	"micro-services/api-gateway/internal/routes/recommendRoutes"
@@ -54,6 +55,8 @@ func SetupRoutes(router *gin.Engine) {
 		productServer.POST("/uploadProductByExcel", productRoutes.UploadProductByExcel)
 		// TODO 鉴权
 		productServer.POST("/uploadSecKillProduct", productRoutes.UploadSecKillProduct)
+
+		productServer.POST("/purchaseSecKill", productRoutes.PurchaseSecKill)
 	}
 
 	// -----------------处理recommend模块请求--------------------------------
@@ -84,6 +87,13 @@ func SetupRoutes(router *gin.Engine) {
 	payServer := router.Group("/api/" + model5)
 	{
 		payServer.POST("/tradePreCreate", payRoutes.TradePreCreate)
+	}
+
+	// -----------------处理order模块请求--------------------------------
+	model6 := "order-server"
+	orderServer := router.Group("/api/" + model6)
+	{
+		orderServer.POST("/createOrder", orderRoutes.CreateOrder)
 	}
 
 }

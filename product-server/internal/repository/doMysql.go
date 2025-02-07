@@ -4,13 +4,17 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/go-redsync/redsync/v4"
+	"github.com/go-redsync/redsync/v4/redis/goredis/v8"
 	"log"
 	pb "micro-services/pkg/proto/product-server"
 	"micro-services/pkg/utils"
 	"micro-services/product-server/pkg/config"
 	"micro-services/product-server/pkg/localLog"
 	"micro-services/product-server/pkg/model/dto"
+	c "micro-services/user-server/pkg/config"
 	"strings"
+	"time"
 )
 
 // SaveProductsBatch 只批量上传普通商品
@@ -24,11 +28,11 @@ func SaveProductsBatch(products []dto.Product) error {
 	defer tx.Rollback() // 如果发生错误，回滚事务
 
 	// 插入顶层products表
-	sql := "INSERT INTO b2c_product.products (name, category, kind, description, create_time) VALUES "
+	sql := "INSERT INTO b2c_product.products (name, category, kind, description, create_time,isListed) VALUES "
 	var productArgs []interface{}
 	for _, p := range products {
 		sql += "(?, ?, ?, ?, ?),"
-		productArgs = append(productArgs, p.Name, p.Category, 1, p.Description, utils.GetTime())
+		productArgs = append(productArgs, p.Name, p.Category, 1, p.Description, utils.GetTime(), 0)
 	}
 	// 去掉最后一个逗号
 	sql = sql[:len(sql)-1]
@@ -98,7 +102,7 @@ func SaveProductsBatch(products []dto.Product) error {
 
 func GetInfoFromProducts(id int32) (
 	dto.Products, error) {
-	query := "SELECT name, kind, category, description, create_time FROM b2c_product.products WHERE id=?"
+	query := "SELECT name, kind, category, description, create_time FROM b2c_product.products WHERE id=? AND isListed=1"
 	var products dto.Products
 	products.ID = id
 	err := config.MySqlClient.QueryRow(query, id).Scan(&products.Name, &products.Kind, &products.Category, &products.Description, &products.CreateTime)
@@ -373,8 +377,8 @@ func UploadSecProduct(secProduct *pb.UploadSecKillProductRequest) error {
 	}
 
 	// 插入秒杀商品数据
-	result, err := tx.Exec("INSERT INTO b2c_product.products (name, kind, category, description, create_time)  VALUES (?, ?, ?, ?, ?)",
-		secProduct.Name, 2, secProduct.CategoryId, secProduct.Description, utils.GetTime())
+	result, err := tx.Exec("INSERT INTO b2c_product.products (name, kind, category, description, create_time,isListed)  VALUES (?, ?, ?, ?, ?,?)",
+		secProduct.Name, 2, secProduct.CategoryId, secProduct.Description, utils.GetTime(), 0)
 	if err != nil {
 		log.Printf("Failed to insert sec_kill_product: %v", err)
 		return errors.New("GLB-003")
@@ -549,7 +553,7 @@ func buildBaseQuery(currentPage int32, pageSize int32, categoryId int32, kind in
         LEFT JOIN 
             b2c_product.product_price pp ON pp.product_id = p.id
         WHERE 
-            1=1
+            p.isListed=1 AND 1=1
     `
 	var args []interface{}
 
@@ -985,7 +989,7 @@ func buildSecBaseQuery(currentPage int32, pageSize int32, sessionId int32, kind 
         LEFT JOIN 
             b2c_product.seckill sk ON sk.product_id = p.id AND sk.session_id = ?
         WHERE
-            p.kind = ?
+             p.isListed=1 AND p.kind = ?
     `
 	args := []interface{}{sessionId, kind}
 
@@ -999,4 +1003,27 @@ func buildSecBaseQuery(currentPage int32, pageSize int32, sessionId int32, kind 
 // logError 记录错误日志
 func logError(message string, err error) {
 	localLog.ProductLog.Error("GetList--" + message + ": " + err.Error())
+}
+
+func Test() string {
+	err := c.InitRedisConfig()
+	if err != nil {
+		fmt.Println("Failed to initialize Redis config:", err)
+		return "no"
+	}
+	c.InitRedis()
+	pool := goredis.NewPool(c.RdClient)
+	rs := redsync.New(pool)
+
+	// 获取一个锁对象，指定锁的名称
+	mutex := rs.NewMutex("my-redis-lock")
+
+	// 尝试获取锁，设置锁的过期时间为 10 秒
+	if err := mutex.Lock(); err != nil {
+		panic(err)
+	}
+	//fmt.Println("锁锁锁")
+	time.Sleep(2 * time.Second)
+	defer mutex.Unlock()
+	return "yes"
 }

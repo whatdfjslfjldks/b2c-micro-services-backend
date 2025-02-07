@@ -18,7 +18,7 @@ func (s *Server) UploadProductByExcel(ctx context.Context, req *pb.UploadProduct
 	// 首先检查文件格式是否符合要求
 	b, e := file.IsFileValid(req.File)
 	if e != nil || !b {
-		// 也可能是服务端问题。。
+		// 也可能是服务端问题
 		return &pb.UploadProductByExcelResponse{
 			Code:       400,
 			Msg:        e.Error(),

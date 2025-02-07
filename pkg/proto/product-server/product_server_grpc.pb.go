@@ -24,6 +24,7 @@ const (
 	ProductService_GetProductById_FullMethodName       = "/proto.ProductService/GetProductById"
 	ProductService_UploadSecKillProduct_FullMethodName = "/proto.ProductService/UploadSecKillProduct"
 	ProductService_GetSecKillList_FullMethodName       = "/proto.ProductService/GetSecKillList"
+	ProductService_PurchaseSecKill_FullMethodName      = "/proto.ProductService/PurchaseSecKill"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -43,6 +44,9 @@ type ProductServiceClient interface {
 	UploadSecKillProduct(ctx context.Context, in *UploadSecKillProductRequest, opts ...grpc.CallOption) (*UploadSecKillProductResponse, error)
 	// 获取秒杀商品列表
 	GetSecKillList(ctx context.Context, in *GetSecKillListRequest, opts ...grpc.CallOption) (*GetSecKillListResponse, error)
+	// 购买秒杀商品，库存上锁,查看是否登录
+	// TODO 基本信息，待传
+	PurchaseSecKill(ctx context.Context, in *PurchaseSecKillRequest, opts ...grpc.CallOption) (*PurchaseSecKillResponse, error)
 }
 
 type productServiceClient struct {
@@ -103,6 +107,16 @@ func (c *productServiceClient) GetSecKillList(ctx context.Context, in *GetSecKil
 	return out, nil
 }
 
+func (c *productServiceClient) PurchaseSecKill(ctx context.Context, in *PurchaseSecKillRequest, opts ...grpc.CallOption) (*PurchaseSecKillResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PurchaseSecKillResponse)
+	err := c.cc.Invoke(ctx, ProductService_PurchaseSecKill_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility.
@@ -120,6 +134,9 @@ type ProductServiceServer interface {
 	UploadSecKillProduct(context.Context, *UploadSecKillProductRequest) (*UploadSecKillProductResponse, error)
 	// 获取秒杀商品列表
 	GetSecKillList(context.Context, *GetSecKillListRequest) (*GetSecKillListResponse, error)
+	// 购买秒杀商品，库存上锁,查看是否登录
+	// TODO 基本信息，待传
+	PurchaseSecKill(context.Context, *PurchaseSecKillRequest) (*PurchaseSecKillResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -144,6 +161,9 @@ func (UnimplementedProductServiceServer) UploadSecKillProduct(context.Context, *
 }
 func (UnimplementedProductServiceServer) GetSecKillList(context.Context, *GetSecKillListRequest) (*GetSecKillListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSecKillList not implemented")
+}
+func (UnimplementedProductServiceServer) PurchaseSecKill(context.Context, *PurchaseSecKillRequest) (*PurchaseSecKillResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PurchaseSecKill not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
@@ -256,6 +276,24 @@ func _ProductService_GetSecKillList_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_PurchaseSecKill_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PurchaseSecKillRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).PurchaseSecKill(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_PurchaseSecKill_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).PurchaseSecKill(ctx, req.(*PurchaseSecKillRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -282,6 +320,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetSecKillList",
 			Handler:    _ProductService_GetSecKillList_Handler,
+		},
+		{
+			MethodName: "PurchaseSecKill",
+			Handler:    _ProductService_PurchaseSecKill_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

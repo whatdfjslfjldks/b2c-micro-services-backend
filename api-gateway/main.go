@@ -18,6 +18,7 @@ import (
 // TODO:             50055：recommend-server
 // TODO:             50056：ai-server
 // TODO:             50057：pay-server
+// TODO:             50058: order-server
 func main() {
 	err := localLog.InitLog()
 	if err != nil {

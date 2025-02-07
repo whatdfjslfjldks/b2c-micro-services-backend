@@ -102,6 +102,16 @@ func (c *GRPCClient) CallProductService(serviceName string, method string, reque
 			return fmt.Errorf("failed to call getProductById: %v", e)
 		}
 		*response = resp
+	case "purchaseSecKill":
+		req := request.(*productServerProto.PurchaseSecKillRequest)
+		resp, e := client.PurchaseSecKill(ctx, req)
+		if e != nil {
+			if errors.Is(e, context.DeadlineExceeded) {
+				return fmt.Errorf("请求超时")
+			}
+			return fmt.Errorf("failed to call purchaseSecKill: %v", e)
+		}
+		*response = resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

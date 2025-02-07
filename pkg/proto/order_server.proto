@@ -1,0 +1,26 @@
+syntax="proto3";
+
+package proto;
+option go_package = "./order-server;order_server_proto";
+
+
+service OrderService{
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+}
+message CreateOrderRequest{
+  string access_token = 1;  // token验明身份
+  string address = 2; // 地址
+  string detail = 3; // 详细地址
+  string name=4; // 买家姓名
+  int32 phone=5; // 买家手机号
+  string note=6; // 订单备注
+  repeated int32 product_id = 7; // 商品id数组
+  repeated string type_name=8; // 商品分类数组
+  repeated int32 product_amount = 9; // 商品数量数组
+}
+message CreateOrderResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string order_id = 4; // 只返回一个订单号，其他信息通过订单号获取
+}
