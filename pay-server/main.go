@@ -4,8 +4,10 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log"
+	"micro-services/order-server/pkg/instance"
 	"micro-services/pay-server/internal/handler"
 	"micro-services/pay-server/internal/notify"
+	"micro-services/pay-server/pkg/config"
 	"micro-services/pkg/etcd"
 	pb "micro-services/pkg/proto/pay-server"
 	"net"
@@ -31,51 +33,23 @@ func startGRPCServer() error {
 	return grpcServer.Serve(lis)
 }
 
-func main() {
-	//// TODO TradeCreate 测试
-	//// 沙盒网关地址 https://openapi-sandbox.dl.alipaydev.com/gateway.do 用不了？ 使用方法是地址拼接返回的交易号参数，到支付宝界面完成支付
-	//
-	//// 读取私钥文件
-	//data, err := ioutil.ReadFile("pay-server/pkg/ali/privateKey.pem")
-	//if err != nil {
-	//	log.Fatalf("读取私钥失败: %v", err)
-	//}
-	//// 初始化支付宝客户端
-	//client, err := alipay.New(ali.AppID, string(data), false)
-	//if err != nil {
-	//	log.Fatalf("初始化支付宝客户端失败: %v", err)
-	//}
-	//// 加载支付宝公钥
-	//err = client.LoadAliPayPublicKey(ali.AlipayPublicKey)
-	//if err != nil {
-	//	log.Fatalf("加载支付宝公钥失败: %v", err)
-	//}
-	//
-	//// 生成一个唯一的订单号
-	//orderId, err := uuid.NewUUID()
-	//if err != nil {
-	//	log.Fatalf("uuid生成失败: %v", err)
-	//}
-	//
-	//r := alipay.TradeCreate{
-	//	Trade: alipay.Trade{
-	//		Subject:        "测试 TradeCreate",
-	//		OutTradeNo:     orderId.String(),
-	//		TotalAmount:    "0.01",
-	//		NotifyURL:      "test",
-	//		ReturnURL:      "http://localhost:3000/",
-	//		TimeoutExpress: "30m",
-	//	},
-	//	BuyerId: ali.UserId,
-	//}
-	//resp, err := client.TradeCreate(context.Background(), r)
-	//
-	//if resp.Code == "10000" {
-	//	fmt.Println("支付宝交易号！:", resp.TradeNo)
-	//} else {
-	//	fmt.Println("创建失败！")
-	//}
+func initConfig() {
+	err := config.InitMysqlConfig()
+	if err != nil {
+		log.Fatalf("Error initializing mysql config: %v", err)
+		return
+	}
+	err = config.InitRedisConfig()
+	if err != nil {
+		log.Fatalf("Error initializing redis config: %v", err)
+		return
+	}
+	config.InitMySql()
+	config.InitRedis()
+}
 
+func main() {
+	initConfig()
 	// 注册服务到 etcd
 	etcdServices, err := etcd.NewEtcdService(5 * time.Second)
 	if err != nil {
@@ -89,6 +63,8 @@ func main() {
 	}
 	//localLog.LogLog.Info("etcd: first time register ai-server")
 
+	instance.NewInstance()
+
 	// 启动异步通知
 	notify.AlipayNotify()
 
@@ -98,3 +74,47 @@ func main() {
 	}
 
 }
+
+//// TODO TradeCreate 测试
+//// 沙盒网关地址 https://openapi-sandbox.dl.alipaydev.com/gateway.do 用不了？ 使用方法是地址拼接返回的交易号参数，到支付宝界面完成支付
+//
+//// 读取私钥文件
+//data, err := ioutil.ReadFile("pay-server/pkg/ali/privateKey.pem")
+//if err != nil {
+//	log.Fatalf("读取私钥失败: %v", err)
+//}
+//// 初始化支付宝客户端
+//client, err := alipay.New(ali.AppID, string(data), false)
+//if err != nil {
+//	log.Fatalf("初始化支付宝客户端失败: %v", err)
+//}
+//// 加载支付宝公钥
+//err = client.LoadAliPayPublicKey(ali.AlipayPublicKey)
+//if err != nil {
+//	log.Fatalf("加载支付宝公钥失败: %v", err)
+//}
+//
+//// 生成一个唯一的订单号
+//orderId, err := uuid.NewUUID()
+//if err != nil {
+//	log.Fatalf("uuid生成失败: %v", err)
+//}
+//
+//r := alipay.TradeCreate{
+//	Trade: alipay.Trade{
+//		Subject:        "测试 TradeCreate",
+//		OutTradeNo:     orderId.String(),
+//		TotalAmount:    "0.01",
+//		NotifyURL:      "test",
+//		ReturnURL:      "http://localhost:3000/",
+//		TimeoutExpress: "30m",
+//	},
+//	BuyerId: ali.UserId,
+//}
+//resp, err := client.TradeCreate(context.Background(), r)
+//
+//if resp.Code == "10000" {
+//	fmt.Println("支付宝交易号！:", resp.TradeNo)
+//} else {
+//	fmt.Println("创建失败！")
+//}

@@ -6,13 +6,34 @@ option go_package = "./order-server;order_server_proto";
 
 service OrderService{
   rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  rpc GetAliPayQRCode(GetAliPayQRCodeRequest) returns (GetAliPayQRCodeResponse);
+  // 模拟支付成功
+  rpc TestPaySuccess(TestPaySuccessRequest) returns (TestPaySuccessResponse);
+}
+message TestPaySuccessRequest{
+  string order_id = 1; // 订单号
+}
+message TestPaySuccessResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string return_url = 4; // 成功后回调地址，也就是下一个界面
+}
+message GetAliPayQRCodeRequest{
+  string order_id = 1; // 订单号
+}
+message GetAliPayQRCodeResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string code_url = 4; // aliPay的二维码地址
 }
 message CreateOrderRequest{
   string access_token = 1;  // token验明身份
   string address = 2; // 地址
   string detail = 3; // 详细地址
   string name=4; // 买家姓名
-  int32 phone=5; // 买家手机号
+  string phone=5; // 买家手机号
   string note=6; // 订单备注
   repeated int32 product_id = 7; // 商品id数组
   repeated string type_name=8; // 商品分类数组

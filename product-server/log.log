@@ -101,3 +101,4 @@
 2025/02/06 23:48:12 localLog.go:36: [INFO] etcd: first time register product-server
 2025/02/06 23:48:47 localLog.go:36: [INFO] etcd: first time register product-server
 2025/02/07 16:53:27 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/09 15:55:52 localLog.go:36: [INFO] etcd: first time register product-server

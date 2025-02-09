@@ -94,6 +94,10 @@ func SetupRoutes(router *gin.Engine) {
 	orderServer := router.Group("/api/" + model6)
 	{
 		orderServer.POST("/createOrder", orderRoutes.CreateOrder)
+		orderServer.POST("/getAliPayQRCode", orderRoutes.GetAliPayQRCode)
+
+		// 测试支付成功后的回调 支付宝沙盒不靠谱，老是异常
+		orderServer.POST("/testPaySuccess", orderRoutes.TestPaySuccess)
 	}
 
 }

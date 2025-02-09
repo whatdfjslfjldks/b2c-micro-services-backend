@@ -5,7 +5,6 @@ import (
 	"log"
 	"micro-services/api-gateway/internal/instance"
 	orderServerProto "micro-services/pkg/proto/order-server"
-	"strconv"
 )
 
 var model6 = "order-server"
@@ -56,29 +55,19 @@ func CreateOrder(c *gin.Context) {
 		productAmounts = append(productAmounts, int32(product.Amount))
 	}
 
-	ph, err := strconv.Atoi(a.Phone)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"code":        400,
-			"status_code": "GLB-001",
-			"msg":         "非法输入！",
-		})
-		return
-	}
-
 	req := orderServerProto.CreateOrderRequest{
 		AccessToken:   accessToken,
 		Address:       a.Address,
 		Detail:        a.Detail,
 		Name:          a.Name,
-		Phone:         int32(ph),
+		Phone:         a.Phone,
 		Note:          a.Note,
 		ProductId:     productIDs,
 		TypeName:      typeNames,
 		ProductAmount: productAmounts,
 	}
 	var resp interface{}
-	err = instance.GrpcClient.CallOrderService(model6, "createOrder", &req, &resp)
+	err := instance.GrpcClient.CallOrderService(model6, "createOrder", &req, &resp)
 	if err != nil {
 		c.JSON(500, gin.H{
 			"code":        500,
@@ -94,6 +83,72 @@ func CreateOrder(c *gin.Context) {
 		"msg":         respCopy.Msg,
 		"data": gin.H{
 			"orderId": respCopy.OrderId,
+		},
+	})
+}
+
+func GetAliPayQRCode(c *gin.Context) {
+	var req orderServerProto.GetAliPayQRCodeRequest
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		log.Printf("err: %v", err)
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	var resp interface{}
+	err = instance.GrpcClient.CallOrderService(model6, "getAliPayQRCode", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := (resp).(*orderServerProto.GetAliPayQRCodeResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"qrCode": respCopy.CodeUrl,
+		},
+	})
+}
+
+func TestPaySuccess(c *gin.Context) {
+	var req orderServerProto.TestPaySuccessRequest
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		log.Printf("err: %v", err)
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	var resp interface{}
+	err = instance.GrpcClient.CallOrderService(model6, "testPaySuccess", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := (resp).(*orderServerProto.TestPaySuccessResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"returnUrl": respCopy.ReturnUrl,
 		},
 	})
 }

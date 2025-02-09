@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/smartwalle/alipay/v3"
 	"io/ioutil"
 	"log"
@@ -30,22 +29,18 @@ func (s *Server) TradePreCreate(ctx context.Context, req *pb.TradePreCreateReque
 		log.Fatalf("加载支付宝公钥失败: %v", err)
 	}
 
-	// 生成一个唯一的订单号
-	orderId, err := uuid.NewUUID()
-	if err != nil {
-		log.Fatalf("uuid生成失败: %v", err)
-	}
-
-	str := strconv.FormatFloat(float64(req.TotalAmount), 'f', 2, 32)
+	str := strconv.FormatFloat(req.TotalPrice, 'f', 2, 32)
+	fmt.Printf("totalPrice: %s", str)
 	// 创建统一收单线下交易预创建请求
 	r := alipay.TradePreCreate{
 		Trade: alipay.Trade{
-			Subject:        req.Subject,
-			OutTradeNo:     orderId.String(),
-			TotalAmount:    str,
-			NotifyURL:      "https://ff20-103-151-173-97.ngrok-free.app/notify",
+			Subject:     req.Subject,
+			OutTradeNo:  req.OrderId,
+			TotalAmount: "0.01",
+			// 这两个地址是支付宝直接返回的，需要用公网地址
+			NotifyURL:      "https://1dd2-103-151-173-95.ngrok-free.app/notify",
 			ReturnURL:      "http://localhost:3000/",
-			TimeoutExpress: "30m",
+			TimeoutExpress: "30m", // 30分钟后过期
 		},
 	}
 
