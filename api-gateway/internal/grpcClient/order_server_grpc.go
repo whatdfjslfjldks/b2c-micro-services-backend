@@ -70,6 +70,16 @@ func (c *GRPCClient) CallOrderService(serviceName string, method string, request
 			return fmt.Errorf("gRPC 调用失败: %v", e)
 		}
 		*response = resp
+	case "getOrderDetail":
+		req := request.(*orderServerProto.GetOrderDetailRequest)
+		resp, e := client.GetOrderDetail(ctx, req)
+		if e != nil {
+			if errors.Is(e, context.DeadlineExceeded) {
+				return fmt.Errorf("gRPC 调用超时: %v", e)
+			}
+			return fmt.Errorf("gRPC 调用失败: %v", e)
+		}
+		*response = resp
 	default:
 		return fmt.Errorf("不支持的方法: %s", method)
 	}

@@ -9,7 +9,38 @@ service OrderService{
   rpc GetAliPayQRCode(GetAliPayQRCodeRequest) returns (GetAliPayQRCodeResponse);
   // 模拟支付成功
   rpc TestPaySuccess(TestPaySuccessRequest) returns (TestPaySuccessResponse);
+  // 获取订单信息 orderDetail界面
+  rpc GetOrderDetail(GetOrderDetailRequest) returns (GetOrderDetailResponse);
 }
+message GetOrderDetailRequest{
+  string order_id = 1; // 订单号
+  string access_token = 2; // 检查身份，是否是买家
+}
+message GetOrderDetailResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+
+  string order_id = 4; // 订单号
+  string order_date = 5;
+  int32 order_status = 6;
+  int32 payment_method = 7; // 支付方式
+  int32 payment_status = 8; // 支付状态
+  double payment_price = 9; // 支付金额
+
+  string name = 10; // 买家姓名
+  string phone = 11;
+  string address = 12; // 地址
+  string detail = 13; // 具体地址
+  string note=14; // 留言
+
+  repeated int32 product_id = 15; // 商品id数组
+  repeated string type_name=16; // 商品分类数组
+  repeated int32 product_amount = 17; // 商品数量数组
+}
+
+
+
 message TestPaySuccessRequest{
   string order_id = 1; // 订单号
 }

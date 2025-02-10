@@ -199,3 +199,67 @@ func GetEmailByUserId(id int64) (string, error) {
 	}
 	return email, nil
 }
+
+func IsUserIdExist(userId int64) bool {
+	var exists bool
+	err := config.MySqlClient.QueryRow("SELECT EXISTS(SELECT 1 FROM b2c_user.users WHERE user_id = ?)", userId).Scan(&exists)
+	if err != nil {
+		return false
+	}
+	return exists
+}
+
+func GetUserInfoByUserId(userId int64) (avatarUrl, name, email, bio, createAt string, err error) {
+	// 使用 sql.NullString 来处理可能为 NULL 的字段
+	var avatarUrlNull, nameNull, emailNull, bioNull, createAtNull sql.NullString
+
+	// 查询用户基本信息和头像URL
+	query := `
+		SELECT u.username, u.email, u.create_at, p.avatar_url, p.bio 
+		FROM b2c_user.users u 
+		LEFT JOIN b2c_user.user_profiles p 
+		ON u.user_id = p.user_id 
+		WHERE u.user_id = ?`
+
+	row := config.MySqlClient.QueryRow(query, userId)
+	err = row.Scan(&nameNull, &emailNull, &createAtNull, &avatarUrlNull, &bioNull)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", "", "", "", "", errors.New("用户不存在")
+		}
+		return "", "", "", "", "", fmt.Errorf("数据库错误: %v", err)
+	}
+
+	// 检查 NullString 是否有效
+	if nameNull.Valid {
+		name = nameNull.String
+	} else {
+		name = ""
+	}
+
+	if emailNull.Valid {
+		email = emailNull.String
+	} else {
+		email = ""
+	}
+
+	if createAtNull.Valid {
+		createAt = createAtNull.String
+	} else {
+		createAt = ""
+	}
+
+	if avatarUrlNull.Valid {
+		avatarUrl = avatarUrlNull.String
+	} else {
+		avatarUrl = "" // 默认头像 URL 或空字符串
+	}
+
+	if bioNull.Valid {
+		bio = bioNull.String
+	} else {
+		bio = "" // 默认空的个人简介
+	}
+
+	return avatarUrl, name, email, bio, createAt, nil
+}

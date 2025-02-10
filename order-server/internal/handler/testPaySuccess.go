@@ -12,7 +12,7 @@ import (
 func (s *Server) TestPaySuccess(ctx context.Context, req *pb.TestPaySuccessRequest) (
 	*pb.TestPaySuccessResponse, error) {
 
-	fmt.Printf("收到支付成功消息: %v", req)
+	//fmt.Printf("收到支付成功消息: %v", req)
 	// 消费掉未支付（初始状态下）Kafka的消息
 	err := kafka.ConsumePartition(0, req.OrderId)
 	if err != nil {
@@ -36,7 +36,7 @@ func (s *Server) TestPaySuccess(ctx context.Context, req *pb.TestPaySuccessReque
 	}
 	fmt.Printf("11")
 	// 修改数据库中订单状态
-	err = repository.ReverseOrderStatus(req.OrderId, 1)
+	err = repository.ReverseOrderStatus(req.OrderId, 1, 1)
 	if err != nil {
 		log.Println("修改数据库订单状态失败")
 		return &pb.TestPaySuccessResponse{

@@ -152,3 +152,57 @@ func TestPaySuccess(c *gin.Context) {
 		},
 	})
 }
+
+func GetOrderDetail(c *gin.Context) {
+	accessToken := c.Request.Header.Get("Access-Token")
+	type a struct {
+		OrderId string `json:"order_id"`
+	}
+	var b a
+	err := c.ShouldBindJSON(&b)
+	if err != nil {
+		log.Printf("err: %v", err)
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	req := orderServerProto.GetOrderDetailRequest{
+		AccessToken: accessToken,
+		OrderId:     b.OrderId,
+	}
+	var resp interface{}
+	err = instance.GrpcClient.CallOrderService(model6, "getOrderDetail", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := (resp).(*orderServerProto.GetOrderDetailResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"orderId":       respCopy.OrderId,
+			"orderDate":     respCopy.OrderDate,
+			"orderStatus":   respCopy.OrderStatus,
+			"paymentMethod": respCopy.PaymentMethod,
+			"paymentStatus": respCopy.PaymentStatus,
+			"paymentPrice":  respCopy.PaymentPrice,
+			"name":          respCopy.Name,
+			"phone":         respCopy.Phone,
+			"address":       respCopy.Address,
+			"detail":        respCopy.Detail,
+			"note":          respCopy.Note,
+			"productId":     respCopy.ProductId,
+			"typeName":      respCopy.TypeName,
+			"productAmount": respCopy.ProductAmount,
+		},
+	})
+}

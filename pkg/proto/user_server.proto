@@ -33,6 +33,22 @@ service UserService {
   rpc GetEmailByUserId(GetEmailByUserIdRequest) returns (GetEmailByUserIdResponse) {}
   // 向特定邮箱地址发送特定消息
   rpc SendEmail(SendEmailRequest) returns (SendEmailResponse) {}
+  // 通过accessToken和user_id获取用户信息，头像，名称，邮箱，id，简介，创建时间
+  rpc GetUserInfoByUserId(GetUserInfoByUserIdRequest) returns (GetUserInfoByUserIdResponse) {}
+}
+message GetUserInfoByUserIdRequest {
+  string access_token=1;
+}
+message GetUserInfoByUserIdResponse {
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string avatar_url=4;
+  string name=5;
+  string email=6;
+  int64 user_id=7;
+  string bio=8;
+  string create_at=9;
 }
 // 向特定邮箱地址发送特定消息
 message SendEmailRequest {

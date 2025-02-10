@@ -31,6 +31,7 @@ const (
 	UserService_EditUserInfo_FullMethodName          = "/proto.UserService/EditUserInfo"
 	UserService_GetEmailByUserId_FullMethodName      = "/proto.UserService/GetEmailByUserId"
 	UserService_SendEmail_FullMethodName             = "/proto.UserService/SendEmail"
+	UserService_GetUserInfoByUserId_FullMethodName   = "/proto.UserService/GetUserInfoByUserId"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -65,6 +66,8 @@ type UserServiceClient interface {
 	GetEmailByUserId(ctx context.Context, in *GetEmailByUserIdRequest, opts ...grpc.CallOption) (*GetEmailByUserIdResponse, error)
 	// 向特定邮箱地址发送特定消息
 	SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*SendEmailResponse, error)
+	// 通过accessToken和user_id获取用户信息，头像，名称，邮箱，id，简介，创建时间
+	GetUserInfoByUserId(ctx context.Context, in *GetUserInfoByUserIdRequest, opts ...grpc.CallOption) (*GetUserInfoByUserIdResponse, error)
 }
 
 type userServiceClient struct {
@@ -195,6 +198,16 @@ func (c *userServiceClient) SendEmail(ctx context.Context, in *SendEmailRequest,
 	return out, nil
 }
 
+func (c *userServiceClient) GetUserInfoByUserId(ctx context.Context, in *GetUserInfoByUserIdRequest, opts ...grpc.CallOption) (*GetUserInfoByUserIdResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserInfoByUserIdResponse)
+	err := c.cc.Invoke(ctx, UserService_GetUserInfoByUserId_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -227,6 +240,8 @@ type UserServiceServer interface {
 	GetEmailByUserId(context.Context, *GetEmailByUserIdRequest) (*GetEmailByUserIdResponse, error)
 	// 向特定邮箱地址发送特定消息
 	SendEmail(context.Context, *SendEmailRequest) (*SendEmailResponse, error)
+	// 通过accessToken和user_id获取用户信息，头像，名称，邮箱，id，简介，创建时间
+	GetUserInfoByUserId(context.Context, *GetUserInfoByUserIdRequest) (*GetUserInfoByUserIdResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -272,6 +287,9 @@ func (UnimplementedUserServiceServer) GetEmailByUserId(context.Context, *GetEmai
 }
 func (UnimplementedUserServiceServer) SendEmail(context.Context, *SendEmailRequest) (*SendEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendEmail not implemented")
+}
+func (UnimplementedUserServiceServer) GetUserInfoByUserId(context.Context, *GetUserInfoByUserIdRequest) (*GetUserInfoByUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfoByUserId not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -510,6 +528,24 @@ func _UserService_SendEmail_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_GetUserInfoByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserInfoByUserIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetUserInfoByUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_GetUserInfoByUserId_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetUserInfoByUserId(ctx, req.(*GetUserInfoByUserIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -564,6 +600,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendEmail",
 			Handler:    _UserService_SendEmail_Handler,
+		},
+		{
+			MethodName: "GetUserInfoByUserId",
+			Handler:    _UserService_GetUserInfoByUserId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -140,6 +140,16 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
 		*response = resp
+	case "getUserInfoByUserId":
+		req := request.(*userServerProto.GetUserInfoByUserIdRequest)
+		resp, err := client.GetUserInfoByUserId(ctx, req)
+		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				return fmt.Errorf("请求超时")
+			}
+			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
+		}
+		*response = resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

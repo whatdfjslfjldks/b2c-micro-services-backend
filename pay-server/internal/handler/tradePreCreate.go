@@ -38,7 +38,7 @@ func (s *Server) TradePreCreate(ctx context.Context, req *pb.TradePreCreateReque
 			OutTradeNo:  req.OrderId,
 			TotalAmount: "0.01",
 			// 这两个地址是支付宝直接返回的，需要用公网地址
-			NotifyURL:      "https://1dd2-103-151-173-95.ngrok-free.app/notify",
+			NotifyURL:      "https://61bb-103-151-173-95.ngrok-free.app/notify",
 			ReturnURL:      "http://localhost:3000/",
 			TimeoutExpress: "30m", // 30分钟后过期
 		},

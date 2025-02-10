@@ -22,6 +22,7 @@ const (
 	OrderService_CreateOrder_FullMethodName     = "/proto.OrderService/CreateOrder"
 	OrderService_GetAliPayQRCode_FullMethodName = "/proto.OrderService/GetAliPayQRCode"
 	OrderService_TestPaySuccess_FullMethodName  = "/proto.OrderService/TestPaySuccess"
+	OrderService_GetOrderDetail_FullMethodName  = "/proto.OrderService/GetOrderDetail"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -32,6 +33,8 @@ type OrderServiceClient interface {
 	GetAliPayQRCode(ctx context.Context, in *GetAliPayQRCodeRequest, opts ...grpc.CallOption) (*GetAliPayQRCodeResponse, error)
 	// 模拟支付成功
 	TestPaySuccess(ctx context.Context, in *TestPaySuccessRequest, opts ...grpc.CallOption) (*TestPaySuccessResponse, error)
+	// 获取订单信息 orderDetail界面
+	GetOrderDetail(ctx context.Context, in *GetOrderDetailRequest, opts ...grpc.CallOption) (*GetOrderDetailResponse, error)
 }
 
 type orderServiceClient struct {
@@ -72,6 +75,16 @@ func (c *orderServiceClient) TestPaySuccess(ctx context.Context, in *TestPaySucc
 	return out, nil
 }
 
+func (c *orderServiceClient) GetOrderDetail(ctx context.Context, in *GetOrderDetailRequest, opts ...grpc.CallOption) (*GetOrderDetailResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrderDetailResponse)
+	err := c.cc.Invoke(ctx, OrderService_GetOrderDetail_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility.
@@ -80,6 +93,8 @@ type OrderServiceServer interface {
 	GetAliPayQRCode(context.Context, *GetAliPayQRCodeRequest) (*GetAliPayQRCodeResponse, error)
 	// 模拟支付成功
 	TestPaySuccess(context.Context, *TestPaySuccessRequest) (*TestPaySuccessResponse, error)
+	// 获取订单信息 orderDetail界面
+	GetOrderDetail(context.Context, *GetOrderDetailRequest) (*GetOrderDetailResponse, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -98,6 +113,9 @@ func (UnimplementedOrderServiceServer) GetAliPayQRCode(context.Context, *GetAliP
 }
 func (UnimplementedOrderServiceServer) TestPaySuccess(context.Context, *TestPaySuccessRequest) (*TestPaySuccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TestPaySuccess not implemented")
+}
+func (UnimplementedOrderServiceServer) GetOrderDetail(context.Context, *GetOrderDetailRequest) (*GetOrderDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOrderDetail not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 func (UnimplementedOrderServiceServer) testEmbeddedByValue()                      {}
@@ -174,6 +192,24 @@ func _OrderService_TestPaySuccess_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_GetOrderDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrderDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).GetOrderDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_GetOrderDetail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).GetOrderDetail(ctx, req.(*GetOrderDetailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -192,6 +228,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TestPaySuccess",
 			Handler:    _OrderService_TestPaySuccess_Handler,
+		},
+		{
+			MethodName: "GetOrderDetail",
+			Handler:    _OrderService_GetOrderDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

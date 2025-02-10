@@ -36,6 +36,7 @@ func SetupRoutes(router *gin.Engine) {
 		// TODO 检测非常用ip和agent
 		userServer.POST("/changePasswordByEmail", userRoutes.ChangePasswordByEmail)
 		userServer.POST("/editUserInfo", userRoutes.EditUserInfo)
+		userServer.POST("/getUserInfoByUserId", userRoutes.GetUserInfoByUserId)
 	}
 
 	// -----------------处理product模块请求--------------------------------
@@ -98,6 +99,7 @@ func SetupRoutes(router *gin.Engine) {
 
 		// 测试支付成功后的回调 支付宝沙盒不靠谱，老是异常
 		orderServer.POST("/testPaySuccess", orderRoutes.TestPaySuccess)
+		orderServer.POST("/getOrderDetail", orderRoutes.GetOrderDetail)
 	}
 
 }

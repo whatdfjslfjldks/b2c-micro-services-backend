@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"log"
 	"micro-services/order-server/pkg/config"
+	pb "micro-services/pkg/proto/order-server"
 	"micro-services/pkg/utils"
 )
 
@@ -153,7 +154,7 @@ func CreateOrder(userId int64, address string, detail string, name string, phone
 	return orderId, nil
 }
 
-func ReverseOrderStatus(orderId string, orderStatus int32) error {
+func ReverseOrderStatus(orderId string, orderStatus int32, paymentStatus int32) error {
 	result, err := config.MySqlClient.Exec("UPDATE b2c_order.orders SET order_status = ? WHERE order_id = ?", orderStatus, orderId)
 	if err != nil {
 		return err
@@ -161,5 +162,93 @@ func ReverseOrderStatus(orderId string, orderStatus int32) error {
 	if rowsAffected, _ := result.RowsAffected(); rowsAffected == 0 {
 		return fmt.Errorf("no rows affected")
 	}
+	rs, err := config.MySqlClient.Exec("UPDATE b2c_order.order_payments SET payment_status = ? , payment_date=? WHERE order_id = ?", paymentStatus, utils.GetTime(), orderId)
+	if err != nil {
+		return err
+	}
+	if rowsAffected, _ := rs.RowsAffected(); rowsAffected == 0 {
+		return fmt.Errorf("no rows affected")
+	}
 	return nil
+}
+
+func GetOrderDetail(orderId string, userId int64) (*pb.GetOrderDetailResponse, error) {
+	// 初始化返回对象
+	orderDetail := &pb.GetOrderDetailResponse{}
+
+	// 查询订单信息
+	var orderStatus, paymentMethod, paymentStatus int32
+	var totalPrice float64
+	var orderDate string
+	var ud int64
+	err := config.MySqlClient.QueryRow(`
+		SELECT o.user_id,o.order_status, op.payment_method, op.payment_status, op.payment_price, o.create_at
+		FROM b2c_order.orders o
+		JOIN b2c_order.order_payments op ON o.order_id = op.order_id
+		WHERE o.order_id = ?`, orderId).Scan(&ud, &orderStatus, &paymentMethod, &paymentStatus, &totalPrice, &orderDate)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query order information: %w", err)
+	}
+	if userId != ud {
+		return nil, fmt.Errorf("userId does not match")
+	}
+
+	// 获取订单地址信息
+	var name, phone, address, detail, note string
+	err = config.MySqlClient.QueryRow(`
+		SELECT name, phone, address, detail, note
+		FROM b2c_order.order_details
+		WHERE order_id = ?`, orderId).Scan(&name, &phone, &address, &detail, &note)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query order address information: %w", err)
+	}
+
+	// 获取订单商品信息
+	var productIdJSON, typeNameJSON, productAmountJSON string
+	err = config.MySqlClient.QueryRow(`
+		SELECT product_ids, type_names, product_amounts
+		FROM b2c_order.order_items
+		WHERE order_id = ?`, orderId).Scan(&productIdJSON, &typeNameJSON, &productAmountJSON)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query order items: %w", err)
+	}
+
+	// 解析商品相关信息
+	var productIds []int32
+	var typeNames []string
+	var productAmounts []int32
+
+	err = json.Unmarshal([]byte(productIdJSON), &productIds)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal productIds: %w", err)
+	}
+	err = json.Unmarshal([]byte(typeNameJSON), &typeNames)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal typeNames: %w", err)
+	}
+	err = json.Unmarshal([]byte(productAmountJSON), &productAmounts)
+	if err != nil {
+		return nil, fmt.Errorf("failed to unmarshal productAmounts: %w", err)
+	}
+
+	// 填充响应结构体
+	orderDetail.Code = 200
+	orderDetail.StatusCode = "GLB-000"
+	orderDetail.Msg = "获取数据成功"
+	orderDetail.OrderId = orderId
+	orderDetail.OrderDate = orderDate
+	orderDetail.OrderStatus = orderStatus
+	orderDetail.PaymentMethod = paymentMethod
+	orderDetail.PaymentStatus = paymentStatus
+	orderDetail.PaymentPrice = totalPrice
+	orderDetail.Name = name
+	orderDetail.Phone = phone
+	orderDetail.Address = address
+	orderDetail.Detail = detail
+	orderDetail.Note = note
+	orderDetail.ProductId = productIds
+	orderDetail.TypeName = typeNames
+	orderDetail.ProductAmount = productAmounts
+
+	return orderDetail, nil
 }

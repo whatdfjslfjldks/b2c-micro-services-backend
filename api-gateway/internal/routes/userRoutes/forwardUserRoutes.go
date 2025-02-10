@@ -403,3 +403,35 @@ func EditUserInfo(c *gin.Context) {
 		"msg":         respCopy.Msg,
 	})
 }
+
+func GetUserInfoByUserId(c *gin.Context) {
+	accessToken := c.Request.Header.Get("Access-Token")
+	req := userServerProto.GetUserInfoByUserIdRequest{
+		AccessToken: accessToken,
+	}
+	var resp interface{}
+	err := instance.GrpcClient.CallService(model, "getUserInfoByUserId", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := (resp).(*userServerProto.GetUserInfoByUserIdResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"avatar_url": respCopy.AvatarUrl,
+			"name":       respCopy.Name,
+			"email":      respCopy.Email,
+			"user_id":    respCopy.UserId,
+			"bio":        respCopy.Bio,
+			"create_at":  respCopy.CreateAt,
+		},
+	})
+
+}

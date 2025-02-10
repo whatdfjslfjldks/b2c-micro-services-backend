@@ -68,7 +68,7 @@ func AlipayNotify() {
 				return
 			}
 			// 修改数据库中订单状态
-			err = repository.ReverseOrderStatus(noti.OutTradeNo, 1)
+			err = repository.ReverseOrderStatus(noti.OutTradeNo, 1, 1)
 			if err != nil {
 				log.Println("修改数据库订单状态失败")
 				return
