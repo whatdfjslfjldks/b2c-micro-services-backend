@@ -1,174 +1,64 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/gorilla/websocket"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	"log"
-	"math/rand"
-	"net/http"
-	"sync"
+	"micro-services/support-server/internal"
+	"micro-services/support-server/pkg/config"
+	"time"
 )
 
-var (
-	userConnections    = make(map[string]*websocket.Conn) // 用户 WebSocket 连接
-	supportConnections = make(map[string]*websocket.Conn) // 客服 WebSocket 连接
-	userSupportMapping = make(map[string]string)          // 映射：用户ID -> 客服ID
-	mutex              sync.Mutex
-)
-
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
+func initConfig() {
+	err := config.InitMysqlConfig()
+	if err != nil {
+		log.Fatalf("Error initializing internal config: %v", err)
+		return
+	}
+	err = config.InitRedisConfig()
+	if err != nil {
+		log.Fatalf("Error initializing redis config: %v", err)
+		return
+	}
+	config.InitMySql()
+	config.InitRedis()
 }
 
-func handleChat(w http.ResponseWriter, r *http.Request) {
-	// 获取用户ID
-	userID := r.URL.Query().Get("userID")
-	if userID == "" {
-		http.Error(w, "userID is required", http.StatusBadRequest)
-		return
-	}
-
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Error during connection upgrade:", err)
-		return
-	}
-	defer conn.Close()
-
-	// 保存用户连接
-	mutex.Lock()
-	userConnections[userID] = conn
-	mutex.Unlock()
-
-	log.Printf("User %s connected", userID)
-
-	// 随机选一个客服连接
-	var connections []*websocket.Conn
-	var keys []string
-	for key, conn := range supportConnections {
-		fmt.Println("111:", key)
-		keys = append(keys, key)
-		connections = append(connections, conn)
-	}
-	fmt.Println("keys:", keys)
-
-	// 如果没有客服连接，返回错误
-	if len(connections) == 0 {
-		http.Error(w, "No support available", http.StatusServiceUnavailable)
-		return
-	}
-
-	// 使用随机数选择一个客服连接
-	idx := rand.Intn(len(connections)) // 生成一个随机索引
-	supportConn := connections[idx]
-	supportId := keys[idx]
-	fmt.Println("supportId:", supportId)
-
-	// 映射用户与客服
-	mutex.Lock()
-	userSupportMapping[userID] = supportId
-	mutex.Unlock()
-
-	// 发送已连接消息给用户
-	type Message struct {
-		Sender string `json:"sender"`
-		Text   string `json:"text"`
-	}
-
-	message := Message{
-		Sender: "tip",
-		Text:   fmt.Sprintf("已经连接到客服: support_%d", idx),
-	}
-
-	// 将结构体转换为 JSON 格式
-	jsonData, err := json.Marshal(message)
-	if err != nil {
-		log.Fatal("Error marshaling JSON:", err)
-	}
-
-	// 返给用户一个已连接到客服的消息
-	err = conn.WriteMessage(websocket.TextMessage, jsonData)
-	if err != nil {
-		log.Println("Error sending message to user:", err)
-		return
-	}
-
-	// 监听用户消息
-	for {
-		_, msg, err := conn.ReadMessage()
-		if err != nil {
-			log.Println("Error reading message from user:", err)
-			break
-		}
-
-		// 将用户的消息转发给指定的客服
-		mutex.Lock()
-		err = supportConn.WriteMessage(websocket.TextMessage, msg)
-		if err != nil {
-			log.Println("Error sending message to support:", err)
-		}
-		mutex.Unlock()
-	}
-}
-
-func handleSupport(w http.ResponseWriter, r *http.Request) {
-	// 获取客服ID
-	supportID := r.URL.Query().Get("supportID")
-	if supportID == "" {
-		http.Error(w, "supportID is required", http.StatusBadRequest)
-		return
-	}
-
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Error during connection upgrade:", err)
-		return
-	}
-	defer conn.Close()
-
-	// 保存客服连接
-	mutex.Lock()
-	supportConnections[supportID] = conn
-	mutex.Unlock()
-
-	log.Printf("Support %s connected", supportID)
-
-	// 监听客服消息
-	for {
-		_, msg, err := conn.ReadMessage()
-		if err != nil {
-			log.Println("Error reading message from support:", err)
-			break
-		}
-
-		// 将客服的消息转发给指定的用户
-		mutex.Lock()
-		for userID, assignedSupportID := range userSupportMapping {
-			fmt.Println("assignedSupportID:", assignedSupportID)
-			fmt.Println("userID:", userID)
-			fmt.Println("supportID:", supportID)
-			if assignedSupportID == supportID {
-				// 发送消息给该用户
-				userConn := userConnections[userID]
-				err := userConn.WriteMessage(websocket.TextMessage, msg)
-				if err != nil {
-					log.Println("Error sending message to user:", err)
-				}
-			}
-		}
-		mutex.Unlock()
-	}
-}
-
+// 客服模块，不用grpc，单独拆分出来
 func main() {
-	http.HandleFunc("/chat", handleChat)       // 用户连接
-	http.HandleFunc("/support", handleSupport) // 客服连接
+
+	initConfig()
+	r := gin.Default()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},                                                                                                        // 允许的跨域来源，* 表示允许所有
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},                                                                  // 允许的请求方法
+		AllowHeaders:     []string{"Access-Token", "Refresh-Token", "X-Real-IP", "X-Forwarded-For", "Origin", "Content-Type", "Authorization"}, // 允许的请求头
+		AllowCredentials: true,                                                                                                                 // 是否允许携带凭证（例如 cookies）
+		MaxAge:           12 * time.Hour,
+	}))
+
+	//http.HandleFunc("/chat", handleChat)       // 用户连接
+	//http.HandleFunc("/support", handleSupport) // 客服连接
+	model := "/api/support-server"
+
+	// 客服注册
+	r.POST(model+"/register", internal.SupportRegister)
+	// 客服登录
+	r.POST(model+"/login", internal.SupportLogin)
+	// 用户查找是否有客服在线,如果有就随机选择一个客服返回，后续可优化，“负载均衡”
+	r.POST(model+"/findSupport", internal.FindSupport)
+
+	// 建立客服与服务端ws连接，用于推送用户连接消息
+	r.GET(model+"/supportConnect", internal.SupportConnect)
+
+	// 连接用户到客服，并生成房间号
+	r.GET(model+"/connect", internal.Connect)
+
+	// 连接客服到用户生成的房间号
+	r.GET(model+"/connectRoom", internal.ConnectRoom)
 
 	log.Println("Server starting on :8081")
-	if err := http.ListenAndServe(":8081", nil); err != nil {
+	if err := r.Run(":8081"); err != nil {
 		log.Fatal("ListenAndServe error:", err)
 	}
 }

@@ -20,7 +20,7 @@ func VerifyCode(email string, code string) bool {
 	return true
 }
 
-// TODO 多次操作数据库，非常耗时，待优化！
+// LoginByEmail TODO 多次操作数据库，非常耗时，待优化！
 func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 	resp = &pb.EmailVerifyCodeResponse{}
 	result := repository.IsEmailExist(email)

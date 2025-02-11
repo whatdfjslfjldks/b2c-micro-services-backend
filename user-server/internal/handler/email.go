@@ -88,7 +88,7 @@ func (s *Server) EmailVerifyCode(ctx context.Context, req *pb.EmailVerifyCodeReq
 	return resp, nil
 }
 
-// 修改邮箱
+// ChangeEmail 修改邮箱
 func (s *Server) ChangeEmail(ctx context.Context, req *pb.ChangeEmailRequest) (
 	*pb.ChangeEmailResponse, error) {
 	resp := &pb.ChangeEmailResponse{}
