@@ -47,6 +47,9 @@ func (s *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (
 			Msg:        err.Error(),
 		}, nil
 	}
+
+	// TODO 查看库存够不够并更新库存
+
 	// 存储订单基本信息
 	orderId, err := repository.CreateOrder(claim.UserId, req.Address, req.Detail, req.Name, req.Phone, req.Note, req.ProductId, req.TypeName, req.ProductAmount, totalPrice)
 	if err != nil {

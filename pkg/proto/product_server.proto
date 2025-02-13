@@ -11,17 +11,32 @@ service ProductService{
   rpc UploadProductByExcel(UploadProductByExcelRequest) returns (UploadProductByExcelResponse);
   // 获取详情页商品信息
   rpc GetProductById(GetProductByIdRequest) returns (GetProductByIdResponse);
-
 //  rpc GetProductDetailById(GetProductDetailByIdRequest) returns (GetProductDetailByIdResponse);
   // 上传秒杀商品
   // TODO 鉴权
   rpc UploadSecKillProduct(UploadSecKillProductRequest) returns (UploadSecKillProductResponse);
   // 获取秒杀商品列表
   rpc GetSecKillList(GetSecKillListRequest) returns (GetSecKillListResponse);
-
   // 购买秒杀商品，库存上锁,查看是否登录
   // TODO 基本信息，待传
   rpc PurchaseSecKill(PurchaseSecKillRequest) returns (PurchaseSecKillResponse);
+  // 获取orderConfirm界面的商品信息
+  rpc GetOrderConfirmProduct(GetOrderConfirmProductRequest) returns (GetOrderConfirmProductResponse);
+}
+message GetOrderConfirmProductRequest{
+  repeated int32 product_id = 1;
+}
+message GetOrderConfirmProductResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  repeated OrderConfirmProduct products=4;
+}
+message OrderConfirmProduct{
+  int32 id = 1;
+  string name = 2;
+  string cover=3;
+  double price=4;
 }
 message PurchaseSecKillRequest{
   int32 id = 1;  // 商品id
@@ -52,17 +67,16 @@ message SecListItem{
   string name = 2;
   string description = 3;
   repeated PImg pImg = 4;
-  repeated PType pType = 5;
-  double price = 6;
-  double original_price = 7;
-  int32 stock = 8;
-  int32 sold = 9;
-  string create_time = 10;
-  int32 category_id = 11;
-  int32 kind_id = 12;
-  string start_time = 13;
-  string duration = 14;
-  int32 session_id = 15;
+  double price = 5;
+  double original_price = 6;
+  int32 stock = 7;
+  int32 sold = 8;
+  string create_time = 9;
+  int32 category_id = 10;
+  int32 kind_id = 11;
+  string start_time = 12;
+  string duration = 13;
+  int32 session_id = 14;
 }
 
 message UploadSecKillProductRequest{
@@ -70,23 +84,19 @@ message UploadSecKillProductRequest{
   string name = 2;
   string description = 3;
   repeated PImg pImg = 4;
-  repeated PType pType = 5;
-  double price = 6;
-  double original_price = 7;
-  int32 stock = 8;
-  int32 sold = 9;
-  string create_time = 10;
-  int32 category_id = 11;
-  int32 kind_id = 12;
-  string start_time = 13;
-  string duration = 14;
-  int32 session_id = 15;
+  double price = 5;
+  double original_price = 6;
+  int32 stock = 7;
+  int32 sold = 8;
+  string create_time = 9;
+  int32 category_id = 10;
+  int32 kind_id = 11;
+  string start_time = 12;
+  string duration = 13;
+  int32 session_id = 14;
 }
 
-// request
-message Sec_type{
-  string type_name = 1;
-}
+
 message Sec_img{
   string img_url = 1;
 }
@@ -96,23 +106,6 @@ message UploadSecKillProductResponse{
   string status_code=2;
   string msg=3;
 }
-
-//message GetProductDetailByIdRequest{
-//  int32 product_id = 1;
-//}
-//message GetProductDetailByIdResponse{
-//  int32 code=1;
-//  string status_code=2;
-//  string msg=3;
-//  int32 product_id = 4;
-//  string product_name = 5;
-//  repeated PImg product_img = 6;
-//  double product_price = 7;
-//  repeated PType product_type = 8;
-//  int32 sold = 9;
-////  int32 product_categoryId = 5;
-////  string description = 6;
-//}
 
 
 
@@ -140,8 +133,8 @@ message ProductById{
   string duration = 11;
   int32 session_id = 12;
   repeated PImg pImg = 13;
-  repeated PType pType = 14;
 }
+
 
 message UploadProductByExcelRequest{
   bytes file = 1;
@@ -172,22 +165,18 @@ message ProductListItem{
   string name = 2;
   string description = 3;
   repeated PImg pImg = 4;
-  repeated PType pType = 5;
-  double price = 6;
-  double original_price = 7;
-  int32 stock = 8;
-  int32 sold = 9;
-  string create_time = 10;
-  int32 category_id = 11;
-  int32 kind_id = 12;
+  double price = 5;
+  double original_price = 6;
+  int32 stock = 7;
+  int32 sold = 8;
+  string create_time = 9;
+  int32 category_id = 10;
+  int32 kind_id = 11;
 }
 
 message PImg{
   string img_url = 1;
 }
 
-message PType{
-  string type_name = 1;
-}
 
 

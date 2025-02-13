@@ -19,12 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProductService_GetProductList_FullMethodName       = "/proto.ProductService/GetProductList"
-	ProductService_UploadProductByExcel_FullMethodName = "/proto.ProductService/UploadProductByExcel"
-	ProductService_GetProductById_FullMethodName       = "/proto.ProductService/GetProductById"
-	ProductService_UploadSecKillProduct_FullMethodName = "/proto.ProductService/UploadSecKillProduct"
-	ProductService_GetSecKillList_FullMethodName       = "/proto.ProductService/GetSecKillList"
-	ProductService_PurchaseSecKill_FullMethodName      = "/proto.ProductService/PurchaseSecKill"
+	ProductService_GetProductList_FullMethodName         = "/proto.ProductService/GetProductList"
+	ProductService_UploadProductByExcel_FullMethodName   = "/proto.ProductService/UploadProductByExcel"
+	ProductService_GetProductById_FullMethodName         = "/proto.ProductService/GetProductById"
+	ProductService_UploadSecKillProduct_FullMethodName   = "/proto.ProductService/UploadSecKillProduct"
+	ProductService_GetSecKillList_FullMethodName         = "/proto.ProductService/GetSecKillList"
+	ProductService_PurchaseSecKill_FullMethodName        = "/proto.ProductService/PurchaseSecKill"
+	ProductService_GetOrderConfirmProduct_FullMethodName = "/proto.ProductService/GetOrderConfirmProduct"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -47,6 +48,8 @@ type ProductServiceClient interface {
 	// 购买秒杀商品，库存上锁,查看是否登录
 	// TODO 基本信息，待传
 	PurchaseSecKill(ctx context.Context, in *PurchaseSecKillRequest, opts ...grpc.CallOption) (*PurchaseSecKillResponse, error)
+	// 获取orderConfirm界面的商品信息
+	GetOrderConfirmProduct(ctx context.Context, in *GetOrderConfirmProductRequest, opts ...grpc.CallOption) (*GetOrderConfirmProductResponse, error)
 }
 
 type productServiceClient struct {
@@ -117,6 +120,16 @@ func (c *productServiceClient) PurchaseSecKill(ctx context.Context, in *Purchase
 	return out, nil
 }
 
+func (c *productServiceClient) GetOrderConfirmProduct(ctx context.Context, in *GetOrderConfirmProductRequest, opts ...grpc.CallOption) (*GetOrderConfirmProductResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOrderConfirmProductResponse)
+	err := c.cc.Invoke(ctx, ProductService_GetOrderConfirmProduct_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility.
@@ -137,6 +150,8 @@ type ProductServiceServer interface {
 	// 购买秒杀商品，库存上锁,查看是否登录
 	// TODO 基本信息，待传
 	PurchaseSecKill(context.Context, *PurchaseSecKillRequest) (*PurchaseSecKillResponse, error)
+	// 获取orderConfirm界面的商品信息
+	GetOrderConfirmProduct(context.Context, *GetOrderConfirmProductRequest) (*GetOrderConfirmProductResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -164,6 +179,9 @@ func (UnimplementedProductServiceServer) GetSecKillList(context.Context, *GetSec
 }
 func (UnimplementedProductServiceServer) PurchaseSecKill(context.Context, *PurchaseSecKillRequest) (*PurchaseSecKillResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PurchaseSecKill not implemented")
+}
+func (UnimplementedProductServiceServer) GetOrderConfirmProduct(context.Context, *GetOrderConfirmProductRequest) (*GetOrderConfirmProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOrderConfirmProduct not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
@@ -294,6 +312,24 @@ func _ProductService_PurchaseSecKill_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_GetOrderConfirmProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOrderConfirmProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).GetOrderConfirmProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_GetOrderConfirmProduct_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).GetOrderConfirmProduct(ctx, req.(*GetOrderConfirmProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -324,6 +360,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PurchaseSecKill",
 			Handler:    _ProductService_PurchaseSecKill_Handler,
+		},
+		{
+			MethodName: "GetOrderConfirmProduct",
+			Handler:    _ProductService_GetOrderConfirmProduct_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

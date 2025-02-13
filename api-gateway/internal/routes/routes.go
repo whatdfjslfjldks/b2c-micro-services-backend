@@ -58,6 +58,8 @@ func SetupRoutes(router *gin.Engine) {
 		productServer.POST("/uploadSecKillProduct", productRoutes.UploadSecKillProduct)
 
 		productServer.POST("/purchaseSecKill", productRoutes.PurchaseSecKill)
+
+		productServer.POST("/getOrderConfirmProduct", productRoutes.GetOrderConfirmProduct)
 	}
 
 	// -----------------处理recommend模块请求--------------------------------

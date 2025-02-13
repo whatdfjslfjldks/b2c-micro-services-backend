@@ -24,11 +24,9 @@ type TitleConfig struct {
 }
 
 var (
-	RdConfig     *TitleConfig
-	Ctx          = context.Background()
-	RdClient     *redis.Client
-	RdClientRoom *redis.Client
-	RdClientSPP  *redis.Client
+	RdConfig *TitleConfig
+	Ctx      = context.Background()
+	RdClient *redis.Client
 )
 
 // InitRedisConfig 初始化配置 Redis
@@ -66,33 +64,8 @@ func InitRedis() {
 		WriteTimeout: writeTimeout, // 写入超时
 	})
 
-	RdClientRoom = redis.NewClient(&redis.Options{
-		Addr:         RdConfig.Redis.Host + ":" + strconv.Itoa(RdConfig.Redis.Port), // Redis 服务器地址
-		Password:     RdConfig.Redis.Password,                                       // Redis 密码，如果没有就留空
-		DB:           7,
-		DialTimeout:  dialTimeout,  // 连接超时
-		ReadTimeout:  readTimeout,  // 读取超时
-		WriteTimeout: writeTimeout, // 写入超时
-	})
-	RdClientSPP = redis.NewClient(&redis.Options{
-		Addr:         RdConfig.Redis.Host + ":" + strconv.Itoa(RdConfig.Redis.Port), // Redis 服务器地址
-		Password:     RdConfig.Redis.Password,                                       // Redis 密码，如果没有就留空
-		DB:           8,
-		DialTimeout:  dialTimeout,  // 连接超时
-		ReadTimeout:  readTimeout,  // 读取超时
-		WriteTimeout: writeTimeout, // 写入超时
-	})
-
 	// 测试连接
 	_, err := RdClient.Ping(Ctx).Result()
-	if err != nil {
-		panic(err)
-	}
-	_, err = RdClientRoom.Ping(Ctx).Result()
-	if err != nil {
-		panic(err)
-	}
-	_, err = RdClientSPP.Ping(Ctx).Result()
 	if err != nil {
 		panic(err)
 	}

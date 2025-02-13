@@ -36,7 +36,6 @@ func GetProductById(id int32) (
 			Sold:          productDetail.Sold,
 			Stock:         productDetail.Stock,
 			PImg:          productDetail.ImageList,
-			PType:         productDetail.TypeList,
 		}, nil
 	case 2:
 		productDetail, err := repository.GetSecProductDetail(id)
@@ -55,7 +54,6 @@ func GetProductById(id int32) (
 			Sold:          productDetail.Sold,
 			Stock:         productDetail.Stock,
 			PImg:          productDetail.ImageList,
-			PType:         productDetail.TypeList,
 			StartTime:     productDetail.StartTime,
 			Duration:      productDetail.Duration,
 			SessionId:     productDetail.SessionId,

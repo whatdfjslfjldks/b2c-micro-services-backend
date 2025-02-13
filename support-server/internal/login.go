@@ -82,7 +82,7 @@ func SupportLogin(c *gin.Context) {
 		return
 	}
 	// 把客服状态存入数据库 1 在线
-	config.RdClient.HMSet(config.Ctx, login.SupportID, "status", "1")
+	//config.RdClient.HMSet(config.Ctx, login.SupportID, "status", "1")
 
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,

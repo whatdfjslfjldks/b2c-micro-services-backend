@@ -47,7 +47,6 @@ type SecKillProduct struct {
 	Stock            int32
 	StartTime        string
 	EndTime          string
-	SecType          []*pb.SecType
 	SecImg           []*pb.SecImg
 	Time             int32 // 场次
 }
@@ -69,7 +68,6 @@ type NormalProducts struct {
 	Kind        int32
 	Category    int32
 	ImageList   []*pb.PImg
-	TypeList    []*pb.PType
 	Price       float64
 	OriginPrice float64
 	Stock       int32
@@ -83,7 +81,6 @@ type Test struct {
 
 type SecProducts struct {
 	ImageList   []*pb.PImg
-	TypeList    []*pb.PType
 	Price       float64
 	OriginPrice float64
 	Stock       int32

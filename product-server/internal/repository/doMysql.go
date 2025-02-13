@@ -191,47 +191,8 @@ func GetProductDetail(id int32) (dto.NormalProducts, error) {
 	}
 	productDetail.ImageList = imageList
 
-	// 查询商品类型
-	typeQuery := `
-        SELECT 
-            type_description
-        FROM 
-            b2c_product.product_type
-        WHERE 
-            product_id = ?
-    `
-	typeRows, err := config.MySqlClient.Query(typeQuery, id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			localLog.ProductLog.Error("GetProductDetail--Product not found: " + err.Error())
-			return productDetail, nil
-		}
-		localLog.ProductLog.Error("GetProductDetail--Failed to execute type query: " + err.Error())
-		return productDetail, errors.New("GLB-003")
-	}
-	defer typeRows.Close()
-
-	var typeList []*pb.PType
-	for typeRows.Next() {
-		var typeName sql.NullString
-		err := typeRows.Scan(&typeName)
-		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				localLog.ProductLog.Error("GetProductDetail--Product not found: " + err.Error())
-				return productDetail, nil
-			}
-			localLog.ProductLog.Error("GetProductDetail--Failed to scan type row: " + err.Error())
-			return productDetail, errors.New("GLB-003")
-		}
-		if typeName.Valid {
-			typ := pb.PType{TypeName: typeName.String}
-			typeList = append(typeList, &typ)
-		}
-	}
-	productDetail.TypeList = typeList
-
 	// 如果没有查询到任何数据，返回错误
-	if len(imageList) == 0 && len(typeList) == 0 {
+	if len(imageList) == 0 {
 		return productDetail, nil
 	}
 
@@ -315,39 +276,8 @@ func GetSecProductDetail(id int32) (dto.SecProducts, error) {
 	}
 	productDetail.ImageList = imageList
 
-	// 查询商品类型
-	typeQuery := `
-        SELECT 
-            type_description
-        FROM 
-            b2c_product.product_type
-        WHERE 
-            product_id = ?
-    `
-	typeRows, err := config.MySqlClient.Query(typeQuery, id)
-	if err != nil {
-		localLog.ProductLog.Error("GetSecProductDetail--Failed to execute type query: " + err.Error())
-		return productDetail, errors.New("GLB-003")
-	}
-	defer typeRows.Close()
-
-	var typeList []*pb.PType
-	for typeRows.Next() {
-		var typeName sql.NullString
-		err := typeRows.Scan(&typeName)
-		if err != nil {
-			localLog.ProductLog.Error("GetSecProductDetail--Failed to scan type row: " + err.Error())
-			return productDetail, errors.New("GLB-003")
-		}
-		if typeName.Valid {
-			typ := pb.PType{TypeName: typeName.String}
-			typeList = append(typeList, &typ)
-		}
-	}
-	productDetail.TypeList = typeList
-
 	// 如果没有查询到任何数据，返回错误
-	if len(imageList) == 0 && len(typeList) == 0 {
+	if len(imageList) == 0 {
 		return productDetail, nil
 	}
 
@@ -377,8 +307,8 @@ func UploadSecProduct(secProduct *pb.UploadSecKillProductRequest) error {
 	}
 
 	// 插入秒杀商品数据
-	result, err := tx.Exec("INSERT INTO b2c_product.products (name, kind, category, description, create_time,isListed)  VALUES (?, ?, ?, ?, ?,?)",
-		secProduct.Name, 2, secProduct.CategoryId, secProduct.Description, utils.GetTime(), 0)
+	result, err := tx.Exec("INSERT INTO b2c_product.products (name, kind, category, description, create_time,isListed,cover)  VALUES (?, ?, ?, ?, ?,?,?)",
+		secProduct.Name, 2, secProduct.CategoryId, secProduct.Description, utils.GetTime(), 0, secProduct.PImg[0])
 	if err != nil {
 		log.Printf("Failed to insert sec_kill_product: %v", err)
 		return errors.New("GLB-003")
@@ -392,19 +322,19 @@ func UploadSecProduct(secProduct *pb.UploadSecKillProductRequest) error {
 	}
 
 	// TODO 避免在循环体操作数据库，优化为批量插入
-	// 插入秒杀商品类型数据
-	var args []interface{}
-	query := "INSERT INTO b2c_product.product_type (product_id, type_description) VALUES"
-	for _, sType := range secProduct.PType {
-		query += "(?,?),"
-		args = append(args, id, sType.TypeName)
-	}
-	query = query[:len(query)-1]
-	_, err = tx.Exec(query, args...)
-	if err != nil {
-		log.Printf("Failed to insert sec_kill_product_type: %v", err)
-		return errors.New("GLB-003")
-	}
+	//// 插入秒杀商品类型数据
+	//var args []interface{}
+	//query := "INSERT INTO b2c_product.product_type (product_id, type_description) VALUES"
+	//for _, sType := range secProduct.PType {
+	//	query += "(?,?),"
+	//	args = append(args, id, sType.TypeName)
+	//}
+	//query = query[:len(query)-1]
+	//_, err = tx.Exec(query, args...)
+	//if err != nil {
+	//	log.Printf("Failed to insert sec_kill_product_type: %v", err)
+	//	return errors.New("GLB-003")
+	//}
 	// 插入秒杀商品图片数据
 	var args2 []interface{}
 	query2 := "INSERT INTO b2c_product.product_image (product_id, image) VALUES"
@@ -484,13 +414,13 @@ func GetProductList(currentPage int32, pageSize int32, categoryId int32, kind in
 		}
 	}
 
-	// 查询每个商品的类型
-	if len(productIDs) > 0 {
-		err = queryTypes(productIDs, productMap)
-		if err != nil {
-			return nil, 0, err
-		}
-	}
+	//// 查询每个商品的类型
+	//if len(productIDs) > 0 {
+	//	err = queryTypes(productIDs, productMap)
+	//	if err != nil {
+	//		return nil, 0, err
+	//	}
+	//}
 
 	// 按照原始顺序将商品添加到列表中
 	for _, id := range productIDs {
@@ -691,48 +621,48 @@ func queryImages(productIDs []int32, productMap map[int32]*pb.ProductListItem) e
 	return nil
 }
 
-// queryTypes 查询商品类型
-func queryTypes(productIDs []int32, productMap map[int32]*pb.ProductListItem) error {
-	typeQuery := `
-        SELECT 
-            product_id, 
-            type_description
-        FROM 
-            b2c_product.product_type
-        WHERE 
-            product_id IN (?` + strings.Repeat(",?", len(productIDs)-1) + `)
-    `
-	typeArgs := make([]interface{}, len(productIDs))
-	for i, id := range productIDs {
-		typeArgs[i] = id
-	}
-	typeRows, err := config.MySqlClient.Query(typeQuery, typeArgs...)
-	if err != nil {
-		logError("Failed to execute type query", err)
-		return err
-	}
-	defer typeRows.Close()
-
-	for typeRows.Next() {
-		var productID int32
-		var typeName sql.NullString
-
-		err := typeRows.Scan(&productID, &typeName)
-		if err != nil {
-			logError("Failed to scan type row", err)
-			return err
-		}
-
-		if typeName.Valid {
-			typ := pb.PType{TypeName: typeName.String}
-			if product, ok := productMap[productID]; ok {
-				product.PType = append(product.PType, &typ)
-			}
-		}
-	}
-
-	return nil
-}
+//// queryTypes 查询商品类型
+//func queryTypes(productIDs []int32, productMap map[int32]*pb.ProductListItem) error {
+//	typeQuery := `
+//        SELECT
+//            product_id,
+//            type_description
+//        FROM
+//            b2c_product.product_type
+//        WHERE
+//            product_id IN (?` + strings.Repeat(",?", len(productIDs)-1) + `)
+//    `
+//	typeArgs := make([]interface{}, len(productIDs))
+//	for i, id := range productIDs {
+//		typeArgs[i] = id
+//	}
+//	typeRows, err := config.MySqlClient.Query(typeQuery, typeArgs...)
+//	if err != nil {
+//		logError("Failed to execute type query", err)
+//		return err
+//	}
+//	defer typeRows.Close()
+//
+//	for typeRows.Next() {
+//		var productID int32
+//		var typeName sql.NullString
+//
+//		err := typeRows.Scan(&productID, &typeName)
+//		if err != nil {
+//			logError("Failed to scan type row", err)
+//			return err
+//		}
+//
+//		if typeName.Valid {
+//			typ := pb.PType{TypeName: typeName.String}
+//			if product, ok := productMap[productID]; ok {
+//				product.PType = append(product.PType, &typ)
+//			}
+//		}
+//	}
+//
+//	return nil
+//}
 
 // GetSecList 获取秒杀商品列表
 func GetSecList(currentPage int32, pageSize int32, sessionId int32) ([]*pb.SecListItem, int32, error) {
@@ -777,13 +707,13 @@ func GetSecList(currentPage int32, pageSize int32, sessionId int32) ([]*pb.SecLi
 		}
 	}
 
-	// 查询每个商品的类型
-	if len(productIDs) > 0 {
-		err = querySecTypes(productIDs, productMap)
-		if err != nil {
-			return nil, 0, err
-		}
-	}
+	//// 查询每个商品的类型
+	//if len(productIDs) > 0 {
+	//	err = querySecTypes(productIDs, productMap)
+	//	if err != nil {
+	//		return nil, 0, err
+	//	}
+	//}
 
 	// 按照原始顺序将商品添加到列表中
 	for _, id := range productIDs {
@@ -903,48 +833,48 @@ func querySecImages(productIDs []int32, productMap map[int32]*pb.SecListItem) er
 	return nil
 }
 
-// queryTypes 查询商品类型
-func querySecTypes(productIDs []int32, productMap map[int32]*pb.SecListItem) error {
-	typeQuery := `
-        SELECT 
-            product_id, 
-            type_description
-        FROM 
-            b2c_product.product_type
-        WHERE 
-            product_id IN (?` + strings.Repeat(",?", len(productIDs)-1) + `)
-    `
-	typeArgs := make([]interface{}, len(productIDs))
-	for i, id := range productIDs {
-		typeArgs[i] = id
-	}
-	typeRows, err := config.MySqlClient.Query(typeQuery, typeArgs...)
-	if err != nil {
-		logError("Failed to execute type query", err)
-		return err
-	}
-	defer typeRows.Close()
-
-	for typeRows.Next() {
-		var productID int32
-		var typeName sql.NullString
-
-		err := typeRows.Scan(&productID, &typeName)
-		if err != nil {
-			logError("Failed to scan type row", err)
-			return err
-		}
-
-		if typeName.Valid {
-			typ := pb.PType{TypeName: typeName.String}
-			if product, ok := productMap[productID]; ok {
-				product.PType = append(product.PType, &typ)
-			}
-		}
-	}
-
-	return nil
-}
+//// queryTypes 查询商品类型
+//func querySecTypes(productIDs []int32, productMap map[int32]*pb.SecListItem) error {
+//	typeQuery := `
+//        SELECT
+//            product_id,
+//            type_description
+//        FROM
+//            b2c_product.product_type
+//        WHERE
+//            product_id IN (?` + strings.Repeat(",?", len(productIDs)-1) + `)
+//    `
+//	typeArgs := make([]interface{}, len(productIDs))
+//	for i, id := range productIDs {
+//		typeArgs[i] = id
+//	}
+//	typeRows, err := config.MySqlClient.Query(typeQuery, typeArgs...)
+//	if err != nil {
+//		logError("Failed to execute type query", err)
+//		return err
+//	}
+//	defer typeRows.Close()
+//
+//	for typeRows.Next() {
+//		var productID int32
+//		var typeName sql.NullString
+//
+//		err := typeRows.Scan(&productID, &typeName)
+//		if err != nil {
+//			logError("Failed to scan type row", err)
+//			return err
+//		}
+//
+//		if typeName.Valid {
+//			typ := pb.PType{TypeName: typeName.String}
+//			if product, ok := productMap[productID]; ok {
+//				product.PType = append(product.PType, &typ)
+//			}
+//		}
+//	}
+//
+//	return nil
+//}
 
 // buildSecCountQuery 构建统计满足条件商品数量的查询语句和参数
 func buildSecCountQuery(kind int32, sessionId int32) (string, []interface{}) {
@@ -1026,4 +956,67 @@ func Test() string {
 	time.Sleep(2 * time.Second)
 	defer mutex.Unlock()
 	return "yes"
+}
+
+func GetOrderConfirmProduct(productIds []int32) ([]*pb.OrderConfirmProduct, error) {
+	// 如果传入的 productIds 为空，直接返回空列表
+	if len(productIds) == 0 {
+		return nil, errors.New("空")
+	}
+
+	// 构建 SQL 查询语句
+	query := `
+        SELECT 
+            p.id, 
+            p.name, 
+            p.cover, 
+            pp.price
+        FROM 
+            b2c_product.products p
+        JOIN 
+            b2c_product.product_price pp ON p.id = pp.product_id
+        WHERE 
+            p.id IN (?` + strings.Repeat(",?", len(productIds)-1) + `)
+    `
+
+	// 将 productIds 转换为 interface{} 类型，以便传递给 Exec 函数
+	args := make([]interface{}, len(productIds))
+	for i, id := range productIds {
+		args[i] = id
+	}
+
+	// 执行查询
+	rows, err := config.MySqlClient.Query(query, args...)
+	if err != nil {
+		localLog.ProductLog.Error("GetOrderConfirmProduct--Failed to execute query: " + err.Error())
+		return nil, errors.New("GLB-003")
+	}
+	defer rows.Close()
+
+	// 定义一个切片来存储查询结果
+	var products []*pb.OrderConfirmProduct
+
+	// 遍历查询结果
+	for rows.Next() {
+		var product pb.OrderConfirmProduct
+		err := rows.Scan(
+			&product.Id,
+			&product.Name,
+			&product.Cover,
+			&product.Price,
+		)
+		if err != nil {
+			localLog.ProductLog.Error("GetOrderConfirmProduct--Failed to scan row: " + err.Error())
+			return nil, errors.New("GLB-003")
+		}
+		products = append(products, &product)
+	}
+
+	// 检查遍历过程中是否有错误发生
+	if err = rows.Err(); err != nil {
+		localLog.ProductLog.Error("GetOrderConfirmProduct--Error during rows iteration: " + err.Error())
+		return nil, errors.New("GLB-003")
+	}
+
+	return products, nil
 }

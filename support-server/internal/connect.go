@@ -6,8 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"log"
+	"micro-services/support-server/pkg/config"
 	"net/http"
 	"sync"
+	"time"
 )
 
 var connections = struct {
@@ -79,11 +81,10 @@ func Connect(c *gin.Context) {
 	}
 }
 
-// SupportConnect 建立客服与服务端连接，用于推送用户连接房间
-// 把客服id存到redis，还有conn连接
 func SupportConnect(c *gin.Context) {
 	supportID := c.Query("supportID")
 	fmt.Println("supportID:", supportID)
+
 	// 升级为WebSocket连接
 	conn, err := upgrade.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -96,60 +97,111 @@ func SupportConnect(c *gin.Context) {
 	}
 	defer conn.Close()
 
-	//supportConnections[supportID] = conn
+	// 将连接存储到内存映射中
 	connections.Lock()
 	connections.m[supportID] = conn
 	connections.Unlock()
 
-	if err != nil {
-		log.Println("Error storing support connection in Redis:", err)
-		return
-	}
+	// 在 Redis 中设置状态
+	config.RdClient.HMSet(config.Ctx, supportID, "status", "1")
+
 	for {
-		_, message, err := conn.ReadMessage()
+		messageType, message, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("Error reading message from support:", err)
-			// 出错，删除内存映射，中断连接
-			//delete(supportConnections, supportID)
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("Error reading message from support %s: %v", supportID, err)
+			}
+			// 出错，删除内存映射，更新 Redis 状态
+			connections.Lock()
+			delete(connections.m, supportID)
+			connections.Unlock()
+
+			config.RdClient.HDel(config.Ctx, supportID, "status")
+
+			log.Printf("WebSocket connection closed for support %s", supportID)
 			break
 		}
+
+		if messageType == websocket.CloseMessage {
+			log.Printf("Received close message from support %s", supportID)
+			// 删除内存映射，更新 Redis 状态
+			connections.Lock()
+			delete(connections.m, supportID)
+			connections.Unlock()
+
+			config.RdClient.HDel(config.Ctx, supportID, "status")
+
+			log.Printf("WebSocket connection closed for support %s", supportID)
+			break
+		}
+
 		// 把消息发送回去，这里发的是用户和客服的房间号 userID_supportID
-		err = conn.WriteMessage(websocket.TextMessage, message)
+		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
+			log.Printf("Error sending message to support %s: %v", supportID, err)
+			break
+		}
 	}
 }
-
 func ConnectRoom(c *gin.Context) {
 	roomID := c.Query("roomID")
 
 	conn, err := upgrade.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		log.Printf("WebSocket Upgrade Error: %v", err)
+		log.Printf("WebSocket Upgrade Error in room %s: %v", roomID, err)
 		return
 	}
+	defer conn.Close()
 
 	connections.RLock()
 	userConn := connections.m[roomID]
 	connections.RUnlock()
 
+	a := Message{
+		Sender: "tip",
+		Text:   "房间不存在",
+	}
+	j, err := json.Marshal(a)
+	if err != nil {
+		log.Println("json.Marshal err:", err)
+	}
 	if userConn == nil {
-		conn.WriteMessage(websocket.CloseMessage, []byte("房间不存在"))
-		conn.Close()
+		conn.WriteMessage(websocket.CloseMessage, j)
 		return
 	}
 
-	// 存储客服端连接
 	connections.Lock()
 	connections.m[roomID+"_support"] = conn
 	connections.Unlock()
 
+	defer func() {
+		connections.Lock()
+		delete(connections.m, roomID+"_support")
+		connections.Unlock()
+	}()
+
+	go func() {
+		for {
+			select {
+			case <-time.After(30 * time.Second):
+				if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+					log.Printf("Error sending ping message in room %s: %v", roomID, err)
+					return
+				}
+			}
+		}
+	}()
+
 	for {
-		_, message, err := conn.ReadMessage()
+		messageType, message, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("Error reading message from support:", err)
-			// 出错，删除内存映射，中断连接
-			//delete(supportConnections, supportID)
+			log.Printf("Error reading message from support in room %s: %v", roomID, err)
 			break
 		}
-		userConn.WriteMessage(websocket.TextMessage, message)
+
+		if err := userConn.WriteMessage(messageType, message); err != nil {
+			log.Printf("Error forwarding message to user in room %s: %v", roomID, err)
+			userConn.Close()
+			break
+		}
 	}
 }

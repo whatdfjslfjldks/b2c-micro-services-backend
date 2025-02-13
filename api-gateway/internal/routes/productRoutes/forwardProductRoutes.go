@@ -200,46 +200,6 @@ func GetProductById(c *gin.Context) {
 	})
 }
 
-//// GetProductDetailById 获取详情界面商品信息
-//func GetProductDetailById(c *gin.Context) {
-//	productId := c.DefaultQuery("productId", "0")
-//	id, e := strconv.Atoi(productId)
-//	if e != nil {
-//		c.JSON(500, gin.H{
-//			"code":        500,
-//			"status_code": "GLB-002",
-//			"msg":         "参数错误",
-//		})
-//		return
-//	}
-//	req := productServerProto.GetProductDetailByIdRequest{
-//		ProductId: int32(id),
-//	}
-//	var resp productServerProto.GetProductDetailByIdResponse
-//	err := instance.GrpcClient.CallProductService(model2, "getProductDetailById", &req, &resp)
-//	if err != nil {
-//		c.JSON(500, gin.H{
-//			"code":        500,
-//			"status_code": "GLB-002",
-//			"msg":         "grpc调用错误: " + err.Error(),
-//		})
-//		return
-//	}
-//	c.JSON(int(resp.Code), gin.H{
-//		"code":        resp.Code,
-//		"status_code": resp.StatusCode,
-//		"msg":         resp.Msg,
-//		"data": gin.H{
-//			"product_id":    resp.ProductId,
-//			"product_name":  resp.ProductName,
-//			"product_price": resp.ProductPrice,
-//			"product_img":   resp.ProductImg,
-//			"product_type":  resp.ProductType,
-//			"product_sold":  resp.Sold,
-//		},
-//	})
-//}
-
 // UploadSecKillProduct 上传秒杀商品（非批量）
 func UploadSecKillProduct(c *gin.Context) {
 	// TODO 请求头带token，测试不加
@@ -368,5 +328,37 @@ func PurchaseSecKill(c *gin.Context) {
 		"code":        respCopy.Code,
 		"status_code": respCopy.StatusCode,
 		"msg":         respCopy.Msg,
+	})
+}
+
+func GetOrderConfirmProduct(c *gin.Context) {
+	var req productServerProto.GetOrderConfirmProductRequest
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	var resp interface{}
+	err = instance.GrpcClient.CallProductService(model2, "getOrderConfirmProduct", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := resp.(*productServerProto.GetOrderConfirmProductResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"products": respCopy.Products,
+		},
 	})
 }

@@ -50,7 +50,7 @@ func GenerateAccessToken(userId int64, role string) (string, error) {
 		Role:   role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			// 设置有效期
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 10)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 20)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()), // 设置当前时间为签发时间
 			Issuer:    "b2cPlatform",                  // 签发者
 		},
