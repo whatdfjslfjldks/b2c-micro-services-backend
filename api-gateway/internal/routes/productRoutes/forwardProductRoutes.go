@@ -21,6 +21,7 @@ func GetProductList(c *gin.Context) {
 	pageSize := c.DefaultQuery("pageSize", "10")
 	categoryId := c.DefaultQuery("categoryId", "0") // 0 is all
 	sort := c.DefaultQuery("sort", "0")             // 0 all, 1 price, 2 time
+	keyword := c.DefaultQuery("keyword", "")
 	//time := c.DefaultQuery("time", "0")             // 0 all, 1 asc, 2 des
 	//fmt.Println("currentPage:", currentPage, "pageSize:", pageSize, "categoryId:", categoryId)
 	page, e := strconv.Atoi(currentPage)
@@ -32,6 +33,12 @@ func GetProductList(c *gin.Context) {
 		})
 		return
 	}
+
+	//fmt.Println("1111: ", keyword)
+	if keyword == "null" {
+		keyword = ""
+	}
+
 	size, e := strconv.Atoi(pageSize)
 	if e != nil {
 		c.JSON(400, gin.H{
@@ -64,6 +71,7 @@ func GetProductList(c *gin.Context) {
 		PageSize:    int32(size),
 		CategoryId:  int32(id),
 		Sort:        int32(s),
+		Keyword:     keyword,
 	}
 	var resp interface{}
 	err := instance.GrpcClient.CallProductService(model2, "getProductList", &req, &resp)
@@ -359,6 +367,57 @@ func GetOrderConfirmProduct(c *gin.Context) {
 		"msg":         respCopy.Msg,
 		"data": gin.H{
 			"products": respCopy.Products,
+		},
+	})
+}
+
+func FuzzySearch(c *gin.Context) {
+	keyword := c.DefaultQuery("keyword", "")
+	currentPage := c.DefaultQuery("currentPage", "1")
+	pageSize := c.DefaultQuery("pageSize", "10")
+	page, e := strconv.Atoi(currentPage)
+	if e != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	size, e := strconv.Atoi(pageSize)
+	if e != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	req := productServerProto.FuzzySearchRequest{
+		Keyword:     keyword,
+		CurrentPage: int32(page),
+		PageSize:    int32(size),
+	}
+	var resp interface{}
+	err := instance.GrpcClient.CallProductService(model2, "fuzzySearch", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := resp.(*productServerProto.FuzzySearchResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"productList": respCopy.ProductList,
+			"totalItems":  respCopy.TotalItems,
+			"currentPage": respCopy.CurrentPage,
+			"pageSize":    respCopy.PageSize,
 		},
 	})
 }

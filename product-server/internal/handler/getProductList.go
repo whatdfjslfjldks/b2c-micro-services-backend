@@ -18,7 +18,7 @@ func (s *Server) GetProductList(ctx context.Context, req *pb.GetProductListReque
 	*pb.GetProductListResponse, error) {
 	resp := &pb.GetProductListResponse{}
 
-	productList, totalItems, err := repository.GetProductList(req.CurrentPage, req.PageSize, req.CategoryId, 1, req.Sort)
+	productList, totalItems, err := repository.GetProductList(req.CurrentPage, req.PageSize, req.CategoryId, 1, req.Sort, req.Keyword)
 	if err != nil {
 		log.Printf("GetProductList error: %v", err)
 		if errors.Is(err, sql.ErrNoRows) {

@@ -1,6 +1,7 @@
 package usernameLoginService
 
 import (
+	"log"
 	logServerProto "micro-services/pkg/proto/log-server"
 	pb "micro-services/pkg/proto/user-server"
 	"micro-services/pkg/utils"
@@ -15,8 +16,9 @@ func UsernameLogin(username string, password string, ip string, agent string) (
 	resp := &pb.UsernameLoginResponse{}
 	// 根据用户名（唯一）查找，如果用户名不存在就返回用户名不存在，
 	// 如果密码为空就返回未设置密码,如果都存在就返回信息
-	userId, userName, role, avatarUrl, err := repository.CheckNameAndPwd(username, password)
+	userId, userName, role, avatarUrl, createAt, bio, email, err := repository.CheckNameAndPwd(username, password)
 	if err != nil {
+		log.Printf("err: %v ", err)
 		if err.Error() == "GLB-003" {
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
@@ -79,6 +81,9 @@ func UsernameLogin(username string, password string, ip string, agent string) (
 		Avatar:       avatarUrl,
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
+		CreateAt:     createAt,
+		Bio:          bio,
+		Email:        email,
 	}, nil
 
 }

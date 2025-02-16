@@ -49,6 +49,14 @@ func (s *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (
 	}
 
 	// TODO 查看库存够不够并更新库存
+	err = repository.CheckProductStock(req.ProductId, req.ProductAmount)
+	if err != nil {
+		return &pb.CreateOrderResponse{
+			Code:       400,
+			StatusCode: "GLB-001",
+			Msg:        err.Error(),
+		}, nil
+	}
 
 	// 存储订单基本信息
 	orderId, err := repository.CreateOrder(claim.UserId, req.Address, req.Detail, req.Name, req.Phone, req.Note, req.ProductId, req.TypeName, req.ProductAmount, totalPrice)

@@ -43921,3 +43921,973 @@
 
 2025/02/13 23:35:22 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
 
+2025/02/14 19:13:42 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/14 19:15:40 localLog.go:36: [INFO] request /api/user-server/loginByPassword cost time 113 ms
+
+2025/02/14 19:15:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:15:42 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 81 ms
+
+2025/02/14 19:15:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:15:46 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 6 ms
+
+2025/02/14 19:15:46 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 4 ms
+
+2025/02/14 19:15:47 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 5 ms
+
+2025/02/14 19:15:47 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 3 ms
+
+2025/02/14 19:15:47 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 2 ms
+
+2025/02/14 19:15:49 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 9 ms
+
+2025/02/14 19:15:49 localLog.go:36: [INFO] request /api/product-server/getProductList cost time 4 ms
+
+2025/02/14 19:15:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:15:53 localLog.go:36: [INFO] request /api/product-server/getSecKillList cost time 17 ms
+
+2025/02/14 19:15:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:16:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:16:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 7 ms
+
+2025/02/14 19:16:01 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 12 ms
+
+2025/02/14 19:16:02 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 14 ms
+
+2025/02/14 19:16:02 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 21 ms
+
+2025/02/14 19:16:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:16:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:16:13 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:16:13 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 6 ms
+
+2025/02/14 19:16:18 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:16:18 localLog.go:36: [INFO] request /api/product-server/getProductById cost time 4 ms
+
+2025/02/14 19:16:18 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:16:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:16:23 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:16:28 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:16:30 localLog.go:36: [INFO] request /api/product-server/getOrderConfirmProduct cost time 10 ms
+
+2025/02/14 19:16:33 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:16:38 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:16:43 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:16:44 localLog.go:36: [INFO] request /api/user-server/getUserInfoByUserId cost time 5 ms
+
+2025/02/14 19:16:48 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:16:53 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:16:58 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:17:03 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:17:08 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:17:13 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:17:18 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:17:23 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:17:28 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:17:33 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:17:38 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:17:43 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:17:48 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:17:53 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:17:58 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:18:03 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:18:08 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:18:13 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:18:18 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:18:23 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:18:28 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:18:33 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:18:38 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:18:43 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:18:48 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:18:53 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:18:58 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:19:03 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:19:08 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:19:13 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:19:18 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:19:23 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:19:28 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:19:33 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:19:38 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:19:43 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:19:48 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:19:53 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:19:58 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:20:03 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:20:08 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:20:13 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:20:18 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:20:23 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:20:28 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:20:33 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:20:38 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:20:43 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:20:48 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:20:53 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:20:58 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:21:03 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:21:08 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:21:13 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:21:18 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:21:23 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:21:28 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:21:33 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:21:38 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:21:43 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:21:48 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:21:53 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:21:58 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:22:03 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:22:08 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:22:13 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:22:18 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:22:23 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:22:28 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:22:33 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:22:38 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:22:43 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:22:48 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:22:53 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:22:58 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:23:04 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:23:09 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:23:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:23:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:23:24 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:23:29 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:23:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:23:39 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:23:44 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:23:49 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:23:54 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:23:59 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:04 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:09 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:24 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:29 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:24:39 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:44 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:49 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:54 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:24:59 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:25:04 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:25:09 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:25:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:25:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:25:24 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:25:29 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:25:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:25:39 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:25:44 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:25:49 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:25:54 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:25:59 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:26:04 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:26:09 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:26:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:26:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:26:24 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:26:29 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:26:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:26:39 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:26:44 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:26:49 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:26:54 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:26:59 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:27:04 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:27:09 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:27:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:27:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:27:24 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:27:29 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:27:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:27:39 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:27:44 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:27:49 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:27:54 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:27:59 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:28:04 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:28:09 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:28:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:28:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:28:24 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:28:29 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:28:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:28:39 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:28:44 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:28:49 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:28:54 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:28:59 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:29:04 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:29:09 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:29:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:29:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:29:24 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:29:29 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:29:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:29:39 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:29:44 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:29:49 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:29:54 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:29:59 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:30:04 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:30:09 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:30:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:30:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:30:24 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:30:29 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:30:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:30:39 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:30:44 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:30:49 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:30:54 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:30:59 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:31:04 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:31:09 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:31:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:31:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:31:24 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:31:29 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:31:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:31:39 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:31:44 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:31:49 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:31:54 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:31:59 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:32:04 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:32:09 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:32:14 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:32:19 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:32:24 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:32:29 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:32:34 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:32:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:32:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:32:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:32:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:33:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:33:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:33:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:33:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 22 ms
+
+2025/02/14 19:33:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:33:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:33:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:33:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:33:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:33:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:33:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:33:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:34:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:35:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:35:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:35:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:35:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:35:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:35:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:35:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:35:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:35:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:35:40 localLog.go:36: [INFO] request /api/user-server/testRefreshToken cost time 15 ms
+
+2025/02/14 19:35:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:35:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:35:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:36:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:36:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:36:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:36:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:36:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:36:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:36:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:36:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:36:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:36:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:36:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:36:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:37:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:37:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 4 ms
+
+2025/02/14 19:37:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:37:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:37:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:37:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:37:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:37:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:37:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:37:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:37:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:37:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:38:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:38:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:38:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:38:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:38:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:38:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:38:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 4 ms
+
+2025/02/14 19:38:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:38:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:38:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:38:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:38:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:39:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:39:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:39:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:39:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:39:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:39:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:39:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:39:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:39:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:39:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:39:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:39:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:40:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:40:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:40:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:40:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:40:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:40:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:40:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:40:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 10 ms
+
+2025/02/14 19:40:40 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:40:45 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:40:50 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:40:55 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:41:00 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:41:05 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:41:10 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:41:15 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:41:20 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:41:25 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:41:30 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:41:35 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:41:41 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:41:46 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:41:51 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 5 ms
+
+2025/02/14 19:41:56 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:42:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:42:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 4 ms
+
+2025/02/14 19:42:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:42:16 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:42:21 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:42:26 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:42:31 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:42:36 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:42:41 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:42:46 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:42:51 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:42:56 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:43:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:43:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:43:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:43:16 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:43:21 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:43:26 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:43:31 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:43:36 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:43:41 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:43:46 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:43:51 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:43:56 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:44:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:44:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:44:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:44:16 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:44:21 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:44:26 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 5 ms
+
+2025/02/14 19:44:31 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:44:36 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:44:41 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:44:46 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:44:51 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:44:56 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:45:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:45:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:45:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:45:16 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:45:21 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:45:26 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:45:31 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:45:36 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:45:41 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:45:46 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 4 ms
+
+2025/02/14 19:45:51 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:45:56 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:46:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:46:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:46:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:46:16 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:46:21 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:46:26 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:46:31 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:46:36 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:46:41 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:46:46 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:46:51 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:46:56 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 4 ms
+
+2025/02/14 19:47:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:47:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:47:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:47:16 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:47:21 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:47:26 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:47:31 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:47:36 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:47:41 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:47:46 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:47:51 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:47:56 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:48:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:48:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:48:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:48:16 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:48:21 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:48:26 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:48:31 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:48:36 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:48:41 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:48:46 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:48:51 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:48:56 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:49:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:49:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:49:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:49:16 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:49:21 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:49:26 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:49:31 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:49:36 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:49:41 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:49:46 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:49:51 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:49:56 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:50:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:50:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:50:11 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:50:16 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:50:21 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:50:26 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:50:31 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:50:36 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:50:41 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:50:46 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:50:51 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:50:56 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:51:01 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:51:06 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:51:12 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:51:17 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:51:22 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:51:27 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:51:32 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:51:37 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:51:42 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:51:47 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:51:52 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:51:57 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:52:02 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:52:07 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:52:12 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 4 ms
+
+2025/02/14 19:52:17 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:52:22 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:52:27 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:52:32 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:52:37 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 1 ms
+
+2025/02/14 19:52:42 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 4 ms
+
+2025/02/14 19:52:47 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:52:52 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:52:57 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:53:02 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:53:07 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/14 19:53:12 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:53:17 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:53:22 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:53:27 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:53:32 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 2 ms
+
+2025/02/14 19:53:37 localLog.go:36: [INFO] request /api/user-server/testAccessToken cost time 3 ms
+
+2025/02/15 19:55:15 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/15 19:56:19 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 14:31:52 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 14:44:33 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 14:45:46 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 14:46:41 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 15:39:47 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 15:42:39 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 16:47:52 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 16:50:49 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 17:03:13 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 18:05:03 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 18:34:31 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 18:39:13 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080
+2025/02/16 18:40:20 localLog.go:36: [INFO] api-gateway start: HTTP server is listening on port 8080

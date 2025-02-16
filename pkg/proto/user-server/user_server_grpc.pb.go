@@ -32,6 +32,9 @@ const (
 	UserService_GetEmailByUserId_FullMethodName      = "/proto.UserService/GetEmailByUserId"
 	UserService_SendEmail_FullMethodName             = "/proto.UserService/SendEmail"
 	UserService_GetUserInfoByUserId_FullMethodName   = "/proto.UserService/GetUserInfoByUserId"
+	UserService_UploadAvatar_FullMethodName          = "/proto.UserService/UploadAvatar"
+	UserService_UpdateName_FullMethodName            = "/proto.UserService/UpdateName"
+	UserService_UpdateBio_FullMethodName             = "/proto.UserService/UpdateBio"
 )
 
 // UserServiceClient is the client API for UserService service.
@@ -48,8 +51,6 @@ type UserServiceClient interface {
 	TestAccessToken(ctx context.Context, in *TestAccessTokenRequest, opts ...grpc.CallOption) (*TestAccessTokenResponse, error)
 	// 检测刷新令牌是否过期，过期返回错，没过期返回访问令牌
 	TestRefreshToken(ctx context.Context, in *TestRefreshTokenRequest, opts ...grpc.CallOption) (*TestRefreshTokenResponse, error)
-	// 修改用户名,修改之前先 < 调用 token接口 >，判断是否过期
-	// TODO 调用接口判断而不是直接在这个接口里面判断，是否妥当？但是我懒得改了，先这样
 	ChangeUsername(ctx context.Context, in *ChangeUsernameRequest, opts ...grpc.CallOption) (*ChangeUsernameResponse, error)
 	// 修改邮箱 3天内只能修改一次,修改之前先调用token接口，判断是否过期,
 	// 先调用方法向以前邮箱发验证码并验证，这个注意，前面写登录的时候需要将
@@ -68,6 +69,10 @@ type UserServiceClient interface {
 	SendEmail(ctx context.Context, in *SendEmailRequest, opts ...grpc.CallOption) (*SendEmailResponse, error)
 	// 通过accessToken和user_id获取用户信息，头像，名称，邮箱，id，简介，创建时间
 	GetUserInfoByUserId(ctx context.Context, in *GetUserInfoByUserIdRequest, opts ...grpc.CallOption) (*GetUserInfoByUserIdResponse, error)
+	// 上传或修改用户头像
+	UploadAvatar(ctx context.Context, in *UploadAvatarRequest, opts ...grpc.CallOption) (*UploadAvatarResponse, error)
+	UpdateName(ctx context.Context, in *UpdateNameRequest, opts ...grpc.CallOption) (*UpdateNameResponse, error)
+	UpdateBio(ctx context.Context, in *UpdateBioRequest, opts ...grpc.CallOption) (*UpdateBioResponse, error)
 }
 
 type userServiceClient struct {
@@ -208,6 +213,36 @@ func (c *userServiceClient) GetUserInfoByUserId(ctx context.Context, in *GetUser
 	return out, nil
 }
 
+func (c *userServiceClient) UploadAvatar(ctx context.Context, in *UploadAvatarRequest, opts ...grpc.CallOption) (*UploadAvatarResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadAvatarResponse)
+	err := c.cc.Invoke(ctx, UserService_UploadAvatar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateName(ctx context.Context, in *UpdateNameRequest, opts ...grpc.CallOption) (*UpdateNameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateNameResponse)
+	err := c.cc.Invoke(ctx, UserService_UpdateName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateBio(ctx context.Context, in *UpdateBioRequest, opts ...grpc.CallOption) (*UpdateBioResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateBioResponse)
+	err := c.cc.Invoke(ctx, UserService_UpdateBio_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility.
@@ -222,8 +257,6 @@ type UserServiceServer interface {
 	TestAccessToken(context.Context, *TestAccessTokenRequest) (*TestAccessTokenResponse, error)
 	// 检测刷新令牌是否过期，过期返回错，没过期返回访问令牌
 	TestRefreshToken(context.Context, *TestRefreshTokenRequest) (*TestRefreshTokenResponse, error)
-	// 修改用户名,修改之前先 < 调用 token接口 >，判断是否过期
-	// TODO 调用接口判断而不是直接在这个接口里面判断，是否妥当？但是我懒得改了，先这样
 	ChangeUsername(context.Context, *ChangeUsernameRequest) (*ChangeUsernameResponse, error)
 	// 修改邮箱 3天内只能修改一次,修改之前先调用token接口，判断是否过期,
 	// 先调用方法向以前邮箱发验证码并验证，这个注意，前面写登录的时候需要将
@@ -242,6 +275,10 @@ type UserServiceServer interface {
 	SendEmail(context.Context, *SendEmailRequest) (*SendEmailResponse, error)
 	// 通过accessToken和user_id获取用户信息，头像，名称，邮箱，id，简介，创建时间
 	GetUserInfoByUserId(context.Context, *GetUserInfoByUserIdRequest) (*GetUserInfoByUserIdResponse, error)
+	// 上传或修改用户头像
+	UploadAvatar(context.Context, *UploadAvatarRequest) (*UploadAvatarResponse, error)
+	UpdateName(context.Context, *UpdateNameRequest) (*UpdateNameResponse, error)
+	UpdateBio(context.Context, *UpdateBioRequest) (*UpdateBioResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -290,6 +327,15 @@ func (UnimplementedUserServiceServer) SendEmail(context.Context, *SendEmailReque
 }
 func (UnimplementedUserServiceServer) GetUserInfoByUserId(context.Context, *GetUserInfoByUserIdRequest) (*GetUserInfoByUserIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfoByUserId not implemented")
+}
+func (UnimplementedUserServiceServer) UploadAvatar(context.Context, *UploadAvatarRequest) (*UploadAvatarResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadAvatar not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateName(context.Context, *UpdateNameRequest) (*UpdateNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateName not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateBio(context.Context, *UpdateBioRequest) (*UpdateBioResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBio not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 func (UnimplementedUserServiceServer) testEmbeddedByValue()                     {}
@@ -546,6 +592,60 @@ func _UserService_GetUserInfoByUserId_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UploadAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadAvatarRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UploadAvatar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UploadAvatar_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UploadAvatar(ctx, req.(*UploadAvatarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UpdateName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateName(ctx, req.(*UpdateNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateBio_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBioRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateBio(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserService_UpdateBio_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateBio(ctx, req.(*UpdateBioRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -604,6 +704,18 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserInfoByUserId",
 			Handler:    _UserService_GetUserInfoByUserId_Handler,
+		},
+		{
+			MethodName: "UploadAvatar",
+			Handler:    _UserService_UploadAvatar_Handler,
+		},
+		{
+			MethodName: "UpdateName",
+			Handler:    _UserService_UpdateName_Handler,
+		},
+		{
+			MethodName: "UpdateBio",
+			Handler:    _UserService_UpdateBio_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

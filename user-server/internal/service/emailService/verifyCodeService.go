@@ -27,7 +27,7 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 	if result {
 		//邮箱存在
 		//查找基本信息
-		id, name, role, err := repository.GetUserInfoByEmail(email)
+		id, name, role, createdAt, err := repository.GetUserInfoByEmail(email)
 		if err != nil {
 			resp.Code = 400
 			resp.StatusCode = "USR-002"
@@ -39,8 +39,10 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 		}
 		resp.Username = name
 		resp.Role = role
+		resp.Email = email
+		resp.CreateAt = createdAt
 		//查找头像
-		avatarUrl, err := repository.GetAvatarUrlById(resp.UserId)
+		avatarUrl, bio, err := repository.GetAvatarUrlAndBioById(resp.UserId)
 		if err != nil {
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
@@ -57,6 +59,7 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			return resp, nil
 		}
 		resp.Avatar = avatarUrl
+		resp.Bio = bio
 		//生成双token
 		refreshToken, err := token.GenerateRefreshToken(resp.UserId, resp.Role)
 		if err != nil {
@@ -118,7 +121,7 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 		//邮箱不存在
 		resp.Username = userPkg.GenerateUsername()
 		resp.Role = "user"
-		userId, err := repository.SaveUserInfo(resp.Username, email, resp.Role)
+		userId, createAt, err := repository.SaveUserInfo(resp.Username, email, resp.Role)
 		if err != nil {
 			resp.Code = 500
 			resp.StatusCode = "GLB-003"
@@ -135,6 +138,9 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			return resp, nil
 		}
 		resp.UserId = userId
+		resp.Bio = ""
+		resp.CreateAt = createAt
+		resp.Email = email
 		//生成双token
 		refreshToken, err := token.GenerateRefreshToken(resp.UserId, resp.Role)
 		if err != nil {
@@ -188,7 +194,7 @@ func LoginByEmail(email string) (resp *pb.EmailVerifyCodeResponse, err error) {
 			return resp, nil
 		}
 		// 头像置为默认值，后面可以使用服务器上的默认图片
-		resp.Avatar = "default"
+		resp.Avatar = "b2c/default.jpg"
 
 		return resp, nil
 	}

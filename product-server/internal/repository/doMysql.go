@@ -376,13 +376,13 @@ func UploadSecProduct(secProduct *pb.UploadSecKillProductRequest) error {
 	return nil
 }
 
-// GetProductList 获取商品列表
-func GetProductList(currentPage int32, pageSize int32, categoryId int32, kind int32, sort int32) ([]*pb.ProductListItem, int32, error) {
+// GetProductList 获取商品列表，支持关键词模糊查询
+func GetProductList(currentPage int32, pageSize int32, categoryId int32, kind int32, sort int32, keyword string) ([]*pb.ProductListItem, int32, error) {
 	// 创建返回值结构
 	var productList []*pb.ProductListItem
 
 	// 构建基础查询语句和参数
-	baseQuery, args := buildBaseQuery(currentPage, pageSize, categoryId, kind, sort)
+	baseQuery, args := buildBaseQuery(currentPage, pageSize, categoryId, kind, sort, keyword)
 
 	// 执行基本信息查询
 	rows, err := config.MySqlClient.Query(baseQuery, args...)
@@ -392,7 +392,7 @@ func GetProductList(currentPage int32, pageSize int32, categoryId int32, kind in
 	}
 	defer rows.Close()
 
-	countQuery, countArgs := buildCountQuery(categoryId, kind)
+	countQuery, countArgs := buildCountQuery(categoryId, kind, keyword)
 	var totalItems int32
 	err = config.MySqlClient.QueryRow(countQuery, countArgs...).Scan(&totalItems)
 	if err != nil {
@@ -414,14 +414,6 @@ func GetProductList(currentPage int32, pageSize int32, categoryId int32, kind in
 		}
 	}
 
-	//// 查询每个商品的类型
-	//if len(productIDs) > 0 {
-	//	err = queryTypes(productIDs, productMap)
-	//	if err != nil {
-	//		return nil, 0, err
-	//	}
-	//}
-
 	// 按照原始顺序将商品添加到列表中
 	for _, id := range productIDs {
 		if product, ok := productMap[id]; ok {
@@ -438,7 +430,7 @@ func GetProductList(currentPage int32, pageSize int32, categoryId int32, kind in
 }
 
 // buildCountQuery 构建统计满足条件商品数量的查询语句和参数
-func buildCountQuery(categoryId int32, kind int32) (string, []interface{}) {
+func buildCountQuery(categoryId int32, kind int32, keyword string) (string, []interface{}) {
 	countQuery := `
         SELECT 
             COUNT(*)
@@ -461,11 +453,18 @@ func buildCountQuery(categoryId int32, kind int32) (string, []interface{}) {
 		args = append(args, kind)
 	}
 
+	// 如果传入了关键词且不为空，则添加模糊查询过滤条件
+	if keyword != "" {
+		countQuery += " AND (p.name LIKE ? OR p.description LIKE ?)"
+		keyword = "%" + keyword + "%"
+		args = append(args, keyword, keyword)
+	}
+
 	return countQuery, args
 }
 
 // buildBaseQuery 构建基础查询语句和参数
-func buildBaseQuery(currentPage int32, pageSize int32, categoryId int32, kind int32, sort int32) (string, []interface{}) {
+func buildBaseQuery(currentPage int32, pageSize int32, categoryId int32, kind int32, sort int32, keyword string) (string, []interface{}) {
 	baseQuery := `
         SELECT 
             p.id, 
@@ -497,6 +496,13 @@ func buildBaseQuery(currentPage int32, pageSize int32, categoryId int32, kind in
 	if kind != 0 {
 		baseQuery += " AND p.kind = ?"
 		args = append(args, kind)
+	}
+
+	// 如果传入了关键词且不为空，则添加模糊查询过滤条件
+	if keyword != "" {
+		baseQuery += " AND (p.name LIKE ? OR p.description LIKE ?)"
+		keyword = "%" + keyword + "%"
+		args = append(args, keyword, keyword)
 	}
 
 	// 根据排序标准添加排序条件
@@ -977,6 +983,7 @@ func GetOrderConfirmProduct(productIds []int32) ([]*pb.OrderConfirmProduct, erro
             b2c_product.product_price pp ON p.id = pp.product_id
         WHERE 
             p.id IN (?` + strings.Repeat(",?", len(productIds)-1) + `)
+             AND p.isListed = 1
     `
 
 	// 将 productIds 转换为 interface{} 类型，以便传递给 Exec 函数
@@ -1019,4 +1026,221 @@ func GetOrderConfirmProduct(productIds []int32) ([]*pb.OrderConfirmProduct, erro
 	}
 
 	return products, nil
+}
+
+// FuzzySearch 模糊查询商品列表
+func FuzzySearch(keyword string, currentPage int32, pageSize int32) ([]*pb.ProductListItem, int32, error) {
+	// 创建返回值结构
+	var productList []*pb.ProductListItem
+
+	// 构建基础查询语句和参数
+	baseQuery, args := buildFuzzyBaseQuery(keyword, currentPage, pageSize)
+
+	// 执行基本信息查询
+	rows, err := config.MySqlClient.Query(baseQuery, args...)
+	if err != nil {
+		logError("Failed to execute base query", err)
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	countQuery, countArgs := buildFuzzyCountQuery(keyword)
+	var totalItems int32
+	err = config.MySqlClient.QueryRow(countQuery, countArgs...).Scan(&totalItems)
+	if err != nil {
+		logError("Failed to execute count query", err)
+		return nil, 0, err
+	}
+
+	// 存储商品 ID 列表和商品映射
+	productIDs, productMap, err := processFuzBaseQuery(rows)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 查询每个商品的图片
+	if len(productIDs) > 0 {
+		err = queryFuzImages(productIDs, productMap)
+		if err != nil {
+			return nil, 0, err
+		}
+	}
+
+	// 按照原始顺序将商品添加到列表中
+	for _, id := range productIDs {
+		if product, ok := productMap[id]; ok {
+			productList = append(productList, product)
+		}
+	}
+
+	// 如果没有查询到任何数据，返回错误
+	if len(productList) == 0 {
+		return nil, 0, err
+	}
+
+	return productList, totalItems, nil
+}
+
+// buildFuzzyCountQuery 构建统计满足模糊查询条件商品数量的查询语句和参数
+func buildFuzzyCountQuery(keyword string) (string, []interface{}) {
+	countQuery := `
+        SELECT 
+            COUNT(*)
+        FROM 
+            b2c_product.products p
+        WHERE 
+            1=1
+    `
+	var args []interface{}
+
+	// 如果传入了关键词，则添加模糊查询过滤条件
+	if keyword != "" {
+		countQuery += " AND (p.name LIKE ? OR p.description LIKE ?)"
+		keyword = "%" + keyword + "%"
+		args = append(args, keyword, keyword)
+	}
+
+	return countQuery, args
+}
+
+// buildFuzzyBaseQuery 构建模糊查询基础查询语句和参数
+func buildFuzzyBaseQuery(keyword string, currentPage int32, pageSize int32) (string, []interface{}) {
+	baseQuery := `
+        SELECT 
+            p.id, 
+            p.name,
+            p.description,
+            p.create_time,
+            ps.stock, 
+            ps.sold, 
+            pp.price, 
+            pp.origin_price
+        FROM 
+            b2c_product.products p
+        LEFT JOIN 
+            b2c_product.product_sale ps ON ps.product_id = p.id
+        LEFT JOIN 
+            b2c_product.product_price pp ON pp.product_id = p.id
+        WHERE 
+            p.isListed=1 AND 1=1
+    `
+	var args []interface{}
+
+	// 如果传入了关键词，则添加模糊查询过滤条件
+	if keyword != "" {
+		baseQuery += " AND (p.name LIKE ? OR p.description LIKE ?)"
+		keyword = "%" + keyword + "%"
+		args = append(args, keyword, keyword)
+	}
+
+	// 默认按产品 ID 升序排序
+	baseQuery += " ORDER BY p.id ASC"
+
+	// 添加分页查询的条件
+	offset := (currentPage - 1) * pageSize
+	baseQuery += fmt.Sprintf(" LIMIT %d OFFSET %d", pageSize, offset)
+
+	return baseQuery, args
+}
+
+// processBaseQuery 处理基础查询结果
+func processFuzBaseQuery(rows *sql.Rows) ([]int32, map[int32]*pb.ProductListItem, error) {
+	var productIDs []int32
+	productMap := make(map[int32]*pb.ProductListItem)
+
+	for rows.Next() {
+		var product pb.ProductListItem
+		var stock sql.NullInt32
+		var sold sql.NullInt32
+		var price sql.NullFloat64
+		var originPrice sql.NullFloat64
+		var createTime sql.NullString
+
+		err := rows.Scan(
+			&product.Id,
+			&product.Name,
+			&product.Description,
+			&createTime,
+			&stock,
+			&sold,
+			&price,
+			&originPrice,
+		)
+		if err != nil {
+			logError("Failed to scan base row", err)
+			return nil, nil, err
+		}
+
+		if createTime.Valid {
+			product.CreateTime = createTime.String
+		}
+		if stock.Valid {
+			product.Stock = stock.Int32
+		} else {
+			product.Stock = 0
+		}
+		if sold.Valid {
+			product.Sold = sold.Int32
+		} else {
+			product.Sold = 0
+		}
+		if price.Valid {
+			product.Price = price.Float64
+		} else {
+			product.Price = 0
+		}
+		if originPrice.Valid {
+			product.OriginalPrice = originPrice.Float64
+		} else {
+			product.OriginalPrice = 0
+		}
+
+		productMap[product.Id] = &product
+		productIDs = append(productIDs, product.Id)
+	}
+
+	return productIDs, productMap, nil
+}
+
+// queryImages 查询商品图片
+func queryFuzImages(productIDs []int32, productMap map[int32]*pb.ProductListItem) error {
+	imgQuery := `
+        SELECT 
+            product_id, 
+            image
+        FROM 
+            b2c_product.product_image
+        WHERE 
+            product_id IN (?` + strings.Repeat(",?", len(productIDs)-1) + `)
+    `
+	imgArgs := make([]interface{}, len(productIDs))
+	for i, id := range productIDs {
+		imgArgs[i] = id
+	}
+	imgRows, err := config.MySqlClient.Query(imgQuery, imgArgs...)
+	if err != nil {
+		logError("Failed to execute image query", err)
+		return err
+	}
+	defer imgRows.Close()
+
+	for imgRows.Next() {
+		var productID int32
+		var imgUrl sql.NullString
+
+		err := imgRows.Scan(&productID, &imgUrl)
+		if err != nil {
+			logError("Failed to scan image row", err)
+			return err
+		}
+
+		if imgUrl.Valid {
+			img := pb.PImg{ImgUrl: imgUrl.String}
+			if product, ok := productMap[productID]; ok {
+				product.PImg = append(product.PImg, &img)
+			}
+		}
+	}
+
+	return nil
 }

@@ -62,6 +62,8 @@ func initConfig() {
 		log.Fatalf("Error initializing log config: %v", err)
 		return
 	}
+
+	config.InitMinio()
 }
 
 func registerService(etcdServices *etcd.EtcdService, serviceName string, api string, port int, ttl int64) {

@@ -37,6 +37,10 @@ func SetupRoutes(router *gin.Engine) {
 		userServer.POST("/changePasswordByEmail", userRoutes.ChangePasswordByEmail)
 		userServer.POST("/editUserInfo", userRoutes.EditUserInfo)
 		userServer.POST("/getUserInfoByUserId", userRoutes.GetUserInfoByUserId)
+
+		userServer.POST("/uploadAvatar", userRoutes.UploadAvatar)
+		userServer.POST("/updateName", userRoutes.UpdateName)
+		userServer.POST("/updateBio", userRoutes.UpdateBio)
 	}
 
 	// -----------------处理product模块请求--------------------------------
@@ -60,6 +64,8 @@ func SetupRoutes(router *gin.Engine) {
 		productServer.POST("/purchaseSecKill", productRoutes.PurchaseSecKill)
 
 		productServer.POST("/getOrderConfirmProduct", productRoutes.GetOrderConfirmProduct)
+
+		productServer.GET("/fuzzySearch", productRoutes.FuzzySearch)
 	}
 
 	// -----------------处理recommend模块请求--------------------------------
@@ -74,7 +80,7 @@ func SetupRoutes(router *gin.Engine) {
 		recommendServer.POST("/searchProduct", recommendRoutes.SearchProduct)
 
 		// 获取推荐商品
-		recommendServer.GET("/GetRecommendProductList", recommendRoutes.GetRecommendProductList)
+		recommendServer.GET("/getRecommendProductList", recommendRoutes.GetRecommendProductList)
 
 	}
 

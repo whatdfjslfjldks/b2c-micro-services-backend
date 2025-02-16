@@ -14,8 +14,6 @@ service UserService {
   rpc TestAccessToken(TestAccessTokenRequest) returns (TestAccessTokenResponse) {}
   // 检测刷新令牌是否过期，过期返回错，没过期返回访问令牌
   rpc TestRefreshToken(TestRefreshTokenRequest) returns (TestRefreshTokenResponse) {}
-  // 修改用户名,修改之前先 < 调用 token接口 >，判断是否过期
-  // TODO 调用接口判断而不是直接在这个接口里面判断，是否妥当？但是我懒得改了，先这样
   rpc ChangeUsername(ChangeUsernameRequest) returns (ChangeUsernameResponse) {}
   // 修改邮箱 3天内只能修改一次,修改之前先调用token接口，判断是否过期,
   // 先调用方法向以前邮箱发验证码并验证，这个注意，前面写登录的时候需要将
@@ -35,6 +33,43 @@ service UserService {
   rpc SendEmail(SendEmailRequest) returns (SendEmailResponse) {}
   // 通过accessToken和user_id获取用户信息，头像，名称，邮箱，id，简介，创建时间
   rpc GetUserInfoByUserId(GetUserInfoByUserIdRequest) returns (GetUserInfoByUserIdResponse) {}
+
+  // 上传或修改用户头像
+  rpc UploadAvatar(UploadAvatarRequest) returns (UploadAvatarResponse);
+
+  rpc UpdateName(UpdateNameRequest) returns (UpdateNameResponse) {}
+
+  rpc UpdateBio(UpdateBioRequest) returns (UpdateBioResponse) {}
+}
+message UpdateBioRequest {
+  string access_token=1;
+  string bio=2;
+}
+message UpdateBioResponse {
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string bio=4;
+}
+message UpdateNameRequest {
+  string access_token=1;
+  string name=2;
+}
+message UpdateNameResponse {
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string name=4;
+}
+message UploadAvatarRequest{
+  bytes file = 1;
+  string access_token = 2;
+}
+message UploadAvatarResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  string avatar_url=4;
 }
 message GetUserInfoByUserIdRequest {
   string access_token=1;
@@ -169,6 +204,9 @@ message UsernameLoginResponse {
   string accessToken=7;
   string refreshToken=8;
   string avatar=9;
+  string email=10;
+  string bio=11;
+  string create_at=12;
 }
 // 验证码发送
 message EmailSendCodeRequest {
@@ -196,6 +234,9 @@ message EmailVerifyCodeResponse {
   string accessToken=7;
   string refreshToken=8;
   string avatar=9;
+  string email=10;
+  string bio=11;
+  string create_at=12;
 }
 
 

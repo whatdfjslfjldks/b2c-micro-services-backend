@@ -62,8 +62,8 @@ func TimeMW() gin.HandlerFunc {
 		ctx.Next()
 		timeCost := time.Since(now)
 		// TODO: 信息收集
-		msg := fmt.Sprintf("request %s cost time %d ms\n", ctx.Request.URL.Path, timeCost.Milliseconds())
+		_ = fmt.Sprintf("request %s cost time %d ms\n", ctx.Request.URL.Path, timeCost.Milliseconds())
 		//fmt.Println("消息： ", msg)
-		localLog.GateWayLog.Info(msg)
+		//localLog.GateWayLog.Info(msg)
 	}
 }

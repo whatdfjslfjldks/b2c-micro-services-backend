@@ -141,3 +141,9 @@
 2025/02/13 23:03:19 localLog.go:36: [INFO] etcd: first time register product-server
 2025/02/13 23:03:24 localLog.go:46: [ERROR] GetOrderConfirmProduct--Failed to scan row: sql: expected 5 destination arguments in Scan, not 4
 2025/02/13 23:04:48 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/14 19:14:59 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/15 19:56:31 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/15 23:05:47 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/15 23:31:06 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/16 18:08:50 localLog.go:36: [INFO] etcd: first time register product-server
+2025/02/16 18:35:03 localLog.go:36: [INFO] etcd: first time register product-server

@@ -150,6 +150,36 @@ func (c *GRPCClient) CallService(serviceName string, method string, request inte
 			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
 		}
 		*response = resp
+	case "uploadAvatar":
+		req := request.(*userServerProto.UploadAvatarRequest)
+		resp, err := client.UploadAvatar(ctx, req)
+		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				return fmt.Errorf("请求超时")
+			}
+			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
+		}
+		*response = resp
+	case "updateName":
+		req := request.(*userServerProto.UpdateNameRequest)
+		resp, err := client.UpdateName(ctx, req)
+		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				return fmt.Errorf("请求超时")
+			}
+			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
+		}
+		*response = resp
+	case "updateBio":
+		req := request.(*userServerProto.UpdateBioRequest)
+		resp, err := client.UpdateBio(ctx, req)
+		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				return fmt.Errorf("请求超时")
+			}
+			return fmt.Errorf("failed to call sendVerifyCode: %v", err)
+		}
+		*response = resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

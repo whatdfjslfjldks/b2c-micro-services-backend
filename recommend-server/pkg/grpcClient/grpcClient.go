@@ -4,6 +4,7 @@ import (
 	"context"
 	"google.golang.org/grpc"
 	"log"
+	"math/rand"
 	"micro-services/pkg/etcd"
 	logServerProto "micro-services/pkg/proto/log-server"
 	productServerProto "micro-services/pkg/proto/product-server"
@@ -27,8 +28,9 @@ func (c *GRPCClient) PostLog(request interface{}) {
 		log.Printf("failed to get service address: %v", err)
 	}
 
+	idx := rand.Intn(len(serviceAddr))
 	// 与 gRPC 服务建立连接
-	conn, err := grpc.Dial(serviceAddr, grpc.WithInsecure()) // 可改成加密连接
+	conn, err := grpc.Dial(serviceAddr[idx], grpc.WithInsecure()) // 可改成加密连接
 	if err != nil {
 		log.Printf("failed to connect to gRPC service: %v\n", err)
 		return
@@ -42,23 +44,23 @@ func (c *GRPCClient) PostLog(request interface{}) {
 
 func (c *GRPCClient) GetProductById(request interface{}) (
 	*productServerProto.GetProductByIdResponse, error) {
-	serviceAddr, err := c.etcdClient.GetService("product-server")
-	if err != nil {
-		log.Printf("failed to get service address: %v", err)
-		return nil, err
-	}
-	conn, err := grpc.Dial(serviceAddr, grpc.WithInsecure())
-	if err != nil {
-		log.Printf("failed to connect to gRPC service: %v\n", err)
-		return nil, err
-	}
-	defer conn.Close()
-	client := productServerProto.NewProductServiceClient(conn)
-	req := request.(*productServerProto.GetProductByIdRequest)
-	resp, err := client.GetProductById(context.Background(), req)
-	if err != nil {
-		log.Printf("failed to call gRPC method: %v", err)
-		return nil, err
-	}
-	return resp, nil
+	//serviceAddr, err := c.etcdClient.GetService("product-server")
+	//if err != nil {
+	//	log.Printf("failed to get service address: %v", err)
+	//	return nil, err
+	//}
+	//conn, err := grpc.Dial(serviceAddr, grpc.WithInsecure())
+	//if err != nil {
+	//	log.Printf("failed to connect to gRPC service: %v\n", err)
+	//	return nil, err
+	//}
+	//defer conn.Close()
+	//client := productServerProto.NewProductServiceClient(conn)
+	//req := request.(*productServerProto.GetProductByIdRequest)
+	//resp, err := client.GetProductById(context.Background(), req)
+	//if err != nil {
+	//	log.Printf("failed to call gRPC method: %v", err)
+	//	return nil, err
+	//}
+	return nil, nil
 }

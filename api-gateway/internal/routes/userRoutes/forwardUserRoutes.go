@@ -3,8 +3,10 @@ package userRoutes
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	"micro-services/api-gateway/internal/instance"
 	userServerProto "micro-services/pkg/proto/user-server"
+	"micro-services/pkg/utils"
 )
 
 var model = "user-server"
@@ -89,6 +91,9 @@ func CheckVerifyCode(c *gin.Context) {
 			"accessToken":  respCopy.AccessToken,
 			"refreshToken": respCopy.RefreshToken,
 			"avatarUrl":    respCopy.Avatar,
+			"email":        respCopy.Email,
+			"bio":          respCopy.Bio,
+			"createAt":     respCopy.CreateAt,
 		},
 	})
 }
@@ -140,6 +145,9 @@ func LoginByPassword(c *gin.Context) {
 			"accessToken":  respCopy.AccessToken,
 			"refreshToken": respCopy.RefreshToken,
 			"avatarUrl":    respCopy.Avatar,
+			"email":        respCopy.Email,
+			"bio":          respCopy.Bio,
+			"createAt":     respCopy.CreateAt,
 		},
 	})
 }
@@ -433,5 +441,130 @@ func GetUserInfoByUserId(c *gin.Context) {
 			"create_at":  respCopy.CreateAt,
 		},
 	})
+}
 
+func UploadAvatar(c *gin.Context) {
+	accessToken := c.Request.Header.Get("Access-Token")
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	fileContent, e := utils.ReadFileContent(file)
+	if e != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "PRT-001",
+			"msg":         "读取 图片 文件内容错误！",
+		})
+		return
+	}
+	req := userServerProto.UploadAvatarRequest{
+		AccessToken: accessToken,
+		File:        fileContent,
+	}
+	var resp interface{}
+	err = instance.GrpcClient.CallService(model, "uploadAvatar", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := (resp).(*userServerProto.UploadAvatarResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"avatar_url": respCopy.AvatarUrl,
+		},
+	})
+}
+
+func UpdateName(c *gin.Context) {
+	accessToken := c.Request.Header.Get("Access-Token")
+	type a struct {
+		Name string `json:"name"`
+	}
+	var b a
+	err := c.ShouldBindJSON(&b)
+	if err != nil {
+		log.Printf("err: %v", err)
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	req := userServerProto.UpdateNameRequest{
+		AccessToken: accessToken,
+		Name:        b.Name,
+	}
+	var resp interface{}
+	err = instance.GrpcClient.CallService(model, "updateName", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := (resp).(*userServerProto.UpdateNameResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"name": respCopy.Name,
+		},
+	})
+}
+func UpdateBio(c *gin.Context) {
+	accessToken := c.Request.Header.Get("Access-Token")
+	type a struct {
+		Bio string `json:"bio"`
+	}
+	var b a
+	err := c.ShouldBindJSON(&b)
+	if err != nil {
+		log.Printf("err: %v", err)
+		c.JSON(400, gin.H{
+			"code":        400,
+			"status_code": "GLB-001",
+			"msg":         "非法输入！",
+		})
+		return
+	}
+	req := userServerProto.UpdateBioRequest{
+		AccessToken: accessToken,
+		Bio:         b.Bio,
+	}
+	var resp interface{}
+	err = instance.GrpcClient.CallService(model, "updateBio", &req, &resp)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"code":        500,
+			"status_code": "GLB-002",
+			"msg":         "grpc调用错误: " + err.Error(),
+		})
+		return
+	}
+	respCopy := (resp).(*userServerProto.UpdateBioResponse)
+	c.JSON(int(respCopy.Code), gin.H{
+		"code":        respCopy.Code,
+		"status_code": respCopy.StatusCode,
+		"msg":         respCopy.Msg,
+		"data": gin.H{
+			"bio": respCopy.Bio,
+		},
+	})
 }

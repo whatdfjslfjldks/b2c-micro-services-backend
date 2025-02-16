@@ -4,11 +4,15 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/go-redsync/redsync/v4"
+	"github.com/go-redsync/redsync/v4/redis/goredis/v8"
 	"github.com/google/uuid"
 	"log"
 	"micro-services/order-server/pkg/config"
 	pb "micro-services/pkg/proto/order-server"
 	"micro-services/pkg/utils"
+	"strings"
+	"time"
 )
 
 func IsUserIdExist(userId int64) bool {
@@ -251,4 +255,140 @@ func GetOrderDetail(orderId string, userId int64) (*pb.GetOrderDetailResponse, e
 	orderDetail.ProductAmount = productAmounts
 
 	return orderDetail, nil
+}
+
+func CheckProductStock(productId []int32, productAmount []int32) error {
+	// 加锁
+	pool := goredis.NewPool(config.RdClient)
+	rs := redsync.New(pool)
+	mutex := rs.NewMutex("normal", redsync.WithExpiry(10*time.Second)) // 设置锁的超时时间为 10 秒
+
+	// 尝试获取锁
+	if err := mutex.Lock(); err != nil {
+		return fmt.Errorf("failed to acquire lock: %w", err)
+	}
+	defer func() {
+		if _, err := mutex.Unlock(); err != nil {
+			log.Printf("failed to release lock: %v", err)
+		}
+	}()
+
+	if len(productId) != len(productAmount) {
+		return fmt.Errorf("the lengths of productId and productAmount must be the same")
+	}
+
+	// 生成占位符
+	placeholders := make([]string, len(productId))
+	for i := range placeholders {
+		placeholders[i] = "?"
+	}
+	placeholderStr := strings.Join(placeholders, ", ")
+
+	// 构建查询语句，检查商品是否上架
+	checkQuery := fmt.Sprintf("SELECT id FROM b2c_product.products WHERE kind = 1 AND isListed = 1 AND id IN (%s)", placeholderStr)
+
+	// 准备参数
+	args := make([]interface{}, len(productId))
+	for i, id := range productId {
+		args[i] = id
+	}
+
+	// 执行批量查询
+	rows, err := config.MySqlClient.Query(checkQuery, args...)
+	if err != nil {
+		return fmt.Errorf("failed to query product listings: %w", err)
+	}
+	defer rows.Close()
+
+	// 存储已上架商品的ID
+	listedProductIds := make(map[int32]struct{})
+	for rows.Next() {
+		var id int32
+		if err := rows.Scan(&id); err != nil {
+			return fmt.Errorf("failed to scan product listing: %w", err)
+		}
+		listedProductIds[id] = struct{}{}
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("error occurred while iterating over rows: %w", err)
+	}
+
+	// 检查每个商品是否已上架
+	for _, id := range productId {
+		if _, exists := listedProductIds[id]; !exists {
+			return fmt.Errorf("product %d is not listed", id)
+		}
+	}
+
+	// 构建查询库存的语句
+	stockQuery := fmt.Sprintf("SELECT product_id, stock FROM b2c_product.product_sale WHERE product_id IN (%s)", placeholderStr)
+
+	// 执行批量查询库存
+	rows, err = config.MySqlClient.Query(stockQuery, args...)
+	if err != nil {
+		return fmt.Errorf("failed to query product stocks: %w", err)
+	}
+	defer rows.Close()
+
+	// 存储商品库存的映射
+	stockMap := make(map[int32]int32)
+	for rows.Next() {
+		var id int32
+		var stock int32
+		if err := rows.Scan(&id, &stock); err != nil {
+			return fmt.Errorf("failed to scan product stock: %w", err)
+		}
+		stockMap[id] = stock
+	}
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("error occurred while iterating over rows: %w", err)
+	}
+
+	// 检查库存是否足够
+	var allStocksSufficient bool
+	allStocksSufficient = true
+	for i, id := range productId {
+		stock, exists := stockMap[id]
+		if !exists {
+			return fmt.Errorf("stock not found for product %d", id)
+		}
+		if stock < productAmount[i] {
+			return fmt.Errorf("insufficient stock for product %d, required: %d, available: %d", id, productAmount[i], stock)
+		}
+		// 如果库存足够，减去相应的数量
+		stockMap[id] -= productAmount[i]
+		if stockMap[id] < 0 {
+			allStocksSufficient = false
+		}
+	}
+
+	// 如果所有库存都足够，开始事务更新库存
+	if allStocksSufficient {
+		tx, err := config.MySqlClient.Begin()
+		if err != nil {
+			return fmt.Errorf("failed to start transaction: %w", err)
+		}
+		defer func() {
+			if !allStocksSufficient {
+				_ = tx.Rollback()
+			}
+		}()
+
+		for id, newStock := range stockMap {
+			updateQuery := "UPDATE b2c_product.product_sale SET stock = ? WHERE product_id = ?"
+			if _, err := tx.Exec(updateQuery, newStock, id); err != nil {
+				_ = tx.Rollback()
+				return fmt.Errorf("failed to update stock for product %d: %w", id, err)
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			_ = tx.Rollback()
+			return fmt.Errorf("failed to commit transaction: %w", err)
+		}
+	} else {
+		return fmt.Errorf("not all products have sufficient stock")
+	}
+
+	return nil
 }

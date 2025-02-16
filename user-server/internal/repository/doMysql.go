@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"micro-services/pkg/utils"
 	userPkg "micro-services/user-server/pkg"
 	"micro-services/user-server/pkg/config"
@@ -25,91 +26,100 @@ func IsEmailExist(email string) bool {
 	return exists
 }
 
-func GetUserInfoByEmail(email string) (*int64, string, string, error) {
+func GetUserInfoByEmail(email string) (*int64, string, string, string, error) {
 	var id *int64
-	var name, role string
-	query := "SELECT user_id, username, role FROM b2c_user.users WHERE email = ?"
+	var name, role, createAt string
+	query := "SELECT user_id, username, role,create_at FROM b2c_user.users WHERE email = ?"
 	row := config.MySqlClient.QueryRow(query, email) // 使用 QueryRow 获取单行结果
-	err := row.Scan(&id, &name, &role)
+	err := row.Scan(&id, &name, &role, &createAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, "", "", errors.New("用户不存在")
+			return nil, "", "", "", errors.New("用户不存在")
 		} else {
-			return nil, "", "", errors.New("数据库错误")
+			return nil, "", "", "", errors.New("数据库错误")
 		}
 	} else {
-		return id, name, role, nil
+		return id, name, role, createAt, nil
 	}
 }
 
-func GetAvatarUrlById(id int64) (string, error) {
-	var avatarUrl string
-	query := "SELECT avatar_url FROM b2c_user.user_profiles WHERE user_id=?"
+func GetAvatarUrlAndBioById(id int64) (string, string, error) {
+	var avatarUrl, bio string
+	query := "SELECT avatar_url,bio FROM b2c_user.user_profiles WHERE user_id=?"
 	row := config.MySqlClient.QueryRow(query, id)
-	err := row.Scan(&avatarUrl)
+	err := row.Scan(&avatarUrl, &bio)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return avatarUrl, nil
+	return avatarUrl, bio, nil
 }
 
 // 初始化用户信息表
 func SaveUserInfo(name string, email string, role string) (
-	userId int64, err error) {
+	userId int64, createAt string, err error) {
 	currentTime := utils.GetTime()
 	// 初始化 users 表
 	query := "INSERT INTO b2c_user.users (username, email, role,create_at,update_at) VALUES (?, ?, ?, ?, ?)"
 	result, err := config.MySqlClient.Exec(query, name, email, role, currentTime, currentTime)
 	if err != nil {
-		return 0, fmt.Errorf("could not insert user info: %v", err)
+		return 0, "", fmt.Errorf("could not insert user info: %v", err)
 	}
 
 	userId, err = result.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("could not get last insert ID: %v", err)
+		return 0, "", fmt.Errorf("could not get last insert ID: %v", err)
 	}
 
 	// 初始化 user_profiles 表
 	query = "INSERT INTO b2c_user.user_profiles (user_id,avatar_url,create_at,update_at) VALUES (?,?,?,?)"
-	_, err = config.MySqlClient.Exec(query, userId, "default", currentTime, currentTime)
+	_, err = config.MySqlClient.Exec(query, userId, "b2c/default.jpg", currentTime, currentTime)
 	if err != nil {
-		return 0, fmt.Errorf("could not insert user profile: %v", err)
+		return 0, "", fmt.Errorf("could not insert user profile: %v", err)
 	}
-	return userId, nil
+	return userId, currentTime, nil
 }
 
 func CheckNameAndPwd(name string, pwd string) (
-	int64, string, string, string, error) {
+	int64, string, string, string, string, string, string, error) {
 	if pwd == "" {
-		return 0, "", "", "", errors.New("GLB-001")
+		return 0, "", "", "", "", "", "", errors.New("GLB-001")
 	}
-	query := "SELECT user_id,role,password_hash FROM b2c_user.users WHERE username=?"
+	query := "SELECT user_id,role,password_hash,create_at,email FROM b2c_user.users WHERE username=?"
 	row := config.MySqlClient.QueryRow(query, name)
 	var id int64
 	var role string
 	var oldPwdHash string
-	err := row.Scan(&id, &role, &oldPwdHash)
+	var createAt string
+	var email string
+	err := row.Scan(&id, &role, &oldPwdHash, &createAt, &email)
 	if err != nil {
+		log.Printf("Error checking if name exists: %v", err)
 		if errors.Is(err, sql.ErrNoRows) {
-			return 0, "", "", "", errors.New("GLB-001")
+			return 0, "", "", "", "", "", "", errors.New("GLB-001")
 		} else {
-			return 0, "", "", "", errors.New("GLB-003")
+			return 0, "", "", "", "", "", "", errors.New("GLB-003")
 		}
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(oldPwdHash), []byte(pwd))
 
 	if err != nil {
-		return 0, "", "", "", errors.New("GLB-001")
+		log.Printf("Error checking if password is correct: %v", err)
+		return 0, "", "", "", "", "", "", errors.New("GLB-001")
 	}
 
-	query = "SELECT avatar_url FROM b2c_user.user_profiles WHERE user_id=?"
+	query = "SELECT avatar_url,bio FROM b2c_user.user_profiles WHERE user_id=?"
 	row = config.MySqlClient.QueryRow(query, id)
 	var avatarUrl string
-	err = row.Scan(&avatarUrl)
+	var bio sql.NullString
+	err = row.Scan(&avatarUrl, &bio)
 	if err != nil {
-		return 0, "", "", "", errors.New("GBL-003")
+		log.Printf("Error checking if user profile exists: %v", err)
+		return 0, "", "", "", "", "", "", errors.New("GBL-003")
 	}
-	return id, name, role, avatarUrl, nil
+	if !bio.Valid {
+		bio.String = ""
+	}
+	return id, name, role, avatarUrl, createAt, bio.String, email, nil
 }
 func IsUsernameExist(username string) bool {
 	query := "SELECT EXISTS(SELECT 1 FROM b2c_user.users WHERE username = ?)"
@@ -125,8 +135,9 @@ func IsUsernameExist(username string) bool {
 
 func ChangeUsername(id int64, username string) error {
 	currentTime := utils.GetTime()
+	name := utils.Filter(username)
 	query := "UPDATE b2c_user.users SET username=?,update_at=? WHERE user_id=?"
-	_, err := config.MySqlClient.Exec(query, username, currentTime, id)
+	_, err := config.MySqlClient.Exec(query, name, currentTime, id)
 	if err != nil {
 		return err
 	} else {
@@ -262,4 +273,24 @@ func GetUserInfoByUserId(userId int64) (avatarUrl, name, email, bio, createAt st
 	}
 
 	return avatarUrl, name, email, bio, createAt, nil
+}
+
+func ChangeAvatar(userId int64, avatarUrl string) error {
+	currentTime := utils.GetTime()
+	query := "UPDATE b2c_user.user_profiles SET avatar_url=?,update_at=? WHERE user_id=?"
+	_, err := config.MySqlClient.Exec(query, avatarUrl, currentTime, userId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func ChangeBio(userId int64, bio string) error {
+	currentTime := utils.GetTime()
+	query := "UPDATE b2c_user.user_profiles SET bio=?,update_at=? WHERE user_id=?"
+	_, err := config.MySqlClient.Exec(query, bio, currentTime, userId)
+	if err != nil {
+		return err
+	}
+	return nil
 }

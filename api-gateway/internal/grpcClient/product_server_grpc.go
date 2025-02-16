@@ -122,6 +122,16 @@ func (c *GRPCClient) CallProductService(serviceName string, method string, reque
 			return fmt.Errorf("failed to call getOrderConfirmProduct: %v", e)
 		}
 		*response = resp
+	case "fuzzySearch":
+		req := request.(*productServerProto.FuzzySearchRequest)
+		resp, e := client.FuzzySearch(ctx, req)
+		if e != nil {
+			if errors.Is(e, context.DeadlineExceeded) {
+				return fmt.Errorf("请求超时")
+			}
+			return fmt.Errorf("failed to call fuzzySearch: %v", e)
+		}
+		*response = resp
 	default:
 		return fmt.Errorf("method %s not supported", method)
 	}

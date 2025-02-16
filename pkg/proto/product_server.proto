@@ -11,7 +11,7 @@ service ProductService{
   rpc UploadProductByExcel(UploadProductByExcelRequest) returns (UploadProductByExcelResponse);
   // 获取详情页商品信息
   rpc GetProductById(GetProductByIdRequest) returns (GetProductByIdResponse);
-//  rpc GetProductDetailById(GetProductDetailByIdRequest) returns (GetProductDetailByIdResponse);
+  //  rpc GetProductDetailById(GetProductDetailByIdRequest) returns (GetProductDetailByIdResponse);
   // 上传秒杀商品
   // TODO 鉴权
   rpc UploadSecKillProduct(UploadSecKillProductRequest) returns (UploadSecKillProductResponse);
@@ -22,6 +22,22 @@ service ProductService{
   rpc PurchaseSecKill(PurchaseSecKillRequest) returns (PurchaseSecKillResponse);
   // 获取orderConfirm界面的商品信息
   rpc GetOrderConfirmProduct(GetOrderConfirmProductRequest) returns (GetOrderConfirmProductResponse);
+
+  rpc FuzzySearch(FuzzySearchRequest) returns (FuzzySearchResponse);
+}
+message FuzzySearchRequest{
+  string keyword = 1;
+  int32 currentPage = 2;
+  int32 pageSize = 3;
+}
+message FuzzySearchResponse{
+  int32 code=1;
+  string status_code=2;
+  string msg=3;
+  int32 currentPage = 4;
+  int32 pageSize = 5;
+  int32 totalItems = 6;
+  repeated ProductListItem productList = 7;
 }
 message GetOrderConfirmProductRequest{
   repeated int32 product_id = 1;
@@ -149,6 +165,7 @@ message GetProductListRequest{
   int32 pageSize = 2;
   int32 categoryId = 3; // 前后端维护一个种类id对应表
   int32 sort=4; // 筛选方式 0:all, 1 price,2 time
+  string keyword = 5;
 }
 message GetProductListResponse{
   int32 code=1;
